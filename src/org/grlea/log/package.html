@@ -30,7 +30,7 @@ what-not.<br>
 But most of the programs I write just don't need something like that. I need something simple that
 just prints stuff to the console, works with a minimum of effort and lets me change the logging
 level easily to see only the stuff I want to see.<br>
-And that's what Simple Log does.
+And that's what Simple Log does. (Mmmmm... and a whole lot more, but simply.)
 </p>
 
 <h3>Design Goals</h3>
@@ -40,7 +40,8 @@ The second design goal was to make calls into the API brief, so that you don't h
 code before you get to your actual log message.<br>
 The third design goal was to have a *really* easy configuration file.<br>
 The fourth goal was to make the API as simple as possible. To me, this means you have to know about
-as few classes as possible. (There's only three, and you only need to know about two of them!)<br>
+as few classes as possible. (There's only three, and you can get by only knowing about one of them!)
+<br>
 The fifth goal was to make the configuration of the loggers accessible through code.<br>
 The sixth goal was... to not have any more than five goals....
 </p>
@@ -72,23 +73,75 @@ I provide for four specific types of log messages:<br>
       (I think that was the 6th design goal...)
    </li>
 </ul>
+
+The following convenience methods are also provided as shortcuts to the above methods:
+<ul>
+   <li>
+      For logging strings:<br>
+      {@link org.grlea.log.SimpleLogger#fatal(String) fatal(String)},
+      {@link org.grlea.log.SimpleLogger#error(String) error(String)},
+      {@link org.grlea.log.SimpleLogger#warn(String) warn(String)},
+      {@link org.grlea.log.SimpleLogger#info(String) info(String)},
+      {@link org.grlea.log.SimpleLogger#debug(String) debug(String)},
+      {@link org.grlea.log.SimpleLogger#verbose(String) verbose(String)} and
+      {@link org.grlea.log.SimpleLogger#ludicrous(String) ludicrous(String)}.
+   </li><br><br>
+   <li>
+      For logging exceptions:<br>
+      {@link org.grlea.log.SimpleLogger#fatalException(Throwable) fatalException(Throwable)},
+      {@link org.grlea.log.SimpleLogger#errorException(Throwable) errorException(Throwable)} and
+      {@link org.grlea.log.SimpleLogger#warnException(Throwable) warnException(Throwable)}.
+   </li><br><br>
+   <li>
+      For logging objects:<br>
+      {@link org.grlea.log.SimpleLogger#infoObject(String,Object) infoObject(String,Object)},
+      {@link org.grlea.log.SimpleLogger#infoObject(String,boolean) infoObject(String,boolean)},
+      {@link org.grlea.log.SimpleLogger#infoObject(String,int) infoObject(String,int)},<br>
+      {@link org.grlea.log.SimpleLogger#debugObject(String,Object) debugObject(String,Object)},
+      {@link org.grlea.log.SimpleLogger#debugObject(String,boolean) debugObject(String,boolean)},
+      {@link org.grlea.log.SimpleLogger#debugObject(String,int) debugObject(String,int)},<br>
+      {@link org.grlea.log.SimpleLogger#verboseObject(String,Object) verboseObject(String,Object)},
+      {@link org.grlea.log.SimpleLogger#verboseObject(String,boolean) verboseObject(String,boolean)},
+      {@link org.grlea.log.SimpleLogger#verboseObject(String,int) verboseObject(String,int)},<br>
+      {@link org.grlea.log.SimpleLogger#ludicrousObject(String,Object)
+             ludicrousObject(String,Object)},
+      {@link org.grlea.log.SimpleLogger#ludicrousObject(String,boolean)
+             ludicrousObject(String,boolean)},
+      {@link org.grlea.log.SimpleLogger#ludicrousObject(String,int)
+             ludicrousObject(String,int)}
+   </li><br><br>
+</ul>
 </p>
 
 <h3>Advanced Features</h3>
 <p>
 Simple Log is easy to use, but not simplistic.<br>
 It has quite a few slightly advanced and very useful features, all of which are available without
-having to write any extra code:
+having to write any extra code.
+</p>
+<p>
+
+<b>Core Features</b>
+
 <ul>
    <li>Package-based, hierarchical inheritance of debug levels and trace flags</li>
+   <li>Set debug levels using levels numbers or names</li>
    <li>Special handling of exceptions, object arrays, byte arrays and char arrays</li>
+   <li>API support for logging primitives</li>
    <li>Ability to turn tracing on and off independent of the debug level</li>
-   <li>Send log output to a file <i>[Optional]</i></li>
-   <li>Reloading configuration <i>[Optional]</i></li>
-   <li>Customisable log format <i>[Optional]</i></li>
-   <li>Customisable date format applies to all log formats<i>[Optional]</i></li>
-   <li>Instance-based logging records (as opposed to class-based) <i>[Optional]</i></li>
-   <li>Programmatic access to configuration (might have to write code here!) <i>[Optional]</i></li>
+</ul>
+
+<b>Optional Features (<i>i.e. turned off by default</i>):</b>
+
+<ul>
+   <li>Send log output to a file</li>
+   <li>Generate log file names containing the date</li>
+   <li>Append or overwrite log file output</li>
+   <li>Reloading configuration</li>
+   <li>Customisable log format</li>
+   <li>Customisable date format (applied to all log formats)</li>
+   <li>Instance-based logging records (as opposed to class-based)</li>
+   <li>Programmatic access to configuration (might have to write code here!)</li>
 </ul>
 </p>
 
@@ -119,7 +172,7 @@ HelloWorld
          log.entry("main()");
          log.debug("About to print 'Hello World!'");
          String helloWorldString = "'Hello World!'";
-         log.dbo(DebugLevel.L6_VERBOSE, "helloWorldString", helloWorldString);
+         log.debugObject("helloWorldString", helloWorldString);
          log.db(DebugLevel.L7_LUDICROUS, "I can't believe this library has a level called 'Ludicrous'!");
 
          System.out.println(helloWorldString);
@@ -138,7 +191,7 @@ HelloWorld
    }
 </pre>
 The <b>default</b> output (remember, the format is configurable) from running this class<br>
-(assuming the debug level is set to 7 and tracing is turned on) would be:<pre>
+(assuming the debug level is set to 7 / Ludicrous and tracing is turned on) would be:<pre>
 Fri 2004/11/26 21:10:32.618|>>>|main|HelloWorld|main()
 Fri 2004/11/26 21:10:32.618|   |main|HelloWorld|About to print 'Hello World!'
 Fri 2004/11/26 21:10:32.618|---|main|HelloWorld|helloWorldString|'Hello World!'

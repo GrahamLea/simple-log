@@ -7,6 +7,25 @@
 
 CHANGE LOG
 
+1.5
+
+   + Issue 4: (RFE): Debug level names can now be used in the properties file
+   + Issue 5: (BUG): Relative log file name causes NPE
+   + Issue 6: (RFE): More control over the logger output file:
+                        - Property 'simplelog.logFile' now supports date substitution, controlled by
+                          property 'simplelog.logFile.interpretName'
+                        - Added property 'simplelog.logFile.append' to allow overwriting of file
+   + Issue 7: (RFE): Added SimpleLogger convenience methods:
+                        - fatalException(Throwable)
+                        - errorException(Throwable)
+                        - warnException(Throwable)
+                        - infoObject(String,Object|boolean|int)
+                        - debugObject(String,Object|boolean|int)
+                        - verboseObject(String,Object|boolean|int)
+   + Issue 8: (BUG): Level properties with trailing whitespace cause errors
+   + The dbo(DebugLevel,String,Object) method now routes to the corresponding Object[], byte[] and
+     char[] variations if the object value is of those types
+
 1.4
 
    + Issue 3: (RFE): Added SimpleLogger.wouldLog(DebugLevel level)
