@@ -12,9 +12,9 @@
          color: #666666;
          margin-top: 50;
       }
-      pre.output {
+      pre#output {
          font-size: 8pt;
-         color: red;
+         color: blue;
       }
    </style>
 </head>
@@ -189,7 +189,7 @@ HelloWorld
 <p>
 The default output from running the class (with it's debug level set to 7 and tracing on) follows.
 <br>
-Remember that the format of the output is configurable.<pre class="output">
+Remember that the format of the output is configurable.<pre id="output">
 Fri 26/10/2004 21:10:32.618|&gt;&gt;&gt;|main|HelloWorld|main()
 Fri 26/10/2004 21:10:32.618|   |main|HelloWorld|About to print 'Hello World!'
 Fri 26/10/2004 21:10:32.618|---|main|HelloWorld|helloWorldString|'Hello World!'
