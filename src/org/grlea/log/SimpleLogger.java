@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLogger.java,v 1.3 2005-01-18 13:34:06 grlea Exp $
+// $Id: SimpleLogger.java,v 1.4 2005-03-03 12:03:00 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,7 +31,7 @@ import java.util.Date;
  *
  * <p>2. And then use it like this:<pre>
  *       log.entry("main()");
- *       log.dbo(DebugLevel.L6_VERBOSE, "argv", argv);
+ *       log.debugObject("argv", argv);
  *       if (argv.length == 0)
  *       {
  *          log.info("No arguments. Using defaults.");
@@ -45,30 +45,31 @@ import java.util.Date;
  * <code>SimpleLogger</code> provides for four types of log messages:
  * <ul>
  *    <li>
- *       "db" = Debug (see {@link org.grlea.log.SimpleLogger#db SimpleLogger.db()})<br>
+ *       "db" = Debug (see {@link #db SimpleLogger.db()})<br>
  *       Lets you log a simple log message, e.g. "Got to the point where you thought it wasn't
  *       getting to."
  *    </li><br><br>
  *    <li>
  *       "dbo" = Debug Object
- *       (see {@link org.grlea.log.SimpleLogger#dbo(DebugLevel,String,Object) SimpleLogger.dbo()})
+ *       (see {@link #dbo(DebugLevel,String,Object) SimpleLogger.dbo()})
  *       <br>
  *       Debugs the name and value of an object. Specially handled variants exist for all primitives,
  *       Object[], byte[] and char[].
  *    </li><br><br>
  *    <li>
- *       "dbe" = Debug Exception (see {@link org.grlea.log.SimpleLogger#dbe SimpleLogger.dbe()})<br>
+ *       "dbe" = Debug Exception (see {@link #dbe SimpleLogger.dbe()})<br>
  *       Special handling of exceptions that will print a stack trace (can be turned off).
  *    </li><br><br>
  *    <li>
- *       Tracing (see {@link org.grlea.log.SimpleLogger#entry SimpleLogger.entry()} and
- *       {@link org.grlea.log.SimpleLogger#exit SimpleLogger.exit()})<br>
+ *       Tracing (see {@link #entry SimpleLogger.entry()} and {@link #exit SimpleLogger.exit()})<br>
  *       Logs entry to and exit from a method. Can be turned on/off independent of debug level.<br>
  *    </li>
  * </ul>
+ *
+ * as well as convenience methods, named after the various levels, as shortcuts to the above methods.
  * </p>
  *
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  * @author $Author: grlea $
  */
 public final class
@@ -460,12 +461,11 @@ SimpleLogger
    }
 
    /**
-    * Logs a debug message at the "Fatal" level.
+    * Logs a debug message at the {@link DebugLevel#L1_FATAL Fatal} level.
     *
     * @param s the message to log.
     *
     * @see #db
-    * @see DebugLevel#L1_FATAL
     */
    public void
    fatal(String s)
@@ -474,12 +474,11 @@ SimpleLogger
    }
 
    /**
-    * Logs a debug message at the "Error" level.
+    * Logs a debug message at the {@link DebugLevel#L2_ERROR Error} level.
     *
     * @param s the message to log.
     *
     * @see #db
-    * @see DebugLevel#L2_ERROR
     */
    public void
    error(String s)
@@ -488,12 +487,11 @@ SimpleLogger
    }
 
    /**
-    * Logs a debug message at the "Warn" level.
+    * Logs a debug message at the {@link DebugLevel#L3_WARN Warn} level.
     *
     * @param s the message to log.
     *
     * @see #db
-    * @see DebugLevel#L3_WARN
     */
    public void
    warn(String s)
@@ -502,12 +500,11 @@ SimpleLogger
    }
 
    /**
-    * Logs a debug message at the "Info" level.
+    * Logs a debug message at the {@link DebugLevel#L4_INFO Info} level.
     *
     * @param s the message to log.
     *
     * @see #db
-    * @see DebugLevel#L4_INFO
     */
    public void
    info(String s)
@@ -516,12 +513,11 @@ SimpleLogger
    }
 
    /**
-    * Logs a debug message at the "Debug" level.
+    * Logs a debug message at the {@link DebugLevel#L5_DEBUG Debug} level.
     *
     * @param s the message to log.
     *
     * @see #db
-    * @see DebugLevel#L5_DEBUG
     */
    public void
    debug(String s)
@@ -530,17 +526,29 @@ SimpleLogger
    }
 
    /**
-    * Logs a debug message at the "Verbose" level.
+    * Logs a debug message at the {@link DebugLevel#L6_VERBOSE Verbose} level.
     *
     * @param s the message to log.
     *
     * @see #db
-    * @see DebugLevel#L6_VERBOSE
     */
    public void
    verbose(String s)
    {
       db(DebugLevel.L6_VERBOSE, s);
+   }
+
+   /**
+    * Logs a debug message at the {@link DebugLevel#L7_LUDICROUS Ludicrous} level.
+    *
+    * @param s the message to log.
+    *
+    * @see #db
+    */
+   public void
+   ludicrous(String s)
+   {
+      db(DebugLevel.L7_LUDICROUS, s);
    }
 
    /**
@@ -577,17 +585,37 @@ SimpleLogger
     * <p>The object name and value will be printed only if the given debug level is less than or
     * equal to the current debug level of this <code>SimpleLogger</code>.</p>
     *
-    * @param objName The name of the object whose value is being given.
+    * <p>Note that, if the given object is an instance of <code>Object[]</code>, <code>byte[]</code>
+    * or <code>char[]</code>, this method will route the call to the corresponding variation of
+    * <code>dbo()</code> (each of which performs special formatting for the particualr type),
+    * eliminating the need to perform pre-logging type checks and casts.</p>
     *
-    * @param val The name value of the object.
+    * @param objectName The name of the object whose value is being given.
+    *
+    * @param value The value of the object.
     */
    public void
-   dbo(DebugLevel level, String objName, Object val)
+   dbo(DebugLevel level, String objectName, Object value)
    {
-      if (!log.isOutputting() || !debugLevel.shouldLog(level))
-         return;
+      if (value instanceof Object[])
+      {
+         dbo(level, objectName, (Object[]) value);
+      }
+      else if (value instanceof byte[])
+      {
+         dbo(level, objectName, (byte[]) value);
+      }
+      else if (value instanceof char[])
+      {
+         dbo(level, objectName, (char[]) value);
+      }
+      else
+      {
+         if (!log.isOutputting() || !debugLevel.shouldLog(level))
+            return;
 
-      dboNoCheck(objName, val);
+         dboNoCheck(objectName, value);
+      }
    }
 
    /**
@@ -596,10 +624,10 @@ SimpleLogger
     * which do their own checks before calling this method.
     */
    private void
-   dboNoCheck(String objName, Object val)
+   dboNoCheck(String objectName, Object val)
    {
       Object[] data = createData(2);
-      data[data.length - 2] = objName;
+      data[data.length - 2] = objectName;
       data[data.length - 1] = val;
       MessageFormat format = isInstanceDebugger ? log.getDebugObjectInstanceFormat() :
                                                            log.getDebugObjectFormat();
@@ -612,12 +640,12 @@ SimpleLogger
     * <p>The array name and value will be printed only if the given debug level is less than or
     * equal to the current debug level of this <code>SimpleLogger</code>.</p>
     *
-    * @param objName The name of the array whose value is being given.
+    * @param objectName The name of the array whose value is being given.
     *
     * @param val The array.
     */
    public void
-   dbo(DebugLevel level, String objName, Object[] val)
+   dbo(DebugLevel level, String objectName, Object[] val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
@@ -632,7 +660,7 @@ SimpleLogger
       }
       stringValue.append("]");
 
-      dboNoCheck(objName, stringValue);
+      dboNoCheck(objectName, stringValue);
    }
 
    /**
@@ -641,12 +669,12 @@ SimpleLogger
     * @see #dbo(DebugLevel,String,Object)
     */
    public void
-   dbo(DebugLevel level, String objName, short val)
+   dbo(DebugLevel level, String objectName, short val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objName, String.valueOf(val));
+      dboNoCheck(objectName, String.valueOf(val));
    }
 
    /**
@@ -655,12 +683,12 @@ SimpleLogger
     * @see #dbo(DebugLevel,String,Object)
     */
    public void
-   dbo(DebugLevel level, String objName, int val)
+   dbo(DebugLevel level, String objectName, int val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objName, String.valueOf(val));
+      dboNoCheck(objectName, String.valueOf(val));
    }
 
    /**
@@ -669,12 +697,12 @@ SimpleLogger
     * @see #dbo(DebugLevel,String,Object)
     */
    public void
-   dbo(DebugLevel level, String objName, long val)
+   dbo(DebugLevel level, String objectName, long val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objName,String.valueOf(val));
+      dboNoCheck(objectName,String.valueOf(val));
    }
 
    /**
@@ -683,12 +711,12 @@ SimpleLogger
     * @see #dbo(DebugLevel,String,Object)
     */
    public void
-   dbo(DebugLevel level, String objName, boolean val)
+   dbo(DebugLevel level, String objectName, boolean val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objName, String.valueOf(val));
+      dboNoCheck(objectName, String.valueOf(val));
    }
 
    /**
@@ -697,12 +725,12 @@ SimpleLogger
     * @see #dbo(DebugLevel,String,Object)
     */
    public void
-   dbo(DebugLevel level, String objName, float val)
+   dbo(DebugLevel level, String objectName, float val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objName, String.valueOf(val));
+      dboNoCheck(objectName, String.valueOf(val));
    }
 
    /**
@@ -711,12 +739,12 @@ SimpleLogger
     * @see #dbo(DebugLevel,String,Object)
     */
    public void
-   dbo(DebugLevel level, String objName, double val)
+   dbo(DebugLevel level, String objectName, double val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objName, String.valueOf(val));
+      dboNoCheck(objectName, String.valueOf(val));
    }
 
    /**
@@ -725,12 +753,12 @@ SimpleLogger
     * @see #dbo(DebugLevel,String,Object)
     */
    public void
-   dbo(DebugLevel level, String objName, byte val)
+   dbo(DebugLevel level, String objectName, byte val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objName, toString(val));
+      dboNoCheck(objectName, toString(val));
    }
 
    /**
@@ -739,12 +767,12 @@ SimpleLogger
     * @see #dbo(DebugLevel,String,Object)
     */
    public void
-   dbo(DebugLevel level, String objName, byte[] val)
+   dbo(DebugLevel level, String objectName, byte[] val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objName, toString(val));
+      dboNoCheck(objectName, toString(val));
    }
 
    /**
@@ -753,12 +781,12 @@ SimpleLogger
     * @see #dbo(DebugLevel,String,Object)
     */
    public void
-   dbo(DebugLevel level, String objName, char val)
+   dbo(DebugLevel level, String objectName, char val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objName, String.valueOf(val));
+      dboNoCheck(objectName, String.valueOf(val));
    }
 
    /**
@@ -767,12 +795,156 @@ SimpleLogger
     * @see #dbo(DebugLevel,String,Object)
     */
    public void
-   dbo(DebugLevel level, String objName, char[] val)
+   dbo(DebugLevel level, String objectName, char[] val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objName, String.valueOf(val));
+      dboNoCheck(objectName, String.valueOf(val));
+   }
+
+   /**
+    * Convenience method for logging an object's name and value at the
+    * {@link DebugLevel#L4_INFO Info} level.
+    *
+    * @see #dbo(DebugLevel,String,Object)
+    */
+   public void
+   infoObject(String objectName, Object val)
+   {
+      dbo(DebugLevel.L4_INFO, objectName, val);
+   }
+
+   /**
+    * Convenience method for logging a <code>boolean</code>'s name and value at the
+    * {@link DebugLevel#L4_INFO Info} level.
+    *
+    * @see #dbo(DebugLevel,String,boolean)
+    */
+   public void
+   infoObject(String objectName, boolean val)
+   {
+      dbo(DebugLevel.L4_INFO, objectName, val);
+   }
+
+   /**
+    * Convenience method for logging an <code>int</code>'s name and value at the
+    * {@link DebugLevel#L4_INFO Info} level.
+    *
+    * @see #dbo(DebugLevel,String,int)
+    */
+   public void
+   infoObject(String objectName, int val)
+   {
+      dbo(DebugLevel.L4_INFO, objectName, val);
+   }
+
+   /**
+    * Convenience method for logging an object's name and value at the
+    * {@link DebugLevel#L5_DEBUG Debug} level.
+    *
+    * @see #dbo(DebugLevel,String,Object)
+    */
+   public void
+   debugObject(String objectName, Object val)
+   {
+      dbo(DebugLevel.L5_DEBUG, objectName, val);
+   }
+
+   /**
+    * Convenience method for logging a <code>boolean</code>'s name and value at the
+    * {@link DebugLevel#L5_DEBUG Debug} level.
+    *
+    * @see #dbo(DebugLevel,String,boolean)
+    */
+   public void
+   debugObject(String objectName, boolean val)
+   {
+      dbo(DebugLevel.L5_DEBUG, objectName, val);
+   }
+
+   /**
+    * Convenience method for logging an <code>int</code>'s name and value at the
+    * {@link DebugLevel#L5_DEBUG Debug} level.
+    *
+    * @see #dbo(DebugLevel,String,int)
+    */
+   public void
+   debugObject(String objectName, int val)
+   {
+      dbo(DebugLevel.L5_DEBUG, objectName, val);
+   }
+
+   /**
+    * Convenience method for logging an object's name and value at the
+    * {@link DebugLevel#L6_VERBOSE Verbose} level.
+    *
+    * @see #dbo(DebugLevel,String,Object)
+    */
+   public void
+   verboseObject(String objectName, Object val)
+   {
+      dbo(DebugLevel.L6_VERBOSE, objectName, val);
+   }
+
+   /**
+    * Convenience method for logging a <code>boolean</code>'s name and value at the
+    * {@link DebugLevel#L6_VERBOSE Verbose} level.
+    *
+    * @see #dbo(DebugLevel,String,boolean)
+    */
+   public void
+   verboseObject(String objectName, boolean val)
+   {
+      dbo(DebugLevel.L6_VERBOSE, objectName, val);
+   }
+
+   /**
+    * Convenience method for logging an <code>int</code>'s name and value at the
+    * {@link DebugLevel#L6_VERBOSE Verbose} level.
+    *
+    * @see #dbo(DebugLevel,String,int)
+    */
+   public void
+   verboseObject(String objectName, int val)
+   {
+      dbo(DebugLevel.L6_VERBOSE, objectName, val);
+   }
+
+   /**
+    * Convenience method for logging an object's name and value at the
+    * {@link DebugLevel#L7_LUDICROUS Ludicrous} level.
+    *
+    * @see #dbo(DebugLevel,String,Object)
+    */
+   public void
+   ludicrousObject(String objectName, Object val)
+   {
+      dbo(DebugLevel.L7_LUDICROUS, objectName, val);
+   }
+
+   /**
+    * Convenience method for logging a <code>boolean</code>'s name and value at the
+    * {@link DebugLevel#L7_LUDICROUS Ludicrous} level.
+    *
+    * @see #dbo(DebugLevel,String,boolean)
+    */
+   public void
+   ludicrousObject(String objectName, boolean val)
+   {
+      dbo(DebugLevel.L7_LUDICROUS, objectName, val);
+   }
+
+   /**
+    * Convenience method for logging an <code>int</code>'s name and value at the
+    * {@link DebugLevel#L7_LUDICROUS Ludicrous} level.
+    *
+    * @see #dbo(DebugLevel,String,int)
+    */
+   public void
+   ludicrousObject(String objectName, int val)
+   {
+      dbo(DebugLevel.L7_LUDICROUS, objectName, val);
    }
 
    /**
@@ -794,6 +966,42 @@ SimpleLogger
       MessageFormat format = isInstanceDebugger ? log.getDebugExceptionInstanceFormat() :
                                                            log.getDebugExceptionFormat();
       log.println(format.format(data));
+   }
+
+   /**
+    * Convenience method for logging an exception (or throwable) at the
+    * {@link DebugLevel#L1_FATAL Fatal} level.
+    *
+    * @see #dbe(DebugLevel,Throwable)
+    */
+   public void
+   fatalException(Throwable t)
+   {
+      dbe(DebugLevel.L1_FATAL, t);
+   }
+
+   /**
+    * Convenience method for logging an exception (or throwable) at the
+    * {@link DebugLevel#L2_ERROR Error} level.
+    *
+    * @see #dbe(DebugLevel,Throwable)
+    */
+   public void
+   errorException(Throwable t)
+   {
+      dbe(DebugLevel.L2_ERROR, t);
+   }
+
+   /**
+    * Convenience method for logging an exception (or throwable) at the
+    * {@link DebugLevel#L3_WARN Warn} level.
+    *
+    * @see #dbe(DebugLevel,Throwable)
+    */
+   public void
+   warnException(Throwable t)
+   {
+      dbe(DebugLevel.L3_WARN, t);
    }
 
    /**
