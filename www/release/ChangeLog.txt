@@ -1,0 +1,18 @@
+
+                               Simple Log
+
+                               Version 1.1
+
+                      http://simple-log.dev.java.net
+
+CHANGE LOG
+
+1.1
+
+   + Added SimpleLog.getWriter() and .setWriter() methods.
+   + Improved fail-fast time for SimpleLogs producing no output.
+   + Added a SimpleLog constructor for programmattic configuration: SimpleLog(Properties)
+
+1.0
+
+   + Initial release.
