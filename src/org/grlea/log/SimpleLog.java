@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.6 2005-03-03 12:04:13 grlea Exp $
+// $Id: SimpleLog.java,v 1.7 2005-03-05 04:08:21 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,7 +47,7 @@ import java.util.Date;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  * @author $Author: grlea $
  */
 public final class
@@ -771,18 +771,29 @@ SimpleLog
    private static void
    printError(String description, Throwable t, boolean printExceptionType)
    {
-      System.err.println();
+      String printStackTracesStr = System.getProperty("simplelog.dev.printStackTraces");
+      boolean printStackTraces = printStackTracesStr != null &&
+                                 printStackTracesStr.trim().equalsIgnoreCase("true");
 
-      System.err.print("   SimpleLog ERROR: ");
-      System.err.print(description);
-      System.err.print(": ");
-      if (printExceptionType)
-         System.err.print(t);
-      else
-         System.err.print(t.getMessage());
+      synchronized (System.err)
+      {
+         System.err.println();
 
-      System.err.println();
-      System.err.println();
+         System.err.print("   SimpleLog ERROR: ");
+         System.err.print(description);
+         System.err.print(": ");
+         if (printExceptionType)
+            System.err.print(t);
+         else
+            System.err.print(t.getMessage());
+
+         System.err.println();
+
+         if (printStackTraces)
+            t.printStackTrace(System.err);
+
+         System.err.println();
+      }
    }
 
    /**
