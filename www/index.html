@@ -49,7 +49,7 @@ a viable alternative for most applications that need logging.
 <p>
 Simple Log is a true "Tiny Tool".
 <br><br>
-With only 3 classes in a 18.2K JAR, this tool will handle the logging needs of most small- to
+With only 3 classes in a 19.7K JAR, this tool will handle the logging needs of most small- to
 large-sized projects, but with an almost non-existent learning curve.
 </p>
 
@@ -73,24 +73,30 @@ Simple Log is written and maintained by
 
 <p>
 Here are some of the features of Simple Log:
+</p>
+
+<p>
+<b>Core Features</b>
+
 <ul>
-   <li>A very simple API (3 classes).</li>
-   <li>"Brief" API (i.e short methods names).</li>
-   <li>Fast-failing for unlogged messages.</li>
-   <li>Writes to System.err or to a specified file.</li>
-   <li>Support for three debug types: debug message, debug object and debug exception.</li>
-   <li>Support for tracing: entry and exit.</li>
-   <li>Seven debug levels: Fatal, Error, Warn, Info, Debug, Verbose, Ludicrous.</li>
-   <li>Ability to switch tracing on and off independent of the debug level.</li>
-   <li>Package-based, hierarchical inheritance of debug levels and trace flags.</li>
-   <li>Minimal configuration that is easy to write, understand and maintain.</li>
-   <li>Special printing of exceptions, object arrays, byte arrays and char arrays.</li>
-   <li>Reloading configuration (optional).</li>
-   <li>Customisable log format.</li>
-   <li>Customisable log date format.</li>
-   <li>Instance-based logging records.</li>
-   <li>Configurable through code, while running.</li>
-   <li>18.2 KB distributable JAR</li>
+   <li>Package-based, hierarchical inheritance of debug levels and trace flags</li>
+   <li>Set debug levels using levels numbers or names</li>
+   <li>Special handling of exceptions, object arrays, byte arrays and char arrays</li>
+   <li>API support for logging primitives</li>
+   <li>Ability to turn tracing on and off independent of the debug level</li>
+</ul>
+
+<b>Optional Features (<i>i.e. turned off by default</i>):</b>
+
+<ul>
+   <li>Send log output to a file</li>
+   <li>Generate log file names containing the date</li>
+   <li>Append or overwrite log file output</li>
+   <li>Reloading configuration</li>
+   <li>Customisable log format</li>
+   <li>Customisable date format (applied to all log formats)</li>
+   <li>Instance-based logging records (as opposed to class-based)</li>
+   <li>Programmatic access to configuration (might have to write code here!)</li>
 </ul>
 </p>
 
