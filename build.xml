@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <!--
-$Id: build.xml,v 1.1 2004-12-13 12:26:23 grlea Exp $
+$Id: build.xml,v 1.2 2005-01-18 11:36:34 grlea Exp $
 Copyright (c) 2004 Graham Lea. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -104,7 +104,7 @@ limitations under the License.
             <filter token="VERSION" value="${product.version}" />
           </filterset>
       </copy>
-      <copy todir="${classesDestination}/meta-inf" flatten="true">
+      <copy todir="${classesDestination}/meta-inf/${ant.project.name}" flatten="true">
          <fileset dir="${releaseDir}" includes="README.txt,ChangeLog.txt,LICENSE.txt,VERSION.txt"/>
       </copy>
    </target>
