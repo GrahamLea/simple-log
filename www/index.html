@@ -1,45 +1,205 @@
 <html>
+
 <head>
-<title>Project Home Page</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Simple Log: The Simple Way To Log</title>
+   <meta http-equiv="description"
+         content="Simple Log is a logging anti-framework; a logging library that just works.">
+   <meta http-equiv="keywords" content="java log logging framework simple">
+   <style type="text/css">
+      p.copyright {
+         font-size: smaller;
+         color: #666666;
+         margin-top: 50;
+      }
+   </style>
 </head>
 
-<body bgcolor="#FFFFFF" text="#000000">
-<h1>Default project home page </h1>
-<p>Congratulations on your new java.net project! </p>
-<p>This page is the home page for your new project. This content is appearing 
-  because you have selected the option <b>Use project index.html</b>. To edit 
-  the information displayed on this page, just use CVS to check out your project's 
-  CVS repository and edit index.html in directory www. You can get more information 
-  on how to set-up your local CVS client, click on <b>Version Control</b> on the 
-  left nav bar. </p>
-<p>If you don't want to use CVS to manage your home page, click on the <b>Edit 
-  project</b> link on this page and unclick the option <b>Use project index.html</b>. 
-  Your project home page contents will be generated from the <b>Edit project</b> 
-  field <b>Description</b>. Edit the text on that field to change your home page 
-  contents. Click on <b>Submit changes</b> to save your edits. </p>
-<p>If you are looking for <a href="https://java-net.dev.java.net/ProjectPages.html#templates">sample 
-  home page templates</a>, check out the <a href="https://java-net.dev.java.net/ProjectPages.html">java.net 
-  Project Starter Kit</a>. Copy either of the templates into your project's html 
-  to get started on your project's home page. </p>
-<p>You can find lots of helpful information in the Starter Kit to get your project 
-  started. Some of the things you will find in there include:</p>
+<body>
+
+<!-- TODO (grlra): Need an image
+<img src="images/ED_Metal.png" width="240" height="216" align="right">
+-->
+
+<p>
+Simple Log is logging anti-framework.<br>
+I have written it in protest against the many "logging frameworks" that are available and
+recommended by many developers.
+</p>
+
+<p>
+Simple Log is a small library that does logging very simply and requires you to do almost nothing
+(other than actually logging) to get log output happening.<br>
+It doesn't attempt to solve every logging problem in one package, but I believe it will be suitable
+for at least 80% of applications that need logging.<br>
+I find it much simpler to use than a logging framework, especially in terms of configuration.
+</p>
+
+<p>
+Simple Log is a true "Tiny Tool".<br>
+With only 3 classes in a 17.5K JAR, this tool will handle the logging needs of most small- to
+medium-sized projects, but with an almost non-existent learning curve.
+</p>
+
+<p>
+The rest of this page is a summary of the features and use of Simple Log.<br>
+You can read more about the details in the <a href="doc/api/index.html">API Documentation</a>.
+</p>
+
+
+<h3>Features</h3>
+
+<p>
+Here are some of the features of Simple Log:
 <ul>
-  <li>Hints on how to <a href="https://java-net.dev.java.net/ProjectPages.html#pages">set-up 
-    your project's</a> home page</li>
-  <li>Ideas on how to <a href="https://java-net.dev.java.net/ProjectPages.html#publicity">publicize 
-    your project</a> including RSS feeds</li>
-  <li>Hints on <a href="https://java-net.dev.java.net/pagedesign.html">project 
-    page HTML</a></li>
-  <li>Setting up project <a href="https://java-net.dev.java.net/ProjectPages.html#wiki">wiki 
-    pages</a></li>
-  <li>And places to go if <a href="https://java-net.dev.java.net/ProjectPages.html#feedback">you 
-    have questions</a>.</li>
+   <li>A very simple API (3 classes).</li>
+   <li>"Brief" API (i.e short methods names).</li>
+   <li>Fast-failing for unlogged messages.</li>
+   <li>Support for three debug types: debug message, debug object and debug exception.</li>
+   <li>Support for tracing: entry and exit.</li>
+   <li>Seven debug levels: Fatal, Error, Warn, Info, Debug, Verbose, Ludicrous.</li>
+   <li>Ability to switch tracing on and off independent of the debug level.</li>
+   <li>Package-based, hierarchical inheritance of debug levels and trace flags.</li>
+   <li>Minimal configuration that is easy to write, understand and maintain.</li>
+   <li>Special printing of exceptions, object arrays, byte arrays and char arrays.</li>
+   <li>Reloading configuration (optional).</li>
+   <li>Customisable log format.</li>
+   <li>Customisable log date format.</li>
+   <li>Instance-based logging records.</li>
+   <li>Configurable through code, while running.</li>
+   <li><b><i>17.5 KB distributable JAR</i></b></li>
 </ul>
-<p>Remember that you will attract more new members and your project team will 
-  work more effectively if you, as the project owner, supply sufficient information 
-  about your project for visitors to your project space. Good luck with your new 
-  project! </p>
+</p>
+
+<p>
+Here are some of the features Simple Log <b>does not</b> contain (on purpose):
+<ul>
+   <li>
+      An XML Configuration File.<br>
+      <i>The properties configuration file is simple and easier to read and maintain than XML.</i>
+   </li>
+      <br>
+      <br>
+   <li>
+      Any concept of a "Logging Pipeline" or "Log Event" objects.<br>
+      <i>As well as consuming memory unnecessarily, such architectures are overkill for the simple
+      level-based logging that most applications require.</i>
+   </li>
+      <br>
+      <br>
+   <li>
+      Extendable Debug Levels<br>
+      <i>Really, is seven not enough!?</i>
+   </li>
+      <br>
+      <br>
+   <li>
+      Custom Filters<br>
+      <i>All messages are either logged or not based on the level of the message compared to the
+      level assigned to the class that created it. If you need something fancier, this is not the
+      package for you.</i>
+   </li>
+      <br>
+      <br>
+   <li>
+      Custom Formatters/Renderers<br>
+      <i>The format of log messages can be controlled, from the properties file, using the extremely
+      flexible java.text.MessageFormat.</i>
+   </li>
+      <br>
+      <br>
+   <li>
+      A 200-page Manual<br>
+      <i>If you can't understand the javadoc for 3 classes, you probably shouldn't be programming.
+      </i>
+   </li>
+      <br>
+      <br>
+</ul>
+</p>
+
+
+<h3>Sample Code</h3>
+
+<h4>Creating a Logger</h4>
+
+<p>
+To use Simple Log, you just create a SimpleLogger at the top of your class, like this:<pre>
+   private static final SimpleLogger log = new SimpleLogger(HelloWorld.class);
+</pre>
+and then use that logger through your class.<br>
+</p>
+
+<h4>Using a Logger</h4>
+
+<p>Here's an example of how you might use Simple Log:<pre>
+public class
+HelloWorld
+{
+   <b>// Create a SimpleLogger:</b>
+   private static final SimpleLogger log = new SimpleLogger(HelloWorld.class);
+
+   public static void
+   main(String[] argv)
+   {
+      try
+      {
+         <b>// Use it!</b>
+         log.entry("main()");
+         log.debug("About to print 'Hello World!'");
+         String helloWorldString = "'Hello World!'";
+         log.dbo(DebugLevel.L6_VERBOSE, "helloWorldString", helloWorldString);
+         log.db(DebugLevel.L7_LUDICROUS,
+                "I can't believe this library has a level called 'Ludicrous'!");
+
+         System.out.println(helloWorldString);
+
+         log.debug("Printed 'Hello World!'");
+         log.info("Did you get that?");
+         log.warn("This example is very contrived.");
+      }
+      catch (Throwable t)
+      {
+         // Just in case...
+         log.fatal("Something really unexpected dropped by.");
+         log.dbe(DebugLevel.L1_FATAL, t);
+      }
+      log.exit("main()");
+   }
+</pre>
+</p>
+
+<h4>Sample Output</h4>
+
+<p>
+The default output from running the class (with it's debug level set to 7 and tracing on) follows.
+<br>
+Remember that the format of the output is configurable.<pre>
+<font size="-2">
+Fri 26/10/2004 21:10:32.618|&gt;&gt;&gt;|main|HelloWorld|main()
+Fri 26/10/2004 21:10:32.618|   |main|HelloWorld|About to print 'Hello World!'
+Fri 26/10/2004 21:10:32.618|---|main|HelloWorld|helloWorldString|'Hello World!'
+Fri 26/10/2004 21:10:32.618|   |main|HelloWorld|I can't believe this library has a level called 'Ludicrous'!
+'Hello World!'
+Fri 26/10/2004 21:10:32.618|   |main|HelloWorld|Printed 'Hello World!'
+Fri 26/10/2004 21:10:32.618|   |main|HelloWorld|Did you get that?
+Fri 26/10/2004 21:10:32.618|   |main|HelloWorld|This example is very contrived.
+Fri 26/10/2004 21:10:32.618|&lt;&lt;&lt;|main|HelloWorld|main()
+</font>
+</pre>
+</p>
+
+<h4>Configuration</h4>
+
+<p>
+Simple Log is configured simply by having a file called 'simpelog.properties' in the classpath.<br>
+An empty file will be enough to get you logging at the Info level for all classes.<br>
+The example properties file that comes with the release contains documentation about all the
+properties that can be used to configure Simple Log.<br>
+You can <a href="release/simplelog.properties" target="_blank">view it here</a>.
+</p>
+
+</div>
 </body>
 </html>
 
