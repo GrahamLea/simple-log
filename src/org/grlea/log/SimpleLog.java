@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.2 2004-12-15 10:32:20 grlea Exp $
+// $Id: SimpleLog.java,v 1.3 2005-01-12 12:12:46 grlea Exp $
 // Copyright (c) 2004 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,7 +46,7 @@ import java.util.TimerTask;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * @author $Author: grlea $
  */
 public final class
@@ -103,7 +103,7 @@ SimpleLog
    private static final String KEY_DATE_FORMAT = KEY_PREFIX + "dateFormat";
 
    /** The default date format. */
-   private static final String DATE_FORMAT_DEFAULT = "EEE dd/mm/yyyy HH:mm:ss.SSS";
+   private static final String DATE_FORMAT_DEFAULT = "EEE yyyy/MM/dd HH:mm:ss.SSS";
 
    /** The property key for the print stack traces property. */
    private static final String KEY_PRINT_STACK_TRACES = KEY_PREFIX + "printStackTraces";
