@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: DebugLevel.java,v 1.2 2004-12-15 10:44:11 grlea Exp $
+// $Id: DebugLevel.java,v 1.3 2005-01-18 09:25:50 grlea Exp $
 // Copyright (c) 2004 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,7 @@ package org.grlea.log;
  * <p>Note that tracing is not related to the debug levels, as tracing is controlled
  * independently.</p>
  *
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * @author $Author: grlea $
  */
 public final class
@@ -51,19 +51,25 @@ DebugLevel
    public static final DebugLevel L4_INFO = new DebugLevel(4);
 
    /**
-    * The "Debug" level. This should be used for the most basic debugging statements.
+    * The "Debug" level. This should be used for the most basic debugging statements. This may
+    * include the direction taken in a control structure, events fired or received and the state of
+    * important objects or variables.
     */
    public static final DebugLevel L5_DEBUG = new DebugLevel(5);
 
    /**
     * The "Verbose" level. This should be used for debugging statements that produce a large amount
-    * of output or that don't need to be seen when performing high-level debugging.
+    * of output, are called often, or that don't need to be seen when performing high-level
+    * debugging. This could include extraneous events (e.g. keyboard or mouse events), the state of
+    * not-so-important objects or variables, and statements that exist within a loop. It is
+    * recommended that method parameters and return values be logged at this level (unless the
+    * amount of output they produce is "ludicrous").
     */
    public static final DebugLevel L6_VERBOSE = new DebugLevel(6);
 
    /**
     * The "Ludicrous" level. This should be used for debugging statements that produce a
-    * ridiculous wealth of output, e.g. printing a few lines for every pixel in an image.
+    * ridiculous wealth of output, e.g. printing a line for every pixel in an image.
     */
    public static final DebugLevel L7_LUDICROUS = new DebugLevel(7);
 
