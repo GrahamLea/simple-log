@@ -1,5 +1,5 @@
 
-                               Simple Log
+                               Simple  Log
 
                                Version @VERSION@
 
