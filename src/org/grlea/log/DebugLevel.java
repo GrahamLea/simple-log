@@ -1,7 +1,7 @@
 package org.grlea.log;
 
-// $Id: DebugLevel.java,v 1.3 2005-01-18 09:25:50 grlea Exp $
-// Copyright (c) 2004 Graham Lea. All rights reserved.
+// $Id: DebugLevel.java,v 1.4 2005-01-18 13:34:06 grlea Exp $
+// Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ package org.grlea.log;
  * <p>Note that tracing is not related to the debug levels, as tracing is controlled
  * independently.</p>
  *
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  * @author $Author: grlea $
  */
 public final class

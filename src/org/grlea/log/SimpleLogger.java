@@ -1,7 +1,7 @@
 package org.grlea.log;
 
-// $Id: SimpleLogger.java,v 1.2 2005-01-18 10:43:20 grlea Exp $
-// Copyright (c) 2004 Graham Lea. All rights reserved.
+// $Id: SimpleLogger.java,v 1.3 2005-01-18 13:34:06 grlea Exp $
+// Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ import java.util.Date;
  * </ul>
  * </p>
  *
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * @author $Author: grlea $
  */
 public final class

@@ -1,7 +1,7 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.4 2005-01-18 10:42:52 grlea Exp $
-// Copyright (c) 2004 Graham Lea. All rights reserved.
+// $Id: SimpleLog.java,v 1.5 2005-01-18 13:34:06 grlea Exp $
+// Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ import java.util.TimerTask;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  * @author $Author: grlea $
  */
 public final class
