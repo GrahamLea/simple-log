@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLogger.java,v 1.1 2004-12-13 12:19:30 grlea Exp $
+// $Id: SimpleLogger.java,v 1.2 2005-01-18 10:43:20 grlea Exp $
 // Copyright (c) 2004 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -68,7 +68,7 @@ import java.util.Date;
  * </ul>
  * </p>
  *
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  * @author $Author: grlea $
  */
 public final class
@@ -374,6 +374,24 @@ SimpleLogger
    getDebugLevel()
    {
       return debugLevel;
+   }
+
+   /**
+    * A convenience method for testing whether a message logged at the specified level would be
+    * logged by this <code>SimpleLogger</code>.
+    *
+    * @param level the level of the hypothetical message being logged
+    *
+    * @return <code>true</code> if a message at the specified level would be logged given this
+    * <code>SimpleLogger</code>'s current log level, <code>false</code> if it would not.
+    *
+    * @see #getDebugLevel
+    * @see DebugLevel#shouldLog
+    */
+   public boolean
+   wouldLog(DebugLevel level)
+   {
+      return getDebugLevel().shouldLog(level);
    }
 
    /**
