@@ -1,6 +1,10 @@
 package org.grlea.log;
 
-// $Id: DebugLevel.java,v 1.4 2005-01-18 13:34:06 grlea Exp $
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Collections;
+
+// $Id: DebugLevel.java,v 1.5 2005-03-03 08:10:00 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +25,7 @@ package org.grlea.log;
  * <p>Note that tracing is not related to the debug levels, as tracing is controlled
  * independently.</p>
  *
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  * @author $Author: grlea $
  */
 public final class
@@ -72,6 +76,26 @@ DebugLevel
     * ridiculous wealth of output, e.g. printing a line for every pixel in an image.
     */
    public static final DebugLevel L7_LUDICROUS = new DebugLevel(7);
+
+   /**
+    * A map of all {@link DebugLevel}s, keyed by the lower-case version of their name
+    * (without the Lx_ prefix).
+    */
+   private static final Map levelsByName;
+
+   static
+   {
+      HashMap levels = new HashMap(10, 0.8F);
+      levels.put("fatal", L1_FATAL);
+      levels.put("error", L2_ERROR);
+      levels.put("warn", L3_WARN);
+      levels.put("info", L4_INFO);
+      levels.put("debug", L5_DEBUG);
+      levels.put("verbose", L6_VERBOSE);
+      levels.put("ludicrous", L7_LUDICROUS);
+
+      levelsByName = Collections.unmodifiableMap(levels);
+   }
 
    /**
     * The level of this particular <code>DebugLevel</code> instance.
@@ -135,6 +159,34 @@ DebugLevel
    }
 
    /**
+    * Returns the <code>DebugLevel</code> object associated with the given name. The name of the
+    * debug levels is equivalent to their name in the class except with the "Lx_" prefix. E.g. the
+    * name of the {@link #L1_FATAL} level is "Fatal". The name is treated case-insensitively.
+    *
+    * @param name the name of the <code>DebugLevel</code> to return. This name is not
+    * case-sensitive, but <b>will not</b> be automatically trimmed by this method.
+    *
+    * @return The <code>DebugLevel</code> matching the given name.
+    *
+    * @throws IllegalArgumentException if <code>name</code> is <code>null</code> or if there is no
+    * <code>DebugLevel</code> associated with the specified name.
+    */
+   static DebugLevel
+   fromName(String name)
+   throws IllegalArgumentException
+   {
+      if (name == null)
+         throw new IllegalArgumentException("name cannot be null.");
+
+      DebugLevel level = (DebugLevel) levelsByName.get(name.toLowerCase());
+      if (level == null)
+         // TODO (grahaml) Use a checked exception ?
+         throw new IllegalArgumentException("Unrecognised DebugLevel name: '" + name + "'");
+
+      return level;
+   }
+
+   /**
     * Returns this <code>DebugLevel</code>'s level.
     */
    public int
@@ -145,7 +197,7 @@ DebugLevel
 
    /**
     * Returns <code>true</code> if the given object is a <code>DebugLevel</code> with the same level
-    * value as this <code>DebugLevel</code>. 
+    * value as this <code>DebugLevel</code>.
     */
    public boolean
    equals(Object o)
