@@ -1,7 +1,7 @@
 
                                Simple  Log
 
-                               Version 1.2
+                               Version 1.3
 
                       http://simple-log.dev.java.net
 
