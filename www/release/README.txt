@@ -1,7 +1,7 @@
 
-                               Simple Log
+                               Simple  Log
 
-                               Version 1.1
+                               Version 1.2
 
                       http://simple-log.dev.java.net
 
@@ -30,7 +30,7 @@ USAGE
 
 To use Simple Log in your application, you will need to:
 
-1. Have the simplelog.jar in your classpath.
+1. Have the simple-log.jar in your classpath.
 
 2. Have a 'simplelog.properties' file in the root directory of your classpath (a file or in a JAR).
    Simple Log will not fail if this file is not present, but it will not produce any output.
@@ -39,8 +39,8 @@ To use Simple Log in your application, you will need to:
 
 STATUS
 
-Version 1.0 is basically a major refactor of my own similar logger that I've been using for years.
-So, while it's based on a solidly tested idea and I've re-tested all the features since refactoring,
+Version 1.0 was basically a major refactor of my own similar logger that I've been using for years.
+While it's based on a solidly tested idea and I've re-tested all the features since refactoring,
 it may still have a few nasties. Let me know if you find one.
 However, seeing as it's only three classes, I couldn't really justify calling it a 'beta' or
 whatever, so this is Version 1!
@@ -48,16 +48,15 @@ whatever, so this is Version 1!
 
 FUTURE FEATURES
 
-Some features that might be added in the future if people ask for them are:
+Some features that might be added in the future *if people ask for them* are:
 
-* Write to a file instead of the console
 * Programmatic access to the log formats
 * Ability to turn logging off for a class/package (rather than just down to "Fatal")
 * Option to use a different filename/location for the default SimpleLog instance
 
 If you think you need one of these features, or some other feature, please feel free to contact me
-and I should be able to hack it up within a couple of days.
-Remember, this is "Simple Log", so if you ask me to do something like "make it more extendable",
+and I should be able to hack it up within a couple of days (assuming I haven't gone camping).
+But remember, this is "Simple Log", so if you ask me to do something like "make it more extendable",
 expect to be vilified. ;)
 
 

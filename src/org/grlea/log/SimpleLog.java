@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.1 2004-12-13 12:19:30 grlea Exp $
+// $Id: SimpleLog.java,v 1.2 2004-12-15 10:32:20 grlea Exp $
 // Copyright (c) 2004 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@ package org.grlea.log;
 // limitations under the License.
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -45,7 +46,7 @@ import java.util.TimerTask;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  * @author $Author: grlea $
  */
 public final class
@@ -85,6 +86,9 @@ SimpleLog
 
    /** The property key for properties reloading. */
    private static final String KEY_RELOADING = KEY_PREFIX + "reloading";
+
+   /** The default value for the reloading properties property. */
+   private static final String KEY_LOG_FILE = KEY_PREFIX + "logFile";
 
    /** The default value for the reloading properties property. */
    private static final String RELOADING_DEFAULT = "false";
@@ -176,6 +180,12 @@ SimpleLog
 
    /** The destination of this <code>SimpleLog</code>'s output. */
    private PrintWriter out;
+
+   /**
+    * The path and name of the log file being written to, or <code>null</code> if output is going
+    * somewhere else.
+    */
+   private String logFile;
 
    /** The default level of this <code>SimpleLog</code>. */
    private DebugLevel defaultLevel = DebugLevel.L4_INFO;
@@ -352,6 +362,33 @@ SimpleLog
    private void
    readSettingsFromProperties()
    {
+      // Read the log file
+      String newLogFile = properties.getProperty(KEY_LOG_FILE);
+      boolean logFileChanged = (logFile == null) != (newLogFile == null);
+      logFileChanged |= logFile != null && newLogFile != null && !newLogFile.equals(newLogFile);
+      if (logFileChanged)
+      {
+         try
+         {
+            if (newLogFile == null)
+            {
+               out = new PrintWriter(System.err, true);
+            }
+            else
+            {
+               File file = new File(newLogFile);
+               file.getParentFile().mkdirs();
+               FileWriter fileWriter = new FileWriter(file, true);
+               out = new PrintWriter(fileWriter, true);
+            }
+            logFile = newLogFile;
+         }
+         catch (IOException e)
+         {
+            printError("Error opening log file for writing", e, true);
+         }
+      }
+
       // Read the Default level
       String defaultLevelStr = properties.getProperty(KEY_DEFAULT_LEVEL);
       if (defaultLevelStr != null)

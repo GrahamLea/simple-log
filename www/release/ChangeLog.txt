@@ -1,11 +1,15 @@
 
-                               Simple Log
+                               Simple  Log
 
-                               Version 1.1
+                               Version 1.2
 
                       http://simple-log.dev.java.net
 
 CHANGE LOG
+
+1.2
+
+   + Added ability to write log output to a file using a new property 'simplelog.logFile'
 
 1.1
 
