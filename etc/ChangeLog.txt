@@ -1,9 +1,9 @@
 
-                                 Simple Log
+                               Simple Log
 
                                Version @VERSION@
 
-                        http://simplelog.dev.java.net
+                      http://simple-log.dev.java.net
 
 CHANGE LOG
 

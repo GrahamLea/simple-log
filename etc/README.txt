@@ -1,9 +1,9 @@
 
-                                 Simple Log
+                               Simple Log
 
                                Version @VERSION@
 
-                        http://simplelog.dev.java.net
+                      http://simple-log.dev.java.net
 
 LICENSE
 
@@ -77,7 +77,7 @@ If you find a bug, please follow these steps:
 
 3. Send an email, with the subject "Simple Log BUG", to:
 
-      issues@simplelog.dev.java.net
+      issues@simple-log.dev.java.net
 
    Please describe the problem VERBOSELY.
    Make sure to include your Java versions and Simple Log version.
@@ -86,4 +86,4 @@ If you find a bug, please follow these steps:
 
  - Contacting the Creator -
 
-If you need to contact me regarding Simple Log, I can be reached at owner@simplelog.dev.java.net
+If you need to contact me regarding Simple Log, I can be reached at owner@simple-log.dev.java.net
