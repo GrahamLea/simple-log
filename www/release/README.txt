@@ -1,13 +1,13 @@
 
                                Simple  Log
 
-                               Version 1.4
+                               Version 1.5
 
                       http://simple-log.dev.java.net
 
 LICENSE
 
-Simple Log is Copyright (c) 2004 Graham Lea. All rights reserved.
+Simple Log is Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 Simple Log is freely distributed under the Apache License 2.0.
 See LICENSE.txt for details.
 
@@ -40,10 +40,10 @@ To use Simple Log in your application, you will need to:
 STATUS
 
 Version 1.0 was basically a major refactor of my own similar logger that I've been using for years.
-While it's based on a solidly tested idea and I've re-tested all the features since refactoring,
-it may still have a few nasties. Let me know if you find one.
-However, seeing as it's only three classes, I couldn't really justify calling it a 'beta' or
-whatever, so this is Version 1!
+
+Version 1.5 has added several features that will enhance the usefulness of Simple Log significantly
+by increasing the convenience of using a SimpleLogger and the flexibility of the configuration.
+See ChangeLog.txt for a list of new features and completed issues.
 
 
 FUTURE FEATURES
