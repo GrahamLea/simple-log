@@ -30,7 +30,7 @@ USAGE
 
 To use Simple Log in your application, you will need to:
 
-1. Have the simplelog.jar in your classpath.
+1. Have the simple-log.jar in your classpath.
 
 2. Have a 'simplelog.properties' file in the root directory of your classpath (a file or in a JAR).
    Simple Log will not fail if this file is not present, but it will not produce any output.
