@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: DebugLevel.java,v 1.1 2004-12-13 12:19:30 grlea Exp $
+// $Id: DebugLevel.java,v 1.2 2004-12-15 10:44:11 grlea Exp $
 // Copyright (c) 2004 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,7 @@ package org.grlea.log;
  * <p>Note that tracing is not related to the debug levels, as tracing is controlled
  * independently.</p>
  *
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  * @author $Author: grlea $
  */
 public final class
@@ -63,7 +63,7 @@ DebugLevel
 
    /**
     * The "Ludicrous" level. This should be used for debugging statements that produce a
-    * ridiculously welath of output, e.g. printing a few lines for every pixel in an image.
+    * ridiculous wealth of output, e.g. printing a few lines for every pixel in an image.
     */
    public static final DebugLevel L7_LUDICROUS = new DebugLevel(7);
 
