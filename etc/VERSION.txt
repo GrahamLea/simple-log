@@ -1,0 +1,3 @@
+Simple Log
+Version @VERSION@
+http://simplelog.dev.java.net

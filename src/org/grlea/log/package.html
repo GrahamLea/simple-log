@@ -1,0 +1,156 @@
+<html>
+<body>
+<p>Simple Log: the simple way to log.</p>
+
+<h3>Sales Pitch</h3>
+<p>
+Simple Log is logging made easy.<br>
+Simple Log just works.<br>
+Er... I take that back.<br>
+You actually have to have a properties file called 'simplelog.properties' in your classpath, but it
+doesn't have to contain anything.<br>
+Then Simple Log just works. : )<br>
+[Note: this is a feature: no properties file, no logging! Easy way to disable logging in deployment.]
+</p>
+
+<p>
+I call Simple Log a "Logging Anti-Framework" because it is a library made in protest of the many
+"logging frameworks" that exist.<br>
+Many of them are so "flexible" and "configurable" and "extendable" that you have to read an hour's
+worth of documentation, learn XML and write a two-page configuration file before you can write one
+message. Some of these things are so complicated they need
+<a href="http://www.qos.ch/shop/products/eclm/" target="_blank">whole books to explain them</a>!
+</p>
+
+<p>
+Now, don't get me wrong - I'm happy to assume that these frameworks have become complex because new
+features have been requested over time, and that some people use these frameworks for logging that
+really is a bit different and requires something flexible that can be configured and extended and
+what-not.<br>
+But most of the programs I write just don't need something like that. I need something simple that
+just prints stuff to the console, works with a minimum of effort and lets me change the logging
+level easily to see only the stuff I want to see.<br>
+And that's what Simple Log does.
+</p>
+
+<h3>Design Goals</h3>
+<p>
+So, as you may have guessed, the whole idea of Simple Log is to be simple.<br>
+(Being small is simply a consequence. The original name was actually "Simple Log", but that name
+is already in use.)<br>
+The second design goal was to make calls into the API brief, so that you don't have 3/4 of a line of
+code before you get to your actual log message.<br>
+The third design goal was to have a *really* easy configuration file.<br>
+The fourth goal was to make the API as simple as possible. To me, this means you have to know about
+as few classes as possible. (There's only three, and you only need to know about two of them!)<br>
+The fifth goal was to make the configuration of the loggers accessible through code.<br>
+The sixth goal was... to not have any more than five goals....
+</p>
+
+<h3>Types of Logs</h3>
+<p>
+SO! What kind of logging can you do with this thing?<br>
+I provide for four specific types of log messages:<br>
+<ul>
+   <li>
+      "db" = Debug (see {@link org.grlea.log.SimpleLogger#db SimpleLogger.db()})<br>
+      Lets you log a simple log message, e.g. "Got to the point where you thought it wasn't getting
+      to."
+   </li><br><br>
+   <li>
+      "dbo" = Debug Object
+      (see {@link org.grlea.log.SimpleLogger#dbo(DebugLevel,String,Object) SimpleLogger.dbo()})<br>
+      Debugs the name and value of an object. Specially handled variants exist for all primitives,
+      Object[], byte[] and char[].
+   </li><br><br>
+   <li>
+      "dbe" = Debug Exception (see {@link org.grlea.log.SimpleLogger#dbe SimpleLogger.dbe()})<br>
+      Special handling of exceptions that will print a stack trace (can be turned off).
+   </li><br><br>
+   <li>
+      Tracing (see {@link org.grlea.log.SimpleLogger#entry SimpleLogger.entry()} and
+      {@link org.grlea.log.SimpleLogger#exit SimpleLogger.exit()})<br>
+      Logs entry to and exit from a method. Can be turned on/off independent of debug level.<br>
+      (I think that was the 6th design goal...)
+   </li>
+</ul>
+</p>
+
+<h3>Advanced Features</h3>
+<p>
+Simple Log is easy to use, but not simplistic.<br>
+It has quite a few slightly advanced and very useful features, all of which are available without
+having to write any extra code:
+<ul>
+   <li>Package-based, hierarchical inheritance of debug levels and trace flags</li>
+   <li>Special handling of exceptions, object arrays, byte arrays and char arrays</li>
+   <li>Ability to turn tracing on and off independent of the debug level</li>
+   <li>Reloading configuration <i>[Optional]</i></li>
+   <li>Customisable log format <i>[Optional]</i></li>
+   <li>Customisable date format applies to all log formats<i>[Optional]</i></li>
+   <li>Instance-based logging records (as opposed to class-based) <i>[Optional]</i></li>
+   <li>Programmatic access to configuration (might have to write code here!) <i>[Optional]</i></li>
+</ul>
+</p>
+
+<h3>Basic How-To</h3>
+<p>
+To use Simple Log, you basically want to just create a SimpleLogger at the top of your class, like
+this:<pre>
+   private static final SimpleLogger log = new SimpleLogger(HelloWorld.class);
+</pre>
+and then use that logger through your class!<br>
+Too easy!
+</p>
+
+<h3>Example (w/ Output!)</h3>
+<p>Here's an example of how you might use Simple Log:<pre>
+public class
+HelloWorld
+{
+   <b>// Create a SimpleLogger:</b>
+   private static final SimpleLogger log = new SimpleLogger(HelloWorld.class);
+
+   public static void
+   main(String[] argv)
+   {
+      try
+      {
+         <b>// Use it!</b>
+         log.entry("main()");
+         log.debug("About to print 'Hello World!'");
+         String helloWorldString = "'Hello World!'";
+         log.dbo(DebugLevel.L6_VERBOSE, "helloWorldString", helloWorldString);
+         log.db(DebugLevel.L7_LUDICROUS, "I can't believe this library has a level called 'Ludicrous'!");
+
+         System.out.println(helloWorldString);
+
+         log.debug("Printed 'Hello World!'");
+         log.info("Did you get that?");
+         log.warn("This example is very contrived.");
+      }
+      catch (Throwable t)
+      {
+         // Just in case...
+         log.fatal("Something really unexpected dropped by.");
+         log.dbe(DebugLevel.L1_FATAL, t);
+      }
+      log.exit("main()");
+   }
+</pre>
+The <b>default</b> output (remember, the format is configurable) from running this class<br>
+(assuming the debug level is set to 7 and tracing is turned on) would be:<pre>
+Fri 26/10/2004 21:10:32.618|>>>|main|HelloWorld|main()
+Fri 26/10/2004 21:10:32.618|   |main|HelloWorld|About to print 'Hello World!'
+Fri 26/10/2004 21:10:32.618|---|main|HelloWorld|helloWorldString|'Hello World!'
+Fri 26/10/2004 21:10:32.618|   |main|HelloWorld|I can't believe this library has a level called 'Ludicrous'!
+'Hello World!'
+Fri 26/10/2004 21:10:32.618|   |main|HelloWorld|Printed 'Hello World!'
+Fri 26/10/2004 21:10:32.618|   |main|HelloWorld|Did you get that?
+Fri 26/10/2004 21:10:32.618|   |main|HelloWorld|This example is very contrived.
+Fri 26/10/2004 21:10:32.618|<<<|main|HelloWorld|main()
+</pre>
+</p>
+
+</body>
+</html>
