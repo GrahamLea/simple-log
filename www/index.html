@@ -12,9 +12,8 @@
          color: #666666;
          margin-top: 50;
       }
-      pre#output {
+      code.output {
          font-size: 8pt;
-         color: blue;
       }
    </style>
 </head>
@@ -189,18 +188,18 @@ HelloWorld
 <p>
 The default output from running the class (with it's debug level set to 7 and tracing on) follows.
 <br>
-Remember that the format of the output is configurable.
-<pre id="output">
-Fri 26/10/2004 21:10:32.618|&gt;&gt;&gt;|main|HelloWorld|main()
-Fri 26/10/2004 21:10:32.618|   |main|HelloWorld|About to print 'Hello World!'
-Fri 26/10/2004 21:10:32.618|---|main|HelloWorld|helloWorldString|'Hello World!'
-Fri 26/10/2004 21:10:32.618|   |main|HelloWorld|I can't believe this library has a level called 'Ludicrous'!
-'Hello World!'
-Fri 26/10/2004 21:10:32.618|   |main|HelloWorld|Printed 'Hello World!'
-Fri 26/10/2004 21:10:32.618|   |main|HelloWorld|Did you get that?
-Fri 26/10/2004 21:10:32.618|   |main|HelloWorld|This example is very contrived.
-Fri 26/10/2004 21:10:32.618|&lt;&lt;&lt;|main|HelloWorld|main()
-</pre>
+Remember that the format of the output is configurable.<br>
+<code class="output">
+Fri 26/10/2004 21:10:32.618|&gt;&gt;&gt;|main|HelloWorld|main()<br>
+Fri 26/10/2004 21:10:32.618|&nbsp;&nbsp;&nbsp;|main|HelloWorld|About to print 'Hello World!'<br>
+Fri 26/10/2004 21:10:32.618|---|main|HelloWorld|helloWorldString|'Hello World!'<br>
+Fri 26/10/2004 21:10:32.618|&nbsp;&nbsp;&nbsp;|main|HelloWorld|I can't believe this library has a level called 'Ludicrous'!<br>
+'Hello World!'<br>
+Fri 26/10/2004 21:10:32.618|&nbsp;&nbsp;&nbsp;|main|HelloWorld|Printed 'Hello World!'<br>
+Fri 26/10/2004 21:10:32.618|&nbsp;&nbsp;&nbsp;|main|HelloWorld|Did you get that?<br>
+Fri 26/10/2004 21:10:32.618|&nbsp;&nbsp;&nbsp;|main|HelloWorld|This example is very contrived.<br>
+Fri 26/10/2004 21:10:32.618|&lt;&lt;&lt;|main|HelloWorld|main()<br>
+</code>
 </p>
 
 <h4>Configuration</h4>
