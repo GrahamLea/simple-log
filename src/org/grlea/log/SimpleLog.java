@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.5 2005-01-18 13:34:06 grlea Exp $
+// $Id: SimpleLog.java,v 1.6 2005-03-03 12:04:13 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Date;
 
 /**
  * <p>Controls the configuration and formatting of a group of <code>SimpleLogger</code>s.</p>
@@ -46,7 +47,7 @@ import java.util.TimerTask;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  * @author $Author: grlea $
  */
 public final class
@@ -88,10 +89,22 @@ SimpleLog
    private static final String KEY_RELOADING = KEY_PREFIX + "reloading";
 
    /** The default value for the reloading properties property. */
+   private static final String RELOADING_DEFAULT = "false";
+
+   /** The property key for the log file name. */
    private static final String KEY_LOG_FILE = KEY_PREFIX + "logFile";
 
-   /** The default value for the reloading properties property. */
-   private static final String RELOADING_DEFAULT = "false";
+   /** The property key for whether the log file name should be interpreted. */
+   private static final String KEY_INTERPRET_NAME = KEY_LOG_FILE + ".interpretName";
+
+   /** The default value for the parse log file name property. */
+   private static final boolean INTREPRET_NAME_DEFAULT = true;
+
+   /** The property key for whether the log file should be appended. */
+   private static final String KEY_APPEND = KEY_LOG_FILE + ".append";
+
+   /** The default value for the append property. */
+   private static final boolean APPEND_DEFAULT = true;
 
    /** The property key for the default debug level. */
    private static final String KEY_DEFAULT_LEVEL = KEY_PREFIX + "defaultLevel";
@@ -364,8 +377,34 @@ SimpleLog
    {
       // Read the log file
       String newLogFile = properties.getProperty(KEY_LOG_FILE);
+
+      boolean interpretName = INTREPRET_NAME_DEFAULT;
+      String interpretNameStr = properties.getProperty(KEY_INTERPRET_NAME);
+      // The strategy here is to only turn interpret off if the property definitely says false
+      if (interpretNameStr != null)
+         interpretName = !(interpretNameStr.trim().equalsIgnoreCase("false"));
+
+      // Substitue the date into the name if necessary
+      boolean newLogFileNotNull = newLogFile != null;
+      boolean nameContainsBraces = newLogFileNotNull && newLogFile.indexOf('{') != -1;
+      if (newLogFileNotNull && nameContainsBraces && interpretName)
+      {
+         try
+         {
+            MessageFormat logFileNameFormat = new MessageFormat(newLogFile);
+            newLogFile = logFileNameFormat.format(new Object[] {new Date()});
+         }
+         catch (Exception e)
+         {
+            printError("Error generating log file name", e, true);
+            newLogFile = null;
+         }
+      }
+
+      // The log file has changed if it used to be null and now isn't, or vice versa...
       boolean logFileChanged = (logFile == null) != (newLogFile == null);
-      logFileChanged |= logFile != null && newLogFile != null && !newLogFile.equals(newLogFile);
+      // or it's changed if it wasn't null and still isn't null but the name has changed.
+      logFileChanged |= logFile != null && newLogFileNotNull && !newLogFile.equals(logFile);
       if (logFileChanged)
       {
          try
@@ -376,9 +415,18 @@ SimpleLog
             }
             else
             {
-               File file = new File(newLogFile);
-               file.getParentFile().mkdirs();
-               FileWriter fileWriter = new FileWriter(file, true);
+               File file = new File(newLogFile).getAbsoluteFile();
+               File parentFile = file.getParentFile();
+               if (parentFile != null)
+                  parentFile.mkdirs();
+
+               boolean append = APPEND_DEFAULT;
+               String appendStr = properties.getProperty(KEY_APPEND);
+               // The strategy here is to only turn append off if the property definitely says false
+               if (appendStr != null)
+                  append = !(appendStr.trim().equalsIgnoreCase("false"));
+
+               FileWriter fileWriter = new FileWriter(file, append);
                out = new PrintWriter(fileWriter, true);
             }
             logFile = newLogFile;
@@ -393,14 +441,26 @@ SimpleLog
       String defaultLevelStr = properties.getProperty(KEY_DEFAULT_LEVEL);
       if (defaultLevelStr != null)
       {
+         defaultLevelStr = defaultLevelStr.trim();
+         
          try
          {
+            // Try to read it as an int first...
             int level = Integer.parseInt(defaultLevelStr);
             defaultLevel = DebugLevel.fromInt(level);
          }
-         catch (NumberFormatException e)
+         catch (NumberFormatException e1)
          {
-            printError("Error parsing debug level for " + KEY_DEFAULT_LEVEL, e, false);
+            // ... then try it as a name.
+            try
+            {
+               defaultLevel = DebugLevel.fromName(defaultLevelStr);
+            }
+            catch (IllegalArgumentException e2)
+            {
+               printError("Error parsing debug level for " + KEY_DEFAULT_LEVEL, e1, true);
+               printError("Error parsing debug level for " + KEY_DEFAULT_LEVEL, e2, false);
+            }
          }
       }
 
@@ -601,14 +661,26 @@ SimpleLog
          String value = properties.getProperty(name);
          if (value != null)
          {
+            value = value.trim();
+
             try
             {
+               // Try to read it as an int first...
                int level = Integer.parseInt(value);
                debugLevel = DebugLevel.fromInt(level);
             }
-            catch (NumberFormatException e)
+            catch (NumberFormatException e1)
             {
-               printError("Error parsing debug level for " + name, e, true);
+               // ... then try it as a name.
+               try
+               {
+                  debugLevel = DebugLevel.fromName(value);
+               }
+               catch (IllegalArgumentException e2)
+               {
+                  printError("Error parsing debug level for " + name, e1, true);
+                  printError("Error parsing debug level for " + name, e2, false);
+               }
             }
          }
 
