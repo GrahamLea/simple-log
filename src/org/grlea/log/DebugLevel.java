@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
 
-// $Id: DebugLevel.java,v 1.5 2005-03-03 08:10:00 grlea Exp $
+// $Id: DebugLevel.java,v 1.6 2005-04-26 12:52:26 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,7 @@ import java.util.Collections;
  * <p>Note that tracing is not related to the debug levels, as tracing is controlled
  * independently.</p>
  *
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  * @author $Author: grlea $
  */
 public final class
@@ -35,31 +35,31 @@ DebugLevel
     * The "Fatal" level. This should be used when an unexpected error occurs that is serious enough
     * to cause or warrant the halting of the current process or even the whole application.
     */
-   public static final DebugLevel L1_FATAL = new DebugLevel(1);
+   public static final DebugLevel L1_FATAL = new DebugLevel(1, "Fatal");
 
    /**
     * The "Error" level. This should be used when an unexpected error occurs that cannot be
     * recovered from.
     */
-   public static final DebugLevel L2_ERROR = new DebugLevel(2);
+   public static final DebugLevel L2_ERROR = new DebugLevel(2, "Error");
 
    /**
     * The "Warning" level. This should be used when an unexpected error occurs that CAN be
     * recovered from.
     */
-   public static final DebugLevel L3_WARN = new DebugLevel(3);
+   public static final DebugLevel L3_WARN = new DebugLevel(3, "Warn");
 
    /**
     * The "Info" level. This should be used for reporting information to the end user.
     */
-   public static final DebugLevel L4_INFO = new DebugLevel(4);
+   public static final DebugLevel L4_INFO = new DebugLevel(4, "Info");
 
    /**
     * The "Debug" level. This should be used for the most basic debugging statements. This may
     * include the direction taken in a control structure, events fired or received and the state of
     * important objects or variables.
     */
-   public static final DebugLevel L5_DEBUG = new DebugLevel(5);
+   public static final DebugLevel L5_DEBUG = new DebugLevel(5, "Debug");
 
    /**
     * The "Verbose" level. This should be used for debugging statements that produce a large amount
@@ -69,13 +69,19 @@ DebugLevel
     * recommended that method parameters and return values be logged at this level (unless the
     * amount of output they produce is "ludicrous").
     */
-   public static final DebugLevel L6_VERBOSE = new DebugLevel(6);
+   public static final DebugLevel L6_VERBOSE = new DebugLevel(6, "Verbose");
 
    /**
     * The "Ludicrous" level. This should be used for debugging statements that produce a
     * ridiculous wealth of output, e.g. printing a line for every pixel in an image.
     */
-   public static final DebugLevel L7_LUDICROUS = new DebugLevel(7);
+   public static final DebugLevel L7_LUDICROUS = new DebugLevel(7, "Ludicrous");
+
+   /**
+    * The "Trace" "level". This exists only to provide a name for output patterns that want to print
+    * the name of the debug level. It should <b>never</b> be used outside of the Simple Log package.
+    */
+   static final DebugLevel FAKE_TRACE = new DebugLevel(Integer.MAX_VALUE, "Trace");
 
    /**
     * A map of all {@link DebugLevel}s, keyed by the lower-case version of their name
@@ -103,15 +109,23 @@ DebugLevel
    private final int level;
 
    /**
+    * The name of this particular <code>DebugLevel</code> instance.
+    */
+   private final String name;
+
+   /**
     * Creates a new <code>DebugLevel</code> with the given level. This is private to preven external
     * instantiation.
     *
-    * @param level the leel for the news <code>DebugLevel</code>.
+    * @param level the level for the new <code>DebugLevel</code>.
+    *
+    * @param name the name of the new <code>DebugLevel</code>.
     */
    private
-   DebugLevel(int level)
+   DebugLevel(int level, String name)
    {
       this.level = level;
+      this.name = name;
    }
 
    /**
@@ -209,5 +223,14 @@ DebugLevel
          return false;
 
       return this.level == ((DebugLevel) o).level;
+   }
+
+   /**
+    * Returns a string representation of this object in its current state.
+    */
+   public String
+   toString()
+   {
+      return name;
    }
 }
