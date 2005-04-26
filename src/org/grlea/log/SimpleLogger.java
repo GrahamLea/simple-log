@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLogger.java,v 1.4 2005-03-03 12:03:00 grlea Exp $
+// $Id: SimpleLogger.java,v 1.5 2005-04-26 12:56:07 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,7 +69,7 @@ import java.util.Date;
  * as well as convenience methods, named after the various levels, as shortcuts to the above methods.
  * </p>
  *
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  * @author $Author: grlea $
  */
 public final class
@@ -445,18 +445,21 @@ SimpleLogger
     * Creates an array of data containing the standard arguments for a log message, plus empty
     * array slots for the specified number of arguments.
     *
+    * @param level the level at which this data is going to be logged.
+    *
     * @param extraArguments the number of empty slots to create at the end of the array.
     *
     * @return the newly created array of objects.
     */
    private Object[]
-   createData(int extraArguments)
+   createData(DebugLevel level, int extraArguments)
    {
-      Object[] result = new Object[4 + extraArguments];
+      Object[] result = new Object[5 + extraArguments];
       result[0] = new Date();
       result[1] = Thread.currentThread().getName();
       result[2] = useLongName ? className : classNameShort;
       result[3] = instanceId;
+      result[4] = level;
       return result;
    }
 
@@ -572,7 +575,7 @@ SimpleLogger
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      Object[] data = createData(1);
+      Object[] data = createData(level, 1);
       data[data.length - 1] = s;
       MessageFormat format =
          isInstanceDebugger ? log.getDebugInstanceFormat() : log.getDebugFormat();
@@ -589,6 +592,10 @@ SimpleLogger
     * or <code>char[]</code>, this method will route the call to the corresponding variation of
     * <code>dbo()</code> (each of which performs special formatting for the particualr type),
     * eliminating the need to perform pre-logging type checks and casts.</p>
+    *
+    * <p>Note that passing a {@link Throwable} to this method does not behave in the same way as
+    * {@link #dbe}. I.e. passing an exception in as the object value will not result in a stack
+    * trace being printed.</p>
     *
     * @param objectName The name of the object whose value is being given.
     *
@@ -614,7 +621,7 @@ SimpleLogger
          if (!log.isOutputting() || !debugLevel.shouldLog(level))
             return;
 
-         dboNoCheck(objectName, value);
+         dboNoCheck(level, objectName, value);
       }
    }
 
@@ -624,9 +631,9 @@ SimpleLogger
     * which do their own checks before calling this method.
     */
    private void
-   dboNoCheck(String objectName, Object val)
+   dboNoCheck(DebugLevel level, String objectName, Object val)
    {
-      Object[] data = createData(2);
+      Object[] data = createData(level, 2);
       data[data.length - 2] = objectName;
       data[data.length - 1] = val;
       MessageFormat format = isInstanceDebugger ? log.getDebugObjectInstanceFormat() :
@@ -660,7 +667,7 @@ SimpleLogger
       }
       stringValue.append("]");
 
-      dboNoCheck(objectName, stringValue);
+      dboNoCheck(level, objectName, stringValue);
    }
 
    /**
@@ -674,7 +681,7 @@ SimpleLogger
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objectName, String.valueOf(val));
+      dboNoCheck(level, objectName, String.valueOf(val));
    }
 
    /**
@@ -688,7 +695,7 @@ SimpleLogger
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objectName, String.valueOf(val));
+      dboNoCheck(level, objectName, String.valueOf(val));
    }
 
    /**
@@ -702,7 +709,7 @@ SimpleLogger
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objectName,String.valueOf(val));
+      dboNoCheck(level, objectName,String.valueOf(val));
    }
 
    /**
@@ -716,7 +723,7 @@ SimpleLogger
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objectName, String.valueOf(val));
+      dboNoCheck(level, objectName, String.valueOf(val));
    }
 
    /**
@@ -730,7 +737,7 @@ SimpleLogger
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objectName, String.valueOf(val));
+      dboNoCheck(level, objectName, String.valueOf(val));
    }
 
    /**
@@ -744,7 +751,7 @@ SimpleLogger
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objectName, String.valueOf(val));
+      dboNoCheck(level, objectName, String.valueOf(val));
    }
 
    /**
@@ -758,7 +765,7 @@ SimpleLogger
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objectName, toString(val));
+      dboNoCheck(level, objectName, toString(val));
    }
 
    /**
@@ -772,7 +779,7 @@ SimpleLogger
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objectName, toString(val));
+      dboNoCheck(level, objectName, toString(val));
    }
 
    /**
@@ -786,7 +793,7 @@ SimpleLogger
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objectName, String.valueOf(val));
+      dboNoCheck(level, objectName, String.valueOf(val));
    }
 
    /**
@@ -800,7 +807,7 @@ SimpleLogger
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      dboNoCheck(objectName, String.valueOf(val));
+      dboNoCheck(level, objectName, String.valueOf(val));
    }
 
    /**
@@ -951,7 +958,9 @@ SimpleLogger
     * <p>Logs a message containing an exception (or throwable).</p>
     *
     * <p>The exception will be printed only if the given debug level is less than or
-    * equal to the current debug level of this <code>SimpleLogger</code>.</p>
+    * equal to the current debug level of this <code>SimpleLogger</code>. This method will result in
+    * the stack trace of the exception being printed if this option is turned on in the properties
+    * (which it is by default).</p>
     *
     * @param t the throwable to log.
     */
@@ -961,7 +970,7 @@ SimpleLogger
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
          return;
 
-      Object[] data = createData(1);
+      Object[] data = createData(level, 1);
       data[data.length - 1] = t;
       MessageFormat format = isInstanceDebugger ? log.getDebugExceptionInstanceFormat() :
                                                            log.getDebugExceptionFormat();
@@ -1018,7 +1027,7 @@ SimpleLogger
       if (!log.isOutputting() || !tracing)
          return;
 
-      Object[] data = createData(1);
+      Object[] data = createData(DebugLevel.FAKE_TRACE, 1);
       data[data.length - 1] = methodName;
       MessageFormat format = isInstanceDebugger ? log.getEntryInstanceFormat() :
                                                            log.getEntryFormat();
@@ -1037,7 +1046,7 @@ SimpleLogger
       if (!log.isOutputting() || !tracing)
          return;
 
-      Object[] data = createData(1);
+      Object[] data = createData(DebugLevel.FAKE_TRACE, 1);
       data[data.length - 1] = methodName;
       MessageFormat format = isInstanceDebugger ? log.getExitInstanceFormat() :
                                                            log.getExitFormat();
