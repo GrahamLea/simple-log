@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.7 2005-03-05 04:08:21 grlea Exp $
+// $Id: SimpleLog.java,v 1.8 2005-04-26 12:52:54 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,7 +47,7 @@ import java.util.Date;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  * @author $Author: grlea $
  */
 public final class
@@ -152,18 +152,19 @@ SimpleLog
    // {1} - The name of the current Thread.
    // {2} - The name of the debugging class.
    // {3} - The instance ID, if in use.
+   // {4} - The DebugLevel name
 
-   private static final String DEFAULT_FORMAT_STRING_DB = "{0}|   |{1}|{2}|{4}";
-   private static final String DEFAULT_FORMAT_STRING_DBO = "{0}|---|{1}|{2}|{4}|{5}";
-   private static final String DEFAULT_FORMAT_STRING_DBE = "{0}|***|{1}|{2}|{4}";
-   private static final String DEFAULT_FORMAT_STRING_ENTRY = "{0}|>>>|{1}|{2}|{4}";
-   private static final String DEFAULT_FORMAT_STRING_EXIT = "{0}|<<<|{1}|{2}|{4}";
+   private static final String DEFAULT_FORMAT_STRING_DB = "{0}|   |{1}|{2}|{5}";
+   private static final String DEFAULT_FORMAT_STRING_DBO = "{0}|---|{1}|{2}|{5}|{6}";
+   private static final String DEFAULT_FORMAT_STRING_DBE = "{0}|***|{1}|{2}|{5}";
+   private static final String DEFAULT_FORMAT_STRING_ENTRY = "{0}|>>>|{1}|{2}|{5}";
+   private static final String DEFAULT_FORMAT_STRING_EXIT = "{0}|<<<|{1}|{2}|{5}";
 
-   private static final String DEFAULT_FORMAT_STRING_DB_INSTANCE = "{0}|   |{1}|{2}[{3}]|{4}";
-   private static final String DEFAULT_FORMAT_STRING_DBO_INSTANCE = "{0}|---|{1}|{2}[{3}]|{4}|{5}";
-   private static final String DEFAULT_FORMAT_STRING_DBE_INSTANCE = "{0}|***|{1}|{2}[{3}]|{4}";
-   private static final String DEFAULT_FORMAT_STRING_ENTRY_INSTANCE = "{0}|>>>|{1}|{2}[{3}]|{4}";
-   private static final String DEFAULT_FORMAT_STRING_EXIT_INSTANCE = "{0}|<<<|{1}|{2}[{3}]|{4}";
+   private static final String DEFAULT_FORMAT_STRING_DB_INSTANCE = "{0}|   |{1}|{2}[{3}]|{5}";
+   private static final String DEFAULT_FORMAT_STRING_DBO_INSTANCE = "{0}|---|{1}|{2}[{3}]|{5}|{6}";
+   private static final String DEFAULT_FORMAT_STRING_DBE_INSTANCE = "{0}|***|{1}|{2}[{3}]|{5}";
+   private static final String DEFAULT_FORMAT_STRING_ENTRY_INSTANCE = "{0}|>>>|{1}|{2}[{3}]|{5}";
+   private static final String DEFAULT_FORMAT_STRING_EXIT_INSTANCE = "{0}|<<<|{1}|{2}[{3}]|{5}";
 
    // Static variables
    //..........................................................................................
