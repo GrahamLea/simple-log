@@ -9,6 +9,7 @@ CHANGE LOG
 
 1.6
 
+   + Issue 11 (RFE): Remove 'final' modifier from SimpleLogger
    + Issue 13 (RFE): Allow Debug Level to be printed in output
                      NOTE: this is a backwards-incompatible change that affects custom log formats.
 

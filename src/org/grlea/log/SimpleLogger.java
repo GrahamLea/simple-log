@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLogger.java,v 1.5 2005-04-26 12:56:07 grlea Exp $
+// $Id: SimpleLogger.java,v 1.6 2005-04-26 13:16:29 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,10 +69,10 @@ import java.util.Date;
  * as well as convenience methods, named after the various levels, as shortcuts to the above methods.
  * </p>
  *
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  * @author $Author: grlea $
  */
-public final class
+public class
 SimpleLogger
 {
    /**
