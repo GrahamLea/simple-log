@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.8 2005-04-26 12:52:54 grlea Exp $
+// $Id: SimpleLog.java,v 1.9 2005-04-28 22:49:43 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,7 +47,7 @@ import java.util.Date;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  * @author $Author: grlea $
  */
 public final class
@@ -96,7 +96,6 @@ SimpleLog
 
    /** The property key for whether the log file name should be interpreted. */
    private static final String KEY_INTERPRET_NAME = KEY_LOG_FILE + ".interpretName";
-
    /** The default value for the parse log file name property. */
    private static final boolean INTREPRET_NAME_DEFAULT = true;
 
@@ -138,7 +137,7 @@ SimpleLog
    /**
     * The suffix used in the properties file to identify a trace flag.
     */
-   private static final String TRACE_SUFFIX = ".trace";
+   private static final String TRACE_SUFFIX = "#trace";
 
    /**
     * The string to use to print a new line between the debug exception line and the stack trace.
