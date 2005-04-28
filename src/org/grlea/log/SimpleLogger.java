@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLogger.java,v 1.6 2005-04-26 13:16:29 grlea Exp $
+// $Id: SimpleLogger.java,v 1.7 2005-04-28 22:51:06 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,7 +69,38 @@ import java.util.Date;
  * as well as convenience methods, named after the various levels, as shortcuts to the above methods.
  * </p>
  *
- * @version $Revision: 1.6 $
+ * <p>
+ * Instance-based <code>SimpleLogger</code>s can be used to determine, from the log output,
+ * exactly which object a log statement is coming from. This is useful when many objects of the same
+ * class are all performing logging and it is crucial to analysis to know which object logged any
+ * given message.<br><br>
+ *
+ * Here is an example of how an instance-based logger would be used:<pre>
+ * public class
+ * Test
+ * {
+ *    private final SimpleLogger log;
+ *
+ *    private final String id;
+ *
+ *    public
+ *    Test(String id)
+ *    {
+ *       log = new SimpleLogger(Test.class, id);
+ *       this.id = id;
+ *    }
+ * }</pre>
+ * Note the following important features of this pattern and instance-based logs in general:
+ * <ul>
+ * <li>The <code>log</code> field is <i>not</i> static. There is one per instance.</li>
+ * <li><code>&lt;ClassName&gt;.class</code> is used rather than <code>getClass()</code>. Otherwise,
+ * if this class were subclassed, logging statements would appear with the subclass's name as the
+ * source.</li>
+ * <li>There are separate log formats for instance-based logs in the properties file.</li>
+ * </ul>
+ * </p>
+ *
+ * @version $Revision: 1.7 $
  * @author $Author: grlea $
  */
 public class
