@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLogger.java,v 1.8 2005-05-04 22:43:50 grlea Exp $
+// $Id: SimpleLogger.java,v 1.9 2005-05-04 22:56:25 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -100,7 +100,7 @@ import java.util.Date;
  * </ul>
  * </p>
  *
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  * @author $Author: grlea $
  */
 public class
@@ -374,25 +374,28 @@ SimpleLogger
          return className.substring(sourceClass.getPackage().getName().length() + 1);
 
       // We have to do this trickery to make sure inner classes have their whole name (I think?)
-      String shortName = className;
-      boolean shortNameIsAClass = true;
-      int lastPeriod = shortName.indexOf('.');
-      while (shortNameIsAClass && lastPeriod != -1)
+      String packageName = className;
+      boolean packageNameIsAClass = true;
+      int lastPeriod = packageName.indexOf('.');
+      while (packageNameIsAClass && lastPeriod != -1)
       {
-         shortName = shortName.substring(0, lastPeriod);
-         lastPeriod = shortName.lastIndexOf('.');
+         packageName = packageName.substring(0, lastPeriod);
          try
          {
-            Class.forName(shortName);
-            shortNameIsAClass = true;
+            Class.forName(packageName);
+            packageNameIsAClass = true;
          }
          catch (Throwable e)
          {
-            shortNameIsAClass = false;
+            packageNameIsAClass = false;
          }
+         lastPeriod = packageName.lastIndexOf('.');
       }
 
-      return shortName;
+      if (packageName.length() == 0)
+         return className;
+      else
+         return className.substring(packageName.length() + 1);
    }
 
    /**
