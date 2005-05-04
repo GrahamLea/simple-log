@@ -15,6 +15,7 @@ CHANGE LOG
    + Issue 14 (BUG): Changed the trace suffix from ".trace" to "#trace"
                      NOTE: this is a backwards-incompatible change that affects tracing properties.
    + Added documentation to SimpleLogger regarding use of instance-based logging.
+   + Issue 16 (BUG): Handle null result from Class.getPackage()   
 
 1.5
 

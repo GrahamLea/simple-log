@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLogger.java,v 1.7 2005-04-28 22:51:06 grlea Exp $
+// $Id: SimpleLogger.java,v 1.8 2005-05-04 22:43:50 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -100,7 +100,7 @@ import java.util.Date;
  * </ul>
  * </p>
  *
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  * @author $Author: grlea $
  */
 public class
@@ -352,13 +352,47 @@ SimpleLogger
       this.isInstanceDebugger = instanceId != null;
       this.useLongName = useLongName;
       this.className = sourceClass.getName();
-//      this.classNameShort = className.substring(className.lastIndexOf('.') + 1);
-      if (className.indexOf('.') == -1)
-         this.classNameShort = className;
-      else
-         this.classNameShort = className.substring(sourceClass.getPackage().getName().length() + 1);
+      this.classNameShort = createClassNameShort(sourceClass);
 
       log.register(this);
+   }
+
+   /**
+    * Determines and returns the short name (i.e. without the package) of the given class.
+    *
+    * @param sourceClass the class to retrieve the short name of
+    *
+    * @return the class's short name.
+    */
+   private String
+   createClassNameShort(Class sourceClass)
+   {
+      if (className.indexOf('.') == -1)
+         return className;
+
+      if (sourceClass.getPackage() != null && sourceClass.getPackage().getName() != null)
+         return className.substring(sourceClass.getPackage().getName().length() + 1);
+
+      // We have to do this trickery to make sure inner classes have their whole name (I think?)
+      String shortName = className;
+      boolean shortNameIsAClass = true;
+      int lastPeriod = shortName.indexOf('.');
+      while (shortNameIsAClass && lastPeriod != -1)
+      {
+         shortName = shortName.substring(0, lastPeriod);
+         lastPeriod = shortName.lastIndexOf('.');
+         try
+         {
+            Class.forName(shortName);
+            shortNameIsAClass = true;
+         }
+         catch (Throwable e)
+         {
+            shortNameIsAClass = false;
+         }
+      }
+
+      return shortName;
    }
 
    /**
