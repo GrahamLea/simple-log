@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <!--
-$Id: build.xml,v 1.4 2005-03-03 12:05:57 grlea Exp $
+$Id: build.xml,v 1.5 2005-05-15 16:04:28 grlea Exp $
 Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,124 +17,46 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<project name="simple-log" default="MakeRelease">
 
-   <description>
-      Simple Log is a logging anti-framework.
-   </description>
+<!--
+NOTE: This build file is a little different from most.
+I generate the majority of the build file using an XSL stylesheet and an XML description of the
+project. This allows me to make changes to the build files of all my projects simply by changing the
+stylesheet. I call this process "quick-ant", although I haven't released publicly anywhere yet.
 
-   <property file="ant.properties"/>
+-->
 
-   <property name="applicationRootDir" value="org/grlea/log"/>
+<project name="simple-log" default="CreateRelease" >
 
-   <!-- Directories -->
-   <property name="sourceDir" value="${basedir}/src"/>
-   <property name="etcDir" value="${basedir}/etc"/>
-   <property name="libDir" value="${basedir}/lib"/>
-   <property name="javadocPackages" value="org.grlea.*"/>
+   <property file="quick-ant.properties"/>
 
-   <!-- Classpath -->
-   <path id="classpath">
-   </path>
+   <property name="downloads-page" value="www/downloads.html"/>
 
-   <!-- Outputs -->
-   <property name="tempDir" value="${basedir}/temp"/>
-   <property name="classesDestination" value="${tempDir}/classes"/>
-   <property name="releaseDir" value="${basedir}/release/${product.version}"/>
-   <property name="codeJar" value="${releaseDir}/${ant.project.name}.jar"/>
-   <property name="sourceZip" value="${releaseDir}/${ant.project.name}-src.zip"/>
-   <property name="javadocDir" value="${releaseDir}/doc/api"/>
-   <property name="releaseName" value="${ant.project.name}-${product.version}"/>
-   <property name="releaseZipName" value="${releaseName}.zip"/>
-   <property name="releaseZip" value="${releaseDir}/${releaseZipName}"/>
+   <target name="Release" depends="-DoRelease,CreateDownloadsPage"
+           description="Create a release and upload it"/>
 
-   <!-- Targets -->
-
-   <target name="Init">
-      <tstamp/>
-      <mkdir dir="${tempDir}"/>
-      <mkdir dir="${classesDestination}"/>
-      <mkdir dir="${releaseDir}"/>
-      <mkdir dir="${javadocDir}"/>
+   <target name="CreateDownloadsPage" description="Generate the downloads page">
+      <!-- Generate a new downloads.html file and check it in -->
+      <xslt in="${quickant.source}" style="etc/doc/www/downloads.xsl" out="${downloads-page}"/>
+      <cvs command="commit ${downloads-page}" failonerror="true"/>
    </target>
 
-   <target name="ZipRelease" depends="MakeRelease">
-      <zip zipfile="${releaseZip}" >
-         <zipfileset dir="${releaseDir}" includes="**/*" excludes="${releaseZipName}"
-                     prefix="${releaseName}"/>
-      </zip>
-      <delete includeEmptyDirs="true">
-         <fileset dir="${releaseDir}" includes="**/*" excludes="${releaseZipName}"/>
-      </delete>
+   <target name="Clean" depends="CreateBuildFile" description="Delete all generated files" >
+      <ant antfile="${quickant.target}" target="Clean" inheritall="false" inheritrefs="false"/>
    </target>
 
-   <target name="MakeRelease"
-           depends="Clean, CopyResources, BuildJars, CompileJavadoc, Cleanup"/>
-
-   <target name="Clean">
-      <delete dir="${classesDestination}"/>
-      <delete dir="${releaseDir}"/>
+   <target name="-DoRelease" depends="CreateBuildFile">
+      <ant antfile="${quickant.target}" target="Release" inheritall="false" inheritrefs="false"/>
    </target>
 
-   <target name="BuildJars" depends="BuildCodeJar, BuildSourceJar"/>
-
-   <target name="BuildCodeJar" depends="CompileJavas, CopyResources">
-      <jar jarfile="${codeJar}" basedir="${classesDestination}"
-           includes="${applicationRootDir}/**/*.class,meta-inf/**"/>
+   <target name="CreateRelease" depends="CreateBuildFile" description="Create a release">
+      <ant antfile="${quickant.target}" target="CreateRelease" inheritall="false" inheritrefs="false"/>
    </target>
 
-   <target name="CompileJavas" depends="Clean,Init">
-      <javac srcdir="${sourceDir}"
-         destdir="${classesDestination}"
-         includes="${applicationRootDir}/**/*.java">
-         <classpath refid="classpath"/>
-      </javac>
-   </target>
-
-   <target name="BuildSourceJar" depends="Init">
-      <zip zipfile="${sourceZip}">
-         <fileset dir="${sourceDir}" includes="${applicationRootDir}/**/*.java"/>
-      </zip>
-   </target>
-
-   <target name="CopyResources" depends="Init">
-      <copy todir="${releaseDir}" flatten="true">
-         <fileset dir="${etcDir}" includes="simplelog.properties,README.txt,ChangeLog.txt,LICENSE.txt,VERSION.txt"/>
-         <filterset>
-            <filter token="VERSION" value="${product.version}" />
-          </filterset>
-      </copy>
-      <copy todir="${classesDestination}/meta-inf/${ant.project.name}" flatten="true">
-         <fileset dir="${releaseDir}" includes="README.txt,ChangeLog.txt,LICENSE.txt,VERSION.txt"/>
-      </copy>
-   </target>
-
-   <target name="CompileJavadoc" depends="Init">
-      <javadoc sourcePath="${sourceDir}" destdir="${javadocDir}"
-               packagenames="${javadocPackages}"
-               access="protected" Author="true" Use="true"  Version="true"
-               Windowtitle="${product.name} ${product.version} API Documentation"
-               nodeprecatedlist="true" notree="true" nohelp="true" failonerror="true">
-         <header>
-            &lt;b&gt;&lt;a href="${product.website}" target="_top"&gt;
-               ${product.name} ${product.version}
-            &lt;/a&gt;&lt;/b&gt;
-            &lt;br&gt;
-            &lt;font size="-1"&gt;
-               [&lt;a href="http://home.exetel.com.au/grlea" target="_top"&gt;grlea&lt;a&gt;]
-            &lt;/font&gt;
-         </header>
-         <footer>
-            &lt;font size="-1"&gt;
-               Copyright (c) 2004-2005, Graham Lea. All rights reserved. &lt;br&gt;
-            &lt;/font&gt;
-         </footer>
-      </javadoc>
-   </target>
-
-   <target name="Cleanup">
-      <delete dir="${classesDestination}" failonerror="false"/>
-      <delete dir="${tempDir}" failonerror="false"/>
+   <target name="CreateBuildFile" description="Generates the main build file using XSL">
+      <xslt in="${quickant.source}" out="${quickant.target}" style="${quickant.stylesheet}">
+         <param name="cvsRoot" expression="${quickant.cvsRoot}"/>
+      </xslt>
    </target>
 
 </project>

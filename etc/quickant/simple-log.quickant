@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project
+   PUBLIC "-//Graham Lea//Quick Ant 1.0//EN"
+   "quick-ant-1.0.dtd">
+
+<!--
+$Id: simple-log.quickant,v 1.1 2005-05-15 16:03:41 grlea Exp $
+Copyright (c) 2004-2005 Graham Lea. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<project>
+
+   <id>simple-log</id>
+   <name>Simple Log</name>
+   <website>http://simple-log.dev.java.net</website>
+   <copyright-holder>Graham Lea</copyright-holder>
+   <creation-year>2004</creation-year>
+   <current-year>2005</current-year>
+
+   <version>1.6</version>
+   <previous-versions>
+      <version>1.5</version>
+      <version>1.4</version>
+      <version>1.3</version>
+      <version>1.2</version>
+   </previous-versions>
+
+   <keywords>log logging java package library simple easy log4j commons</keywords>
+
+   <platform>
+      <name>J2SE</name>
+      <version>1.4</version>
+   </platform>
+
+   <source-dir>src</source-dir>
+   <manifest-dir>etc</manifest-dir>
+   <lib-dir>lib</lib-dir>
+
+   <resources>
+      <resource publish="true">etc/ChangeLog.txt</resource>
+      <resource publish="true">etc/README.txt</resource>
+      <resource publish="true">etc/LICENSE.txt</resource>
+      <resource>etc/VERSION.txt</resource>
+   </resources>
+
+   <component>
+      <id>core</id>
+      <name>Simple Log</name>
+      <source-dir></source-dir>
+      <source-files>org/**</source-files>
+   </component>
+
+   <javadoc>
+
+      <package-names>org.grlea.**.*</package-names>
+
+      <bottom>
+         Copyright (c) 2004-2005 Graham Lea. &lt;br /&gt;
+         All rights reserved.
+      </bottom>
+
+      <source-link>
+         <remote>http://java.sun.com/j2se/1.4/docs/api</remote>
+         <local>C:/java/j2sdk1.4.2_06/docs/api</local>
+      </source-link>
+
+      <group title="Simple Log">
+         <package name="org.grlea.log"/>
+      </group>
+
+   </javadoc>
+
+   <extra-sources>
+      <include name="quick-ant.properties"/>
+      <include name="build.xml"/>
+      <include name="etc/*"/>
+      <include name="etc/quickant/*"/>
+   </extra-sources>
+
+   <extra-release-files>
+      <include name="etc/simplelog.properties"/>
+   </extra-release-files>
+
+</project>
