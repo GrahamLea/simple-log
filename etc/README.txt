@@ -41,9 +41,17 @@ STATUS
 
 Version 1.0 was basically a major refactor of my own similar logger that I've been using for years.
 
-Version 1.5 has added several features that will enhance the usefulness of Simple Log significantly
-by increasing the convenience of using a SimpleLogger and the flexibility of the configuration.
+Version 1.6 has continued to improve Simple Log by implementing a few great suggestions from users
+and fixing a few obscure bugs.
 See ChangeLog.txt for a list of new features and completed issues.
+
+Users should not that the configuration files for version 1.6 are incompatible with previous
+versions' configuration files in two small ways:
+1. The log formats have changed, which will change the result of any custom formats being used.
+   Old formats can be upgraded by changing any {4} and {5} arguments to {5} and {6}, respectively.
+   Users using the default formats should not be affected.
+2. The tracing configuration now uses the suffix "#trace" instead of ".trace".
+   Most old configurations can be upgraded by performing a search/replace for .trace/#trace
 
 
 FUTURE FEATURES
