@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.9 2005-04-28 22:49:43 grlea Exp $
+// $Id: SimpleLog.java,v 1.10 2005-05-15 01:42:23 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,7 +47,7 @@ import java.util.Date;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  * @author $Author: grlea $
  */
 public final class
@@ -96,6 +96,7 @@ SimpleLog
 
    /** The property key for whether the log file name should be interpreted. */
    private static final String KEY_INTERPRET_NAME = KEY_LOG_FILE + ".interpretName";
+
    /** The default value for the parse log file name property. */
    private static final boolean INTREPRET_NAME_DEFAULT = true;
 
@@ -104,6 +105,12 @@ SimpleLog
 
    /** The default value for the append property. */
    private static final boolean APPEND_DEFAULT = true;
+
+   /** The property key for whether output to a log file should also be printed to the console. */
+   private static final String KEY_PIPE_TO_CONSOLE = KEY_LOG_FILE + ".andConsole";
+
+   /** The default value for the andConsole property. */
+   private static final boolean PIPE_TO_CONSOLE_DEFAULT = false;
 
    /** The property key for the default debug level. */
    private static final String KEY_DEFAULT_LEVEL = KEY_PREFIX + "defaultLevel";
@@ -199,6 +206,12 @@ SimpleLog
     * somewhere else.
     */
    private String logFile;
+
+   /** Whether the PrintWriter is printing straight to the console. */
+   private boolean printWriterGoesToConsole = true;
+
+   /** Whether output is currently going to the console as well as a log file. */
+   private boolean pipingOutputToConsole = false;
 
    /** The default level of this <code>SimpleLog</code>. */
    private DebugLevel defaultLevel = DebugLevel.L4_INFO;
@@ -412,6 +425,7 @@ SimpleLog
             if (newLogFile == null)
             {
                out = new PrintWriter(System.err, true);
+               printWriterGoesToConsole = true;
             }
             else
             {
@@ -428,6 +442,7 @@ SimpleLog
 
                FileWriter fileWriter = new FileWriter(file, append);
                out = new PrintWriter(fileWriter, true);
+               printWriterGoesToConsole = false;
             }
             logFile = newLogFile;
          }
@@ -436,6 +451,15 @@ SimpleLog
             printError("Error opening log file for writing", e, true);
          }
       }
+
+
+      // Read the "andConsole" property
+      String pipeOutputToConsoleString = properties.getProperty(KEY_PIPE_TO_CONSOLE);
+      // The strategy here is to only turn andConsole on if the property definitely says true
+      pipingOutputToConsole = PIPE_TO_CONSOLE_DEFAULT;
+      if (pipeOutputToConsoleString != null)
+         pipingOutputToConsole = pipeOutputToConsoleString.trim().equalsIgnoreCase("true");
+
 
       // Read the Default level
       String defaultLevelStr = properties.getProperty(KEY_DEFAULT_LEVEL);
@@ -620,7 +644,11 @@ SimpleLog
    println(String s)
    {
       if (out != null)
+      {
          out.println(s);
+         if (!printWriterGoesToConsole && pipingOutputToConsole)
+            System.err.println(s);
+      }
    }
 
    /**
@@ -981,6 +1009,32 @@ SimpleLog
    getExitInstanceFormat()
    {
       return exitFormat4Instance;
+   }
+
+   /**
+    * Returns whether this <code>SimpleLog</code>, when printing output to a file, will also print
+    * the output to the console. This attribute has no effect when output is not going to a file.
+    *
+    * @return <code>true</code> if output will be piped to the console, <code>false</code> if it
+    * won't.
+    */
+   public boolean
+   isPipingOutputToConsole()
+   {
+      return pipingOutputToConsole;
+   }
+
+   /**
+    * Sets whether this <code>SimpleLog</code>, when printing output to a file, should also print
+    * the output to the console. This attribute has no effect when output is not going to a file.
+    *
+    * @param pipeOutputToConsole <code>true</code> if output should be piped to the console as well
+    * as the output file, <code>false</code> if it should not.
+    */
+   public void
+   setPipingOutputToConsole(boolean pipeOutputToConsole)
+   {
+      this.pipingOutputToConsole = pipeOutputToConsole;
    }
 
    /**
