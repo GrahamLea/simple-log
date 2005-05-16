@@ -61,7 +61,6 @@ Some features that might be added in the future *if people ask for them* are:
 * Programmatic access to the log formats
 * Ability to turn logging off for a class/package (rather than just down to "Fatal")
 * Option to use a different filename/location for the default SimpleLog instance's properties
-* Ability to print the log level in the output
 
 If you think you need one of these features, or some other feature, please feel free to contact me
 and I should be able to hack it up within a couple of days (assuming I haven't gone camping).
