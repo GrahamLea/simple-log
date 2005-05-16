@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-$Id: quick-ant.xsl,v 1.1 2005-05-15 16:03:41 grlea Exp $
+$Id: quick-ant.xsl,v 1.2 2005-05-16 00:54:04 grlea Exp $
 Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -244,7 +244,7 @@ limitations under the License.
          </target>
 
 
-         <target name="Release" depends="ConfirmRelease,Init,CreateRelease">
+         <target name="Release" depends="ConfirmRelease,Clean,Init,CreateRelease">
 
             <!-- Copy release files to the deployment directory (www/release/<version>) -->
             <copy>
@@ -255,12 +255,12 @@ limitations under the License.
             </copy>
 
             <!-- Add the deployment directory (www/release/<version>) -->
-            <cvs command="add" failonerror="true">
+            <cvs command="add">
                <xsl:attribute name="command">add ${release-directory}</xsl:attribute>
             </cvs>
 
             <!-- Add the release files -->
-            <cvs failonerror="true">
+            <cvs>
                <xsl:attribute name="command">add ${release-directory}/*</xsl:attribute>
             </cvs>
 
@@ -273,20 +273,34 @@ limitations under the License.
             <copy>
                <xsl:attribute name="todir">${release-base-directory}</xsl:attribute>
                <fileset>
+                  <xsl:attribute name="dir">${resources-directory}</xsl:attribute>
+
                   <xsl:for-each select="resources/resource[@publish='true']">
-                     <include><xsl:value-of select="text()"/></include>
+                     <include>
+                        <xsl:attribute name="name"><xsl:value-of select="name"/></xsl:attribute>
+                     </include>
                   </xsl:for-each>
                </fileset>
             </copy>
 
             <!-- Add & Commit the published resources -->
             <cvs>
-               <xsl:attribute name="command">add ${release-directory}/*</xsl:attribute>
+               <xsl:attribute name="command">add ${release-base-directory}/*</xsl:attribute>
             </cvs>
 
+            <!-- Commit everything -->
             <cvs failonerror="true">
-               <xsl:attribute name="command">commit ${release-directory}/*</xsl:attribute>
+               <xsl:attribute name="command">commit ${release-directory}/*.jar</xsl:attribute>
             </cvs>
+            <cvs failonerror="true">
+               <xsl:attribute name="command">commit ${release-directory}/*.zip</xsl:attribute>
+            </cvs>
+
+            <xsl:for-each select="resources/resource[@publish='true']">
+               <cvs failonerror="true">
+                  <xsl:attribute name="command">commit ${release-base-directory}/<xsl:value-of select="name"/></xsl:attribute>
+               </cvs>
+            </xsl:for-each>
 
 <!--            <xsl:for-each select="resources/resource[@publish='true']">-->
 <!--               <cvs failonerror="true">-->
@@ -305,7 +319,9 @@ limitations under the License.
             <condition property="do-release">
                <and>
                   <isset property="confirm-release"/>
-                  <equals arg1="${confirm-release}" arg2="true" casesensitive="false" trim="true" />
+                  <equals arg2="true" casesensitive="false" trim="true">
+                     <xsl:attribute name="arg1">${confirm-release}</xsl:attribute>
+                  </equals>
                </and>
             </condition>
             <fail unless="do-release" message="Release aborted. To complete a release, modify 'confirm-release.properties'."/>
@@ -501,7 +517,7 @@ limitations under the License.
                   <fileset dir=".">
                      <xsl:for-each select="resources/resource">
                         <include>
-                           <xsl:attribute name="name"><xsl:value-of select="text()"/></xsl:attribute>
+                           <xsl:attribute name="name"><xsl:value-of select="dir"/>/<xsl:value-of select="name"/></xsl:attribute>
                         </include>
                      </xsl:for-each>
                   </fileset>
