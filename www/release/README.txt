@@ -1,7 +1,7 @@
 
                                Simple  Log
 
-                               Version 1.5
+                               Version 1.6
 
                       http://simple-log.dev.java.net
 
@@ -32,7 +32,7 @@ To use Simple Log in your application, you will need to:
 
 1. Have the simple-log.jar in your classpath.
 
-2. Have a 'simplelog.properties' file in the root directory of your classpath (a file or in a JAR).
+2. Have a 'simplelog.properties' file in a directory or JAR that is on your classpath.
    Simple Log will not fail if this file is not present, but it will not produce any output.
    A template properties file is included with the release.
 
@@ -41,9 +41,17 @@ STATUS
 
 Version 1.0 was basically a major refactor of my own similar logger that I've been using for years.
 
-Version 1.5 has added several features that will enhance the usefulness of Simple Log significantly
-by increasing the convenience of using a SimpleLogger and the flexibility of the configuration.
+Version 1.6 has continued to improve Simple Log by implementing a few great suggestions from users
+and fixing a few obscure bugs.
 See ChangeLog.txt for a list of new features and completed issues.
+
+Users should not that the configuration files for version 1.6 are incompatible with previous
+versions' configuration files in two small ways:
+1. The log formats have changed, which will change the result of any custom formats being used.
+   Old formats can be upgraded by changing any {4} and {5} arguments to {5} and {6}, respectively.
+   Users using the default formats should not be affected.
+2. The tracing configuration now uses the suffix "#trace" instead of ".trace".
+   Most old configurations can be upgraded by performing a search/replace for .trace/#trace
 
 
 FUTURE FEATURES
