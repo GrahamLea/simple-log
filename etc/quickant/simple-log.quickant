@@ -4,7 +4,7 @@
    "quick-ant-1.0.dtd">
 
 <!--
-$Id: simple-log.quickant,v 1.1 2005-05-15 16:03:41 grlea Exp $
+$Id: simple-log.quickant,v 1.2 2005-05-16 00:53:31 grlea Exp $
 Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,10 +49,22 @@ limitations under the License.
    <lib-dir>lib</lib-dir>
 
    <resources>
-      <resource publish="true">etc/ChangeLog.txt</resource>
-      <resource publish="true">etc/README.txt</resource>
-      <resource publish="true">etc/LICENSE.txt</resource>
-      <resource>etc/VERSION.txt</resource>
+      <resource publish="true">
+         <dir>etc</dir>
+         <name>ChangeLog.txt</name>
+      </resource>
+      <resource publish="true">
+         <dir>etc</dir>
+         <name>README.txt</name>
+      </resource>
+      <resource publish="true">
+         <dir>etc</dir>
+         <name>LICENSE.txt</name>
+      </resource>
+      <resource>
+         <dir>etc</dir>
+         <name>VERSION.txt</name>
+      </resource>
    </resources>
 
    <component>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-$Id: quick-ant-1.0.dtd,v 1.1 2005-05-15 16:03:41 grlea Exp $
+$Id: quick-ant-1.0.dtd,v 1.2 2005-05-16 00:53:23 grlea Exp $
 Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,8 +36,9 @@ limitations under the License.
    <!ELEMENT lib-dir (#PCDATA)>
 
    <!ELEMENT resources (resource*)>
-      <!ELEMENT resource (#PCDATA)>
+      <!ELEMENT resource (dir,name)>
          <!ATTLIST resource publish (true|false) "false">
+         <!ELEMENT dir (#PCDATA)>
 
    <!ELEMENT component (id, name, source-dir, source-files, manifest?, dependencies)>
       <!ELEMENT source-files (#PCDATA)>
