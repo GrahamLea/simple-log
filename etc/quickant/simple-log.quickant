@@ -4,7 +4,7 @@
    "quick-ant-1.0.dtd">
 
 <!--
-$Id: simple-log.quickant,v 1.2 2005-05-16 00:53:31 grlea Exp $
+$Id: simple-log.quickant,v 1.3 2005-07-28 12:25:20 grlea Exp $
 Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,8 +29,9 @@ limitations under the License.
    <creation-year>2004</creation-year>
    <current-year>2005</current-year>
 
-   <version>1.6</version>
+   <version>1.6.1</version>
    <previous-versions>
+      <version>1.6</version>
       <version>1.5</version>
       <version>1.4</version>
       <version>1.3</version>

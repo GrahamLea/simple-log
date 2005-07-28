@@ -1,11 +1,15 @@
 
                                Simple  Log
 
-                               Version 1.6
+                               Version 1.6.1
 
                       http://simple-log.dev.java.net
 
 CHANGE LOG
+
+1.6.1
+
+   + Issue 18 (BUG): Exceptions don't print in version 1.6
 
 1.6
 
