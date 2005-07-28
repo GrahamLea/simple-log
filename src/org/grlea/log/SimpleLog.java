@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.10 2005-05-15 01:42:23 grlea Exp $
+// $Id: SimpleLog.java,v 1.11 2005-07-28 11:00:04 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,7 +47,7 @@ import java.util.Date;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  * @author $Author: grlea $
  */
 public final class
@@ -171,6 +171,9 @@ SimpleLog
    private static final String DEFAULT_FORMAT_STRING_DBE_INSTANCE = "{0}|***|{1}|{2}[{3}]|{5}";
    private static final String DEFAULT_FORMAT_STRING_ENTRY_INSTANCE = "{0}|>>>|{1}|{2}[{3}]|{5}";
    private static final String DEFAULT_FORMAT_STRING_EXIT_INSTANCE = "{0}|<<<|{1}|{2}[{3}]|{5}";
+
+   private static final int DEFAULT_FORMAT_EXCEPTION_INDEX = 5;
+   private static final int DEFAULT_FORMAT_EXCEPTION_INDEX_INSTANCE = 5;
 
    // Static variables
    //..........................................................................................
@@ -535,8 +538,9 @@ SimpleLog
       if (printStackTraces)
       {
          ExceptionFormat exceptionFormat = new ExceptionFormat();
-         dbeFormat.setFormatByArgumentIndex(4, exceptionFormat);
-         dbeFormat4Instance.setFormatByArgumentIndex(4, exceptionFormat);
+         dbeFormat.setFormatByArgumentIndex(DEFAULT_FORMAT_EXCEPTION_INDEX, exceptionFormat);
+         dbeFormat4Instance.setFormatByArgumentIndex(
+            DEFAULT_FORMAT_EXCEPTION_INDEX_INSTANCE, exceptionFormat);
       }
 
       // TODO (grahaml) Option of different outputs
