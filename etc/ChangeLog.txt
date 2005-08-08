@@ -7,6 +7,15 @@
 
 CHANGE LOG
 
+1.7
+
+   + Issue 9  (RFE): Provide connections to commons-logging and UGLI
+   + Issue 17 (RFE): Better Documentation of Properties File
+   + Issue 19 (RFE): Allow debug level and trace configuration by instanceId
+   + Issue 20 (BUG): Explicitly Set Writer overridden on reload
+   + Inner classes can now be configured using either OuterClass$InnerClass or OuterClass.InnerClass
+   + Created some unit tests! (Using Simple Log remains simple; maintaining it less so.)
+
 1.6.1
 
    + Issue 18 (BUG): Exceptions don't print in version 1.6
