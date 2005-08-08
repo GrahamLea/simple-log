@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.11 2005-07-28 11:00:04 grlea Exp $
+// $Id: SimpleLog.java,v 1.12 2005-08-08 14:31:00 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,6 +38,7 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Date;
+import java.util.Enumeration;
 
 /**
  * <p>Controls the configuration and formatting of a group of <code>SimpleLogger</code>s.</p>
@@ -47,7 +48,7 @@ import java.util.Date;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  * @author $Author: grlea $
  */
 public final class
@@ -203,6 +204,9 @@ SimpleLog
 
    /** The destination of this <code>SimpleLog</code>'s output. */
    private PrintWriter out;
+
+   /** Indicates whether the output writer has been set programatically. */
+   private boolean outputSetProgramatically = false;
 
    /**
     * The path and name of the log file being written to, or <code>null</code> if output is going
@@ -391,70 +395,73 @@ SimpleLog
    private void
    readSettingsFromProperties()
    {
-      // Read the log file
-      String newLogFile = properties.getProperty(KEY_LOG_FILE);
-
-      boolean interpretName = INTREPRET_NAME_DEFAULT;
-      String interpretNameStr = properties.getProperty(KEY_INTERPRET_NAME);
-      // The strategy here is to only turn interpret off if the property definitely says false
-      if (interpretNameStr != null)
-         interpretName = !(interpretNameStr.trim().equalsIgnoreCase("false"));
-
-      // Substitue the date into the name if necessary
-      boolean newLogFileNotNull = newLogFile != null;
-      boolean nameContainsBraces = newLogFileNotNull && newLogFile.indexOf('{') != -1;
-      if (newLogFileNotNull && nameContainsBraces && interpretName)
+      if (!outputSetProgramatically)
       {
-         try
+         // Read the log file
+         String newLogFile = properties.getProperty(KEY_LOG_FILE);
+
+         boolean interpretName = INTREPRET_NAME_DEFAULT;
+         String interpretNameStr = properties.getProperty(KEY_INTERPRET_NAME);
+         // The strategy here is to only turn interpret off if the property definitely says false
+         if (interpretNameStr != null)
+            interpretName = !(interpretNameStr.trim().equalsIgnoreCase("false"));
+
+         // Substitue the date into the name if necessary
+         boolean newLogFileNotNull = newLogFile != null;
+         boolean nameContainsBraces = newLogFileNotNull && newLogFile.indexOf('{') != -1;
+         if (newLogFileNotNull && nameContainsBraces && interpretName)
          {
-            MessageFormat logFileNameFormat = new MessageFormat(newLogFile);
-            newLogFile = logFileNameFormat.format(new Object[] {new Date()});
+            try
+            {
+               MessageFormat logFileNameFormat = new MessageFormat(newLogFile);
+               newLogFile = logFileNameFormat.format(new Object[] {new Date()});
+            }
+            catch (Exception e)
+            {
+               printError("Error generating log file name", e, true);
+               newLogFile = null;
+            }
          }
-         catch (Exception e)
+
+         // The log file has changed if it used to be null and now isn't, or vice versa...
+         boolean logFileChanged = (logFile == null) != (newLogFile == null);
+         // or it's changed if it wasn't null and still isn't null but the name has changed.
+         logFileChanged |= logFile != null && newLogFileNotNull && !newLogFile.equals(logFile);
+         if (logFileChanged)
          {
-            printError("Error generating log file name", e, true);
-            newLogFile = null;
+            try
+            {
+               if (newLogFile == null)
+               {
+                  out = new PrintWriter(System.err, true);
+                  printWriterGoesToConsole = true;
+               }
+               else
+               {
+                  File file = new File(newLogFile).getAbsoluteFile();
+                  File parentFile = file.getParentFile();
+                  if (parentFile != null)
+                     parentFile.mkdirs();
+
+                  boolean append = APPEND_DEFAULT;
+                  String appendStr = properties.getProperty(KEY_APPEND);
+                  // The strategy here is to only turn append off if the property definitely says
+                  // false
+                  if (appendStr != null)
+                     append = !(appendStr.trim().equalsIgnoreCase("false"));
+
+                  FileWriter fileWriter = new FileWriter(file, append);
+                  out = new PrintWriter(fileWriter, true);
+                  printWriterGoesToConsole = false;
+               }
+               logFile = newLogFile;
+            }
+            catch (IOException e)
+            {
+               printError("Error opening log file for writing", e, true);
+            }
          }
       }
-
-      // The log file has changed if it used to be null and now isn't, or vice versa...
-      boolean logFileChanged = (logFile == null) != (newLogFile == null);
-      // or it's changed if it wasn't null and still isn't null but the name has changed.
-      logFileChanged |= logFile != null && newLogFileNotNull && !newLogFile.equals(logFile);
-      if (logFileChanged)
-      {
-         try
-         {
-            if (newLogFile == null)
-            {
-               out = new PrintWriter(System.err, true);
-               printWriterGoesToConsole = true;
-            }
-            else
-            {
-               File file = new File(newLogFile).getAbsoluteFile();
-               File parentFile = file.getParentFile();
-               if (parentFile != null)
-                  parentFile.mkdirs();
-
-               boolean append = APPEND_DEFAULT;
-               String appendStr = properties.getProperty(KEY_APPEND);
-               // The strategy here is to only turn append off if the property definitely says false
-               if (appendStr != null)
-                  append = !(appendStr.trim().equalsIgnoreCase("false"));
-
-               FileWriter fileWriter = new FileWriter(file, append);
-               out = new PrintWriter(fileWriter, true);
-               printWriterGoesToConsole = false;
-            }
-            logFile = newLogFile;
-         }
-         catch (IOException e)
-         {
-            printError("Error opening log file for writing", e, true);
-         }
-      }
-
 
       // Read the "andConsole" property
       String pipeOutputToConsoleString = properties.getProperty(KEY_PIPE_TO_CONSOLE);
@@ -469,7 +476,7 @@ SimpleLog
       if (defaultLevelStr != null)
       {
          defaultLevelStr = defaultLevelStr.trim();
-         
+
          try
          {
             // Try to read it as an int first...
@@ -543,7 +550,16 @@ SimpleLog
             DEFAULT_FORMAT_EXCEPTION_INDEX_INSTANCE, exceptionFormat);
       }
 
-      // TODO (grahaml) Option of different outputs
+      // Copy any properties that have '$' in their name
+      Enumeration propertyNames = properties.propertyNames();
+      Properties newProperties = new Properties();
+      while (propertyNames.hasMoreElements())
+      {
+         String key = (String) propertyNames.nextElement();
+         if (key.indexOf('$') != -1)
+            newProperties.put(key.replace('$', '.'), properties.getProperty(key));
+      }
+      properties.putAll(newProperties);
    }
 
    /**
@@ -664,33 +680,33 @@ SimpleLog
    void
    configure(SimpleLogger logger)
    {
-      logger.setDebugLevel(getDebugLevel(logger.getSourceClass()));
-      logger.setTracing(getTracingFlag(logger.getSourceClass()));
+      logger.setDebugLevel(getDebugLevel(logger));
+      logger.setTracing(getTracingFlag(logger));
    }
 
    /**
     * Retrieves the debug level for the given class from the properties.
     *
-    * @param sourceClass the class to find the debug level for.
+    * @param logger the logger for which to retrieve the debug level
     *
     * @return the debug level to be used for the class.
     */
    private DebugLevel
-   getDebugLevel(Class sourceClass)
+   getDebugLevel(SimpleLogger logger)
    {
       if (properties == null)
          return defaultLevel;
 
-      String name = sourceClass.getName();
+      String loggerConfigName = logger.getConfigName();
 
-      int dotIndex = name.length();
+      int dotIndex = loggerConfigName.length();
       DebugLevel debugLevel = null;
       do
       {
          // On first iteration, this substring() call returns the whole string.
          // On subsequent iterations, it removes everything after and including the last period.
-         name = name.substring(0, dotIndex);
-         String value = properties.getProperty(name);
+         loggerConfigName = loggerConfigName.substring(0, dotIndex);
+         String value = properties.getProperty(loggerConfigName);
          if (value != null)
          {
             value = value.trim();
@@ -703,20 +719,20 @@ SimpleLog
             }
             catch (NumberFormatException e1)
             {
-               // ... then try it as a name.
+               // ... then try it as a loggerConfigName.
                try
                {
                   debugLevel = DebugLevel.fromName(value);
                }
                catch (IllegalArgumentException e2)
                {
-                  printError("Error parsing debug level for " + name, e1, true);
-                  printError("Error parsing debug level for " + name, e2, false);
+                  printError("Error parsing debug level for " + loggerConfigName, e1, true);
+                  printError("Error parsing debug level for " + loggerConfigName, e2, false);
                }
             }
          }
 
-         dotIndex = name.lastIndexOf('.');
+         dotIndex = loggerConfigName.lastIndexOf('.');
       }
       while (debugLevel == null && dotIndex != -1);
 
@@ -730,31 +746,31 @@ SimpleLog
    /**
     * Retrieves the tracing flag for the given class from the properties.
     *
-    * @param sourceClass the class to find the tracing flag for.
+    * @param logger the logger for which to retrieve the debug level
     *
     * @return the tracing flag to be used for the class.
     */
    private boolean
-   getTracingFlag(Class sourceClass)
+   getTracingFlag(SimpleLogger logger)
    {
       if (properties == null)
          return defaultTracing;
 
-      String name = sourceClass.getName();
+      String loggerConfigName = logger.getConfigName();
 
-      int dotIndex = name.length();
+      int dotIndex = loggerConfigName.length();
       boolean trace = defaultTracing;
       do
       {
-         name = name.substring(0, dotIndex);
-         String value = properties.getProperty(name + TRACE_SUFFIX);
+         loggerConfigName = loggerConfigName.substring(0, dotIndex);
+         String value = properties.getProperty(loggerConfigName + TRACE_SUFFIX);
          if (value != null)
          {
             trace = Boolean.valueOf(value).booleanValue();
             break;
          }
 
-         dotIndex = name.lastIndexOf('.');
+         dotIndex = loggerConfigName.lastIndexOf('.');
       }
       while (dotIndex != -1);
 
@@ -925,6 +941,7 @@ SimpleLog
    setWriter(PrintWriter out)
    {
       this.out = out;
+      this.outputSetProgramatically = true;
    }
 
    /**
@@ -1090,18 +1107,16 @@ SimpleLog
       public
       FileConfigurationReloader()
       {
-         URI uri = null;
          try
          {
-            uri = new URI(configurationSource.toExternalForm());
+            URI uri = new URI(configurationSource.toExternalForm());
+            this.configurationFile = new File(uri);
+            this.previousLastModified = configurationFile.lastModified();
          }
          catch (URISyntaxException e)
          {
             throw new IllegalArgumentException("Failed to create URI from URL");
          }
-
-         this.configurationFile = new File(uri);
-         this.previousLastModified = configurationFile.lastModified();
       }
 
       public void
