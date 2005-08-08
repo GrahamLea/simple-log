@@ -37,6 +37,20 @@ To use Simple Log in your application, you will need to:
    A template properties file is included with the release.
 
 
+COMMONS LOGGING
+
+If you plan use Simple Log's CommonsLoggingAdapter with Jakarta Commons Logging, you will also need
+to:
+
+3. Include the simple-log-commons-logging.jar in your classpath.
+
+4. Set the system property:   org.apache.commons.logging.Log
+                        to:   org.grlea.log.adapters.commons.CommonsLoggingAdapter
+
+You should also read the documentation of CommonsLoggingAdapter very carefully, as it contains
+important information about how the commons-logging API maps to a Simple Log configuration.
+
+
 STATUS
 
 Version 1.0 was basically a major refactor of my own similar logger that I've been using for years.
