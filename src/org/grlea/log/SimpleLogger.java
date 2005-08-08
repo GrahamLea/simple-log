@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLogger.java,v 1.9 2005-05-04 22:56:25 grlea Exp $
+// $Id: SimpleLogger.java,v 1.10 2005-08-08 14:24:45 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -100,7 +100,7 @@ import java.util.Date;
  * </ul>
  * </p>
  *
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  * @author $Author: grlea $
  */
 public class
@@ -148,6 +148,20 @@ SimpleLogger
     * have the fully-qualified (long) name of the class printed.
     */
    private final boolean useLongName;
+
+   /**
+    * <p>
+    * The name used to specify and look up the configuration of this <code>SimpleLogger</code>.
+    * </p>
+    *
+    * <p>
+    * The config name is the fully-qualified name of the source class of the logger, plus, if the
+    * logger is an instance logger, a period followed by the string representation
+    * ({@link Object#toString() toString()}) of the logger's instance ID. Additionally, any dollar
+    * signs appearing in the name are changed to periods.
+    * </p>
+    */
+   private String configName;
 
    /**
     * The current debug level for this <code>SimpleLogger</code>.
@@ -354,7 +368,30 @@ SimpleLogger
       this.className = sourceClass.getName();
       this.classNameShort = createClassNameShort(sourceClass);
 
+      generateConfigName();
+
       log.register(this);
+   }
+
+   /**
+    * Creates and sets this <code>SimpleLogger</code>'s {@link #configName}.
+    */
+   private void
+   generateConfigName()
+   {
+      String loggerName = sourceClass.getName();
+
+      if (isInstanceDebugger)
+      {
+         loggerName = loggerName + '.' + instanceId;
+      }
+
+      if (loggerName.indexOf('$') != -1)
+      {
+         loggerName = loggerName.replace('$', '.');
+      }
+
+      this.configName = loggerName;
    }
 
    /**
@@ -368,10 +405,14 @@ SimpleLogger
    createClassNameShort(Class sourceClass)
    {
       if (className.indexOf('.') == -1)
+      {
          return className;
+      }
 
       if (sourceClass.getPackage() != null && sourceClass.getPackage().getName() != null)
+      {
          return className.substring(sourceClass.getPackage().getName().length() + 1);
+      }
 
       // We have to do this trickery to make sure inner classes have their whole name (I think?)
       String packageName = className;
@@ -393,9 +434,13 @@ SimpleLogger
       }
 
       if (packageName.length() == 0)
+      {
          return className;
+      }
       else
+      {
          return className.substring(packageName.length() + 1);
+      }
    }
 
    /**
@@ -430,10 +475,35 @@ SimpleLogger
    setInstanceID(Object instanceId)
    {
       if (!isInstanceDebugger)
+      {
          throw new IllegalStateException("This is not an instance debugger.");
+      }
       if (instanceId == null)
+      {
          throw new IllegalArgumentException("instanceId cannot be null.");
+      }
       this.instanceId = instanceId;
+
+      generateConfigName();
+   }
+
+   /**
+    * <p>
+    * Returns this <code>SimpleLogger</code>'s config name, the name used to specify and look up
+    * its configuration.
+    * </p>
+    *
+    * <p>
+    * Currently, the config name is the fully-qualified name of the source class of the logger,
+    * plus, if the logger is an instance logger, a period ('.') followed by the string
+    * representation ({@link Object#toString() toString()}) of the logger's instance ID.
+    * Additionally, any dollar signs appearing in the name are changed to periods.
+    * </p>
+    */
+   public String
+   getConfigName()
+   {
+      return configName;
    }
 
    /**
@@ -474,7 +544,9 @@ SimpleLogger
    setDebugLevel(DebugLevel debugLevel)
    {
       if (debugLevel == null)
+      {
          throw new IllegalArgumentException("debugLevel cannot be null.");
+      }
       this.debugLevel = debugLevel;
    }
 
@@ -534,92 +606,92 @@ SimpleLogger
    /**
     * Logs a debug message at the {@link DebugLevel#L1_FATAL Fatal} level.
     *
-    * @param s the message to log.
+    * @param message the message to log.
     *
     * @see #db
     */
    public void
-   fatal(String s)
+   fatal(String message)
    {
-      db(DebugLevel.L1_FATAL, s);
+      db(DebugLevel.L1_FATAL, message);
    }
 
    /**
     * Logs a debug message at the {@link DebugLevel#L2_ERROR Error} level.
     *
-    * @param s the message to log.
+    * @param message the message to log.
     *
     * @see #db
     */
    public void
-   error(String s)
+   error(String message)
    {
-      db(DebugLevel.L2_ERROR, s);
+      db(DebugLevel.L2_ERROR, message);
    }
 
    /**
     * Logs a debug message at the {@link DebugLevel#L3_WARN Warn} level.
     *
-    * @param s the message to log.
+    * @param message the message to log.
     *
     * @see #db
     */
    public void
-   warn(String s)
+   warn(String message)
    {
-      db(DebugLevel.L3_WARN, s);
+      db(DebugLevel.L3_WARN, message);
    }
 
    /**
     * Logs a debug message at the {@link DebugLevel#L4_INFO Info} level.
     *
-    * @param s the message to log.
+    * @param message the message to log.
     *
     * @see #db
     */
    public void
-   info(String s)
+   info(String message)
    {
-      db(DebugLevel.L4_INFO, s);
+      db(DebugLevel.L4_INFO, message);
    }
 
    /**
     * Logs a debug message at the {@link DebugLevel#L5_DEBUG Debug} level.
     *
-    * @param s the message to log.
+    * @param message the message to log.
     *
     * @see #db
     */
    public void
-   debug(String s)
+   debug(String message)
    {
-      db(DebugLevel.L5_DEBUG, s);
+      db(DebugLevel.L5_DEBUG, message);
    }
 
    /**
     * Logs a debug message at the {@link DebugLevel#L6_VERBOSE Verbose} level.
     *
-    * @param s the message to log.
+    * @param message the message to log.
     *
     * @see #db
     */
    public void
-   verbose(String s)
+   verbose(String message)
    {
-      db(DebugLevel.L6_VERBOSE, s);
+      db(DebugLevel.L6_VERBOSE, message);
    }
 
    /**
     * Logs a debug message at the {@link DebugLevel#L7_LUDICROUS Ludicrous} level.
     *
-    * @param s the message to log.
+    * @param message the message to log.
     *
     * @see #db
     */
    public void
-   ludicrous(String s)
+   ludicrous(String message)
    {
-      db(DebugLevel.L7_LUDICROUS, s);
+      db(DebugLevel.L7_LUDICROUS, message);
    }
 
    /**
@@ -628,7 +700,7 @@ SimpleLogger
     * <p>The message will be printed if the given debug level is less than or equal to the current
     * debug level of this <code>SimpleLogger</code>.</p>
     *
-    * @param s The debug message to print.
+    * @param message The debug message to print.
     *
     * @see #fatal
     * @see #error
@@ -638,13 +710,15 @@ SimpleLogger
     * @see #verbose
     */
    public void
-   db(DebugLevel level, String s)
+   db(DebugLevel level, String message)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
+      {
          return;
+      }
 
       Object[] data = createData(level, 1);
-      data[data.length - 1] = s;
+      data[data.length - 1] = message;
       MessageFormat format =
          isInstanceDebugger ? log.getDebugInstanceFormat() : log.getDebugFormat();
       log.println(format.format(data));
@@ -672,7 +746,11 @@ SimpleLogger
    public void
    dbo(DebugLevel level, String objectName, Object value)
    {
-      if (value instanceof Object[])
+      if (!log.isOutputting() || !debugLevel.shouldLog(level))
+      {
+         return;
+      }
+      else if (value instanceof Object[])
       {
          dbo(level, objectName, (Object[]) value);
       }
@@ -686,9 +764,6 @@ SimpleLogger
       }
       else
       {
-         if (!log.isOutputting() || !debugLevel.shouldLog(level))
-            return;
-
          dboNoCheck(level, objectName, value);
       }
    }
@@ -723,15 +798,21 @@ SimpleLogger
    dbo(DebugLevel level, String objectName, Object[] val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
+      {
          return;
+      }
 
       StringBuffer stringValue = new StringBuffer("[");
       for (int i = 0; i < val.length; i++)
       {
          if (i == 0)
+         {
             stringValue.append(val[i]);
+         }
          else
+         {
             stringValue.append(", ").append(val[i]);
+         }
       }
       stringValue.append("]");
 
@@ -747,7 +828,9 @@ SimpleLogger
    dbo(DebugLevel level, String objectName, short val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
+      {
          return;
+      }
 
       dboNoCheck(level, objectName, String.valueOf(val));
    }
@@ -761,7 +844,9 @@ SimpleLogger
    dbo(DebugLevel level, String objectName, int val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
+      {
          return;
+      }
 
       dboNoCheck(level, objectName, String.valueOf(val));
    }
@@ -775,9 +860,11 @@ SimpleLogger
    dbo(DebugLevel level, String objectName, long val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
+      {
          return;
+      }
 
-      dboNoCheck(level, objectName,String.valueOf(val));
+      dboNoCheck(level, objectName, String.valueOf(val));
    }
 
    /**
@@ -789,7 +876,9 @@ SimpleLogger
    dbo(DebugLevel level, String objectName, boolean val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
+      {
          return;
+      }
 
       dboNoCheck(level, objectName, String.valueOf(val));
    }
@@ -803,7 +892,9 @@ SimpleLogger
    dbo(DebugLevel level, String objectName, float val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
+      {
          return;
+      }
 
       dboNoCheck(level, objectName, String.valueOf(val));
    }
@@ -817,7 +908,9 @@ SimpleLogger
    dbo(DebugLevel level, String objectName, double val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
+      {
          return;
+      }
 
       dboNoCheck(level, objectName, String.valueOf(val));
    }
@@ -831,7 +924,9 @@ SimpleLogger
    dbo(DebugLevel level, String objectName, byte val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
+      {
          return;
+      }
 
       dboNoCheck(level, objectName, toString(val));
    }
@@ -845,7 +940,9 @@ SimpleLogger
    dbo(DebugLevel level, String objectName, byte[] val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
+      {
          return;
+      }
 
       dboNoCheck(level, objectName, toString(val));
    }
@@ -859,7 +956,9 @@ SimpleLogger
    dbo(DebugLevel level, String objectName, char val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
+      {
          return;
+      }
 
       dboNoCheck(level, objectName, String.valueOf(val));
    }
@@ -873,14 +972,16 @@ SimpleLogger
    dbo(DebugLevel level, String objectName, char[] val)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
+      {
          return;
+      }
 
       dboNoCheck(level, objectName, String.valueOf(val));
    }
 
    /**
-    * Convenience method for logging an object's name and value at the
-    * {@link DebugLevel#L4_INFO Info} level.
+    * Convenience method for logging an object's name and value at the {@link DebugLevel#L4_INFO
+    * Info} level.
     *
     * @see #dbo(DebugLevel,String,Object)
     */
@@ -891,8 +992,8 @@ SimpleLogger
    }
 
    /**
-    * Convenience method for logging a <code>boolean</code>'s name and value at the
-    * {@link DebugLevel#L4_INFO Info} level.
+    * Convenience method for logging a <code>boolean</code>'s name and value at the {@link
+    * DebugLevel#L4_INFO Info} level.
     *
     * @see #dbo(DebugLevel,String,boolean)
     */
@@ -1036,7 +1137,9 @@ SimpleLogger
    dbe(DebugLevel level, Throwable t)
    {
       if (!log.isOutputting() || !debugLevel.shouldLog(level))
+      {
          return;
+      }
 
       Object[] data = createData(level, 1);
       data[data.length - 1] = t;
@@ -1093,7 +1196,9 @@ SimpleLogger
    entry(String methodName)
    {
       if (!log.isOutputting() || !tracing)
+      {
          return;
+      }
 
       Object[] data = createData(DebugLevel.FAKE_TRACE, 1);
       data[data.length - 1] = methodName;
@@ -1112,7 +1217,9 @@ SimpleLogger
    exit(String methodName)
    {
       if (!log.isOutputting() || !tracing)
+      {
          return;
+      }
 
       Object[] data = createData(DebugLevel.FAKE_TRACE, 1);
       data[data.length - 1] = methodName;
@@ -1145,16 +1252,24 @@ SimpleLogger
    toString(byte[] bytes)
    {
       if (bytes == null)
+      {
          return "null";
+      }
 
       StringBuffer buf = new StringBuffer(bytes.length * 4);
       buf.append("0x[");
       boolean first = true;
       for (int i = 0; i < bytes.length; i++)
+      {
          if (first && !(first = false))
+         {
             buf.append(byteString(bytes[i]));
+         }
          else
+         {
             buf.append(", ").append(byteString(bytes[i]));
+         }
+      }
       buf.append(']');
       return buf.toString();
    }
