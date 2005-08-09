@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <!--
-$Id: build.xml,v 1.7 2005-08-09 10:38:10 grlea Exp $
+$Id: build.xml,v 1.8 2005-08-09 10:57:41 grlea Exp $
 Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,7 +50,7 @@ limitations under the License.
 
    <property name="commonsAdapter-sourceDir" value="adapters/commons-logging/src"/>
    <property name="commonsAdapter-classesDestination" value="${tempDir}/adapters/commons/classes"/>
-   <property name="commonsAdapter-codeJar" value="${releaseDir}/${ant.project.name}-commons-logging.jar"/>
+   <property name="commonsAdapter-codeJar" value="${releaseDir}/adapters/${ant.project.name}-commons-logging.jar"/>
 
    <path id="commonsAdapter-classpath">
       <path path="${classesDestination}"/>
@@ -59,7 +59,7 @@ limitations under the License.
 
    <property name="slf4jImplementation-sourceDir" value="adapters/slf4j/src"/>
    <property name="slf4jImplementation-classesDestination" value="${tempDir}/adapters/slf4j/classes"/>
-   <property name="slf4jImplementation-codeJar" value="${releaseDir}/${ant.project.name}-slf4j.jar"/>
+   <property name="slf4jImplementation-codeJar" value="${releaseDir}/adapters/${ant.project.name}-slf4j.jar"/>
 
    <path id="slf4jImplementation-classpath">
       <path path="${classesDestination}"/>
@@ -169,6 +169,8 @@ limitations under the License.
       </copy>
       <copy file="${libDir}/slf4j/license.html"
             tofile="${slf4jImplementation-classesDestination}/meta-inf/slf4j/slf4j-license.html" flatten="true"/>
+      <copy file="${libDir}/slf4j/license.html"
+            tofile="${releaseDir}/adapters/slf4j-license.html" flatten="true"/>
 
    </target>
 
