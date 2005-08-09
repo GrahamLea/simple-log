@@ -9,7 +9,7 @@ CHANGE LOG
 
 1.7
 
-   + Issue 9  (RFE): Provide connections to commons-logging and UGLI
+   + Issue 9  (RFE): Provide connections to commons-logging and SLF4J
    + Issue 17 (RFE): Better Documentation of Properties File
    + Issue 19 (RFE): Allow debug level and trace configuration by instanceId
    + Issue 20 (BUG): Explicitly Set Writer overridden on reload

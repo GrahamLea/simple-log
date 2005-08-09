@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <!--
-$Id: build.xml,v 1.6 2005-08-08 14:37:39 grlea Exp $
+$Id: build.xml,v 1.7 2005-08-09 10:38:10 grlea Exp $
 Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,7 +31,7 @@ limitations under the License.
    <property name="sourceDir" value="${basedir}/src"/>
    <property name="etcDir" value="${basedir}/etc"/>
    <property name="libDir" value="${basedir}/lib"/>
-   <property name="javadocPackages" value="org.grlea.*"/>
+   <property name="javadocPackages" value="org.grlea.*,org.slf4j.*"/>
 
    <!-- Classpath -->
    <path id="classpath">
@@ -54,7 +54,15 @@ limitations under the License.
 
    <path id="commonsAdapter-classpath">
       <path path="${classesDestination}"/>
-      <fileset dir="${libDir}" includes="commons-logging-api.jar" />
+      <fileset dir="${libDir}" includes="commons-logging/commons-logging-api.jar" />
+   </path>
+
+   <property name="slf4jImplementation-sourceDir" value="adapters/slf4j/src"/>
+   <property name="slf4jImplementation-classesDestination" value="${tempDir}/adapters/slf4j/classes"/>
+   <property name="slf4jImplementation-codeJar" value="${releaseDir}/${ant.project.name}-slf4j.jar"/>
+
+   <path id="slf4jImplementation-classpath">
+      <path path="${classesDestination}"/>
    </path>
 
    <!-- Targets -->
@@ -66,6 +74,7 @@ limitations under the License.
       <mkdir dir="${releaseDir}"/>
       <mkdir dir="${javadocDir}"/>
       <mkdir dir="${commonsAdapter-classesDestination}"/>
+      <mkdir dir="${slf4jImplementation-classesDestination}"/>
    </target>
 
    <target name="ZipRelease" depends="MakeRelease">
@@ -84,6 +93,7 @@ limitations under the License.
    <target name="Clean">
       <delete dir="${classesDestination}"/>
       <delete dir="${commonsAdapter-classesDestination}"/>
+      <delete dir="${slf4jImplementation-classesDestination}"/>
       <delete dir="${releaseDir}"/>
    </target>
 
@@ -97,6 +107,10 @@ limitations under the License.
       <jar jarfile="${commonsAdapter-codeJar}"
            basedir="${commonsAdapter-classesDestination}"
            includes="${applicationRootDir}/**/*.class,meta-inf/**"/>
+
+      <jar jarfile="${slf4jImplementation-codeJar}"
+           basedir="${slf4jImplementation-classesDestination}"
+           includes="**/*.class,meta-inf/**"/>
 
    </target>
 
@@ -112,6 +126,12 @@ limitations under the License.
              destdir="${commonsAdapter-classesDestination}"
              includes="${applicationRootDir}/**/*.java">
          <classpath refid="commonsAdapter-classpath"/>
+      </javac>
+
+      <javac srcdir="${slf4jImplementation-sourceDir}"
+             destdir="${slf4jImplementation-classesDestination}"
+             includes="**/*.java">
+         <classpath refid="slf4jImplementation-classpath"/>
       </javac>
 
    </target>
@@ -139,9 +159,17 @@ limitations under the License.
       <copy todir="${classesDestination}/meta-inf/${ant.project.name}" flatten="true">
          <fileset dir="${releaseDir}" includes="README.txt,ChangeLog.txt,LICENSE.txt,VERSION.txt"/>
       </copy>
+
       <copy todir="${commonsAdapter-classesDestination}/meta-inf/${ant.project.name}" flatten="true">
          <fileset dir="${releaseDir}" includes="README.txt,ChangeLog.txt,LICENSE.txt,VERSION.txt"/>
       </copy>
+
+      <copy todir="${slf4jImplementation-classesDestination}/meta-inf/${ant.project.name}" flatten="true">
+         <fileset dir="${releaseDir}" includes="README.txt,ChangeLog.txt,LICENSE.txt,VERSION.txt"/>
+      </copy>
+      <copy file="${libDir}/slf4j/license.html"
+            tofile="${slf4jImplementation-classesDestination}/meta-inf/slf4j/slf4j-license.html" flatten="true"/>
+
    </target>
 
    <target name="CompileJavadoc" depends="Init">
@@ -153,6 +181,7 @@ limitations under the License.
          <sourcepath>
             <path path="${sourceDir}"/>
             <path path="${commonsAdapter-sourceDir}"/>
+            <path path="${slf4jImplementation-sourceDir}"/>
          </sourcepath>
 
          <group>
@@ -162,7 +191,13 @@ limitations under the License.
 
          <group>
             <title>Adapters</title>
-            <package name="org.grlea.log.adapters"/>
+            <package name="org.grlea.log.adapters.*"/>
+         </group>
+
+         <group>
+            <title>SLF4J Framework</title>
+            <package name="org.slf4j"/>
+            <package name="org.slf4j.impl"/>
          </group>
 
          <header>
@@ -185,6 +220,7 @@ limitations under the License.
    <target name="Cleanup">
       <delete dir="${classesDestination}" failonerror="false"/>
       <delete dir="${commonsAdapter-classesDestination}" failonerror="false"/>
+      <delete dir="${slf4jImplementation-classesDestination}" failonerror="false"/>
       <delete dir="${tempDir}" failonerror="false"/>
    </target>
 
