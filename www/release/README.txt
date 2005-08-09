@@ -1,7 +1,7 @@
 
                                Simple  Log
 
-                               Version 1.6.1
+                               Version 1.7
 
                       http://simple-log.dev.java.net
 
@@ -37,12 +37,38 @@ To use Simple Log in your application, you will need to:
    A template properties file is included with the release.
 
 
+COMMONS LOGGING
+
+If you plan use Simple Log's CommonsLoggingAdapter with Jakarta Commons Logging, you will also need
+to:
+
+1. Include the simple-log-commons-logging.jar in your classpath.
+
+2. Set the system property:   org.apache.commons.logging.Log
+                        to:   org.grlea.log.adapters.commons.CommonsLoggingAdapter
+
+You should also read the documentation of CommonsLoggingAdapter very carefully, as it contains
+important information about how the commons-logging API maps to a Simple Log configuration.
+
+
+SLF4J
+
+If you plan use Simple Log's Slf4jAdapter with SLF4J, you will also need to:
+
+1. Include the simple-log-slf4j.jar in your classpath.
+
+You should also read the documentation of Slf4jAdapter very carefully, as it contains important
+information about how the SLF4J API maps to a Simple Log configuration.
+
+
 STATUS
 
 Version 1.0 was basically a major refactor of my own similar logger that I've been using for years.
 
-Version 1.6 has continued to improve Simple Log by implementing a few great suggestions from users
-and fixing a few obscure bugs.
+Version 1.7 continues the tradition of implementing a good suggestion from a user and making a
+release! I've also started implementing some of the outstanding issues,so this release now comes
+with adapters for commons-logging and SLF4J (which explains why the release doubled in size).
+
 See ChangeLog.txt for a list of new features and completed issues.
 
 Users should not that the configuration files for version 1.6 are incompatible with previous
@@ -61,6 +87,7 @@ Some features that might be added in the future *if people ask for them* are:
 * Programmatic access to the log formats
 * Ability to turn logging off for a class/package (rather than just down to "Fatal")
 * Option to use a different filename/location for the default SimpleLog instance's properties
+* Log file rolling
 
 If you think you need one of these features, or some other feature, please feel free to contact me
 and I should be able to hack it up within a couple of days (assuming I haven't gone camping).

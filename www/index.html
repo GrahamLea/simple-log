@@ -1,3 +1,6 @@
+<!DOCTYPE html
+   PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 
 <head>
@@ -12,12 +15,12 @@
          color: #666666;
          margin-top: 50;
       }
-      p.output {
+      span.output {
          font-size: smaller;
          font-family: monospace;
       }
    </style>
-   <script language="javascript">
+   <script type="text/javascript">
       if (document.title)
          document.title = "Simple Log: The Simple Way to Log";
    </script>
@@ -53,7 +56,7 @@ a viable alternative for most applications that need logging.
 <p>
 Simple Log is a true "Tiny Tool".
 <br><br>
-With only 3 classes in a 20.7K JAR, this tool will handle the logging needs of most small- to
+With only 3 classes in a 21.8K JAR, this tool will handle the logging needs of most small- to
 large-sized projects, but with an almost non-existent learning curve.
 </p>
 
@@ -79,8 +82,7 @@ Simple Log is written and maintained by
 Here are some of the features of Simple Log:
 </p>
 
-<p>
-<b>Core Features</b>
+<p><b>Core Features</b></p>
 
 <ul>
    <li>Package-based, hierarchical inheritance of debug levels and trace flags</li>
@@ -89,70 +91,70 @@ Here are some of the features of Simple Log:
    <li>API support for logging primitives</li>
    <li>Ability to turn tracing on and off independent of the debug level</li>
    <li>Convenience methods to reduce the amount of code needed to log</li>
+   <li>Documentation that's complete but brief, embedded in the configuration file</li>
 </ul>
 
-<b>Optional Features (<i>i.e. turned off by default</i>):</b>
+<p><b>Optional Features (<i>i.e. turned off by default</i>):</b></p>
 
 <ul>
    <li>Send log output to a file</li>
    <li>Generate log file names containing the date</li>
    <li>Append or overwrite log file output</li>
    <li>Reloading configuration</li>
-   <li>Customisable log format</li>
+   <li>Customisable log formats</li>
    <li>Customisable date format (applied to all log formats)</li>
-   <li>Instance-based logging records (as opposed to class-based)</li>
+   <li>Instance-based logging records (as opposed to class-based), complete with instance-specific log levels</li>
    <li>Programmatic access to configuration (might have to write code here!)</li>
 </ul>
-</p>
+
+<p><b>Integration Features:</b></p>
+
+<ul>
+   <li>
+      CommonsLoggingAdapter available for integration with
+      <a href="http://jakarta.apache.org/commons/logging">Jakarta commons-logging</a>
+   </li>
+   <li>
+      SLF4J implementation available for integration with <a href="http://www.slf4j.org/">SLF4J</a>
+   </li>
+</ul>
 
 <hr>
 
 <p>
-Here are some of the features Simple Log <b>does not</b> contain (on purpose):
+   Here are some of the features Simple Log <b>does not</b> contain (on purpose):
+</p>
 <ul>
-   <li>
-      An XML Configuration File.<br>
+   <li style="padding-bottom: 1em;">
+      An XML Configuration File<br>
       <i>The properties configuration file is simple and easier to read and maintain than XML.</i>
    </li>
-      <br>
-      <br>
-   <li>
-      Any concept of a "Logging Pipeline" or "Log Event" objects.<br>
+   <li style="padding-bottom: 1em;">
+      Any concept of a "Logging Pipeline" or "Log Event" objects<br>
       <i>As well as consuming memory unnecessarily, such architectures are overkill for the simple
       level-based logging that most applications require.</i>
    </li>
-      <br>
-      <br>
-   <li>
+   <li style="padding-bottom: 1em;">
       Extendable Debug Levels<br>
       <i>Really, is seven not enough!?</i>
    </li>
-      <br>
-      <br>
-   <li>
+   <li style="padding-bottom: 1em;">
       Custom Filters<br>
       <i>All messages are either logged or not based on the level of the message compared to the
       level assigned to the class that created it. If you need something fancier, this is not the
       package for you.</i>
    </li>
-      <br>
-      <br>
-   <li>
+   <li style="padding-bottom: 1em;">
       Custom Formatters/Renderers<br>
       <i>The format of log messages can be controlled, from the properties file, using the extremely
       flexible java.text.MessageFormat.</i>
    </li>
-      <br>
-      <br>
-   <li>
+   <li style="padding-bottom: 1em;">
       A 200-page Manual<br>
       <i>If you can't understand the javadoc for 3 classes, you probably shouldn't be programming.
       </i>
    </li>
-      <br>
-      <br>
 </ul>
-</p>
 
 
 <h3>Sample Code</h3>
@@ -211,7 +213,7 @@ HelloWorld
 The default output from running the class (with it's debug level set to 7 and tracing on) follows.
 <br>
 Remember that the format of the output is configurable.<br>
-<p class="output">
+<span class="output">
 Fri 2004/11/26 21:10:32.618|&gt;&gt;&gt;|main|HelloWorld|main()<br>
 Fri 2004/11/26 21:10:32.618|&nbsp;&nbsp;&nbsp;|main|HelloWorld|About to print 'Hello World!'<br>
 Fri 2004/11/26 21:10:32.618|---|main|HelloWorld|helloWorldString|'Hello World!'<br>
@@ -221,7 +223,7 @@ Fri 2004/11/26 21:10:32.618|&nbsp;&nbsp;&nbsp;|main|HelloWorld|Printed 'Hello Wo
 Fri 2004/11/26 21:10:32.618|&nbsp;&nbsp;&nbsp;|main|HelloWorld|Did you get that?<br>
 Fri 2004/11/26 21:10:32.618|&nbsp;&nbsp;&nbsp;|main|HelloWorld|This example is very contrived.<br>
 Fri 2004/11/26 21:10:32.618|&lt;&lt;&lt;|main|HelloWorld|main()<br>
-</p>
+</span>
 </p>
 
 <h4>Configuration</h4>
@@ -231,14 +233,13 @@ Simple Log is configured simply by having a file called 'simpelog.properties' in
 An empty file will be enough to get you logging at the Info level for all classes.<br>
 The example properties file that comes with the release contains documentation about all the
 properties that can be used to configure Simple Log.<br>
-You can <a href="release/simplelog.properties" target="_blank">view it here</a>.
+You can view it here: <a href="release/simplelog.properties" target="_blank">simplelog.properties</a>.
 </p>
 
 <br>
 <br>
 <p class="copyright">Copyright (c) 2004-2005, Graham Lea. All rights reserved.</p>
 
-</div>
 </body>
 </html>
 
