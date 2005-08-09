@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <!--
-$Id: build.xml,v 1.8 2005-08-09 10:57:41 grlea Exp $
+$Id: build.xml,v 1.9 2005-08-09 12:52:31 grlea Exp $
 Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -75,6 +75,23 @@ limitations under the License.
       <mkdir dir="${javadocDir}"/>
       <mkdir dir="${commonsAdapter-classesDestination}"/>
       <mkdir dir="${slf4jImplementation-classesDestination}"/>
+   </target>
+
+   <target name="DoRelease" depends="DoRelease-Part1,ZipRelease">
+      <copy file="${releaseZip}" todir="www/release"/>
+   </target>
+
+   <target name="DoRelease-Part1" depends="MakeRelease">
+      <copy todir="www/release">
+         <fileset dir="${releaseDir}">
+            <include name="simple-log.jar"/>
+            <include name="simplelog.properties"/>
+            <include name="ChangeLog.txt"/>
+            <include name="LICENSE.txt"/>
+            <include name="README.txt"/>
+            <include name="adapters/*"/>
+         </fileset>
+      </copy>
    </target>
 
    <target name="ZipRelease" depends="MakeRelease">
