@@ -1,6 +1,6 @@
 package org.grlea.log.test.commons;
 
-// $Id: SimpleCommonsLoggingClass.java,v 1.1 2005-08-08 14:13:44 grlea Exp $
+// $Id: SimpleCommonsLoggingClass.java,v 1.2 2005-08-09 10:11:29 grlea Exp $
 // Copyright (c) 2004 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
  * <p></p>
  *
  * @author Graham Lea
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class
 SimpleCommonsLoggingClass
@@ -36,6 +36,12 @@ SimpleCommonsLoggingClass
    SimpleCommonsLoggingClass()
    {
       log = LogFactory.getLog(getClass());
+   }
+
+   public
+   SimpleCommonsLoggingClass(String loggerName)
+   {
+      log = LogFactory.getLog(loggerName);
    }
 
    public Log

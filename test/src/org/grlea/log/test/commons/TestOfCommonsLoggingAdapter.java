@@ -1,6 +1,6 @@
 package org.grlea.log.test.commons;
 
-// $Id: TestOfCommonsLoggingAdapter.java,v 1.1 2005-08-08 14:13:45 grlea Exp $
+// $Id: TestOfCommonsLoggingAdapter.java,v 1.2 2005-08-09 10:11:29 grlea Exp $
 // Copyright (c) 2004 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,27 +16,29 @@ package org.grlea.log.test.commons;
 // limitations under the License.
 
 
-import org.grlea.log.adapters.commons.CommonsLoggingAdapter;
-import org.grlea.log.SimpleLog;
 import org.grlea.log.DebugLevel;
+import org.grlea.log.SimpleLog;
+import org.grlea.log.adapters.commons.CommonsLoggingAdapter;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
-import java.io.BufferedReader;
 import java.io.PrintWriter;
-import java.util.Properties;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Properties;
 
 /**
  * <p>Tests the public interface of {@link CommonsLoggingAdapter}.</p>
  *
  * @author Graham Lea
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class
 TestOfCommonsLoggingAdapter
@@ -97,7 +99,33 @@ extends TestCase
          "   |main|SimpleCommonsLoggingClass|Test of Info",
       };
 
-      checkOutput(expectedOutputLineParts);
+      checkOutput(expectedOutputLineParts, true);
+   }
+
+   public void
+   testFatalLogging()
+   throws Exception
+   {
+      Properties logProperties = getLogProperties(SimpleLog.defaultInstance());
+      logProperties.setProperty(SimpleCommonsLoggingClass.class.getName(), "Fatal");
+      reconfigureLoggers();
+      new SimpleCommonsLoggingClass().doSomeLogging();
+
+      String[] expectedOutputLineParts =
+      {
+         "   |main|SimpleCommonsLoggingClass|Test of Fatal",
+      };
+
+      checkOutput(expectedOutputLineParts, true);
+   }
+
+   private void
+   reconfigureLoggers()
+   throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
+   {
+      Method reconfigureMethod = SimpleLog.class.getDeclaredMethod("reconfigureAllLoggers", new Class[0]);
+      reconfigureMethod.setAccessible(true);
+      reconfigureMethod.invoke(SimpleLog.defaultInstance(), new Object[0]);
    }
 
    public void
@@ -114,7 +142,7 @@ extends TestCase
          "   |main|SimpleCommonsLoggingClass|OUT: doSomeTracing()",
       };
 
-      checkOutput(expectedOutputLineParts);
+      checkOutput(expectedOutputLineParts, true);
    }
 
    public void
@@ -124,9 +152,62 @@ extends TestCase
       SimpleLog.defaultInstance().setDefaultLevel(DebugLevel.L5_DEBUG);
       new SimpleCommonsLoggingClass().doSomeTracing();
 
-      checkOutput(new String[0]);
+      checkOutput(new String[0], true);
    }
 
+   public void
+   testLogginAnError()
+   throws Exception
+   {
+      SimpleLog.defaultInstance().setDefaultLevel(DebugLevel.L4_INFO);
+      new SimpleCommonsLoggingClass().logAnError();
+
+      String[] expectedOutputLineParts =
+      {
+         "   |main|SimpleCommonsLoggingClass|Test of Exception",
+         "***|main|SimpleCommonsLoggingClass|java.lang.Throwable: Test Message",
+      };
+
+      checkOutput(expectedOutputLineParts, false);
+   }
+
+   public void
+   testLoggerNameThatIsNotAClassName()
+   throws Exception
+   {
+      String loggerName = "MadeUpLoggerName";
+      SimpleLog.defaultInstance().setDefaultLevel(DebugLevel.L4_INFO);
+      new SimpleCommonsLoggingClass(loggerName).doSomeLogging();
+
+      String[] expectedOutputLineParts =
+      {
+         "   |main|Log[MadeUpLoggerName]|Test of Fatal",
+         "   |main|Log[MadeUpLoggerName]|Test of Error",
+         "   |main|Log[MadeUpLoggerName]|Test of Warn",
+         "   |main|Log[MadeUpLoggerName]|Test of Info",
+      };
+
+      checkOutput(expectedOutputLineParts, true);
+   }
+
+   public void
+   testConfiguringLoggerNameThatIsNotAClassName()
+   throws Exception
+   {
+      String loggerName = "MadeUpLoggerName";
+      getLogProperties(SimpleLog.defaultInstance())
+         .setProperty("org.apache.commons.logging.Log.MadeUpLoggerName", "Error");
+      reconfigureLoggers();
+      new SimpleCommonsLoggingClass(loggerName).doSomeLogging();
+
+      String[] expectedOutputLineParts =
+      {
+         "   |main|Log[MadeUpLoggerName]|Test of Fatal",
+         "   |main|Log[MadeUpLoggerName]|Test of Error",
+      };
+
+      checkOutput(expectedOutputLineParts, true);
+   }
 
    /**
     * Returns a test suite that will automatically run all test methods in this
@@ -140,7 +221,7 @@ extends TestCase
 
 
    protected void
-   checkOutput(String[] expectedOutputLineParts)
+   checkOutput(String[] expectedOutputLineParts, boolean failWhenExtraLinesDetected)
    throws IOException
    {
       System.err.flush();
@@ -155,7 +236,10 @@ extends TestCase
       {
          if (lineNumber >= expectedOutputLineParts.length)
          {
-            fail("More output lines than expected.\nExtra line: " + outputLine);
+            if (failWhenExtraLinesDetected)
+               fail("More output lines than expected.\nExtra line: " + outputLine);
+            else
+               break;
          }
 
          String expectedOutputLinePart = expectedOutputLineParts[lineNumber];
