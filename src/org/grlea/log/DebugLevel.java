@@ -1,10 +1,10 @@
 package org.grlea.log;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
-// $Id: DebugLevel.java,v 1.6 2005-04-26 12:52:26 grlea Exp $
+// $Id: DebugLevel.java,v 1.7 2005-11-09 21:48:22 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,7 @@ import java.util.Collections;
  * <p>Note that tracing is not related to the debug levels, as tracing is controlled
  * independently.</p>
  *
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  * @author $Author: grlea $
  */
 public final class
