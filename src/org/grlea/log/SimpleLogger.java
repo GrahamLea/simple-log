@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLogger.java,v 1.10 2005-08-08 14:24:45 grlea Exp $
+// $Id: SimpleLogger.java,v 1.11 2005-11-09 21:54:15 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -100,7 +100,7 @@ import java.util.Date;
  * </ul>
  * </p>
  *
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  * @author $Author: grlea $
  */
 public class
@@ -530,7 +530,7 @@ SimpleLogger
    public boolean
    wouldLog(DebugLevel level)
    {
-      return getDebugLevel().shouldLog(level);
+      return log.isOutputting() && getDebugLevel().shouldLog(level);
    }
 
    /**
@@ -746,25 +746,24 @@ SimpleLogger
    public void
    dbo(DebugLevel level, String objectName, Object value)
    {
-      if (!log.isOutputting() || !debugLevel.shouldLog(level))
+      if (wouldLog(level))
       {
-         return;
-      }
-      else if (value instanceof Object[])
-      {
-         dbo(level, objectName, (Object[]) value);
-      }
-      else if (value instanceof byte[])
-      {
-         dbo(level, objectName, (byte[]) value);
-      }
-      else if (value instanceof char[])
-      {
-         dbo(level, objectName, (char[]) value);
-      }
-      else
-      {
-         dboNoCheck(level, objectName, value);
+         if (value instanceof Object[])
+         {
+            dbo(level, objectName, (Object[]) value);
+         }
+         else if (value instanceof byte[])
+         {
+            dbo(level, objectName, (byte[]) value);
+         }
+         else if (value instanceof char[])
+         {
+            dbo(level, objectName, (char[]) value);
+         }
+         else
+         {
+            dboNoCheck(level, objectName, value);
+         }
       }
    }
 
