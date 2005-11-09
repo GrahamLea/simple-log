@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <!--
-$Id: build.xml,v 1.9 2005-08-09 12:52:31 grlea Exp $
+$Id: build.xml,v 1.10 2005-11-09 21:56:45 grlea Exp $
 Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,14 +39,23 @@ limitations under the License.
 
    <!-- Outputs -->
    <property name="tempDir" value="${basedir}/temp"/>
-   <property name="classesDestination" value="${tempDir}/classes"/>
-   <property name="releaseDir" value="${basedir}/release/${product.version}"/>
-   <property name="codeJar" value="${releaseDir}/${ant.project.name}.jar"/>
    <property name="sourceZip" value="${releaseDir}/${ant.project.name}-src.zip"/>
    <property name="javadocDir" value="${releaseDir}/doc/api"/>
+
+   <property name="releaseDir" value="${basedir}/release/${product.version}"/>
    <property name="releaseName" value="${ant.project.name}-${product.version}"/>
    <property name="releaseZipName" value="${releaseName}.zip"/>
    <property name="releaseZip" value="${releaseDir}/${releaseZipName}"/>
+
+   <property name="classesDestination" value="${tempDir}/classes"/>
+   <property name="codeJar" value="${releaseDir}/${ant.project.name}.jar"/>
+
+   <property name="rollover-classesDestination" value="${tempDir}/rollover/classes"/>
+   <property name="rollover-codeJar" value="${releaseDir}/${ant.project.name}-rollover.jar"/>
+
+   <path id="rollover-classpath">
+      <path path="${classesDestination}"/>
+   </path>
 
    <property name="commonsAdapter-sourceDir" value="adapters/commons-logging/src"/>
    <property name="commonsAdapter-classesDestination" value="${tempDir}/adapters/commons/classes"/>
@@ -70,9 +79,10 @@ limitations under the License.
    <target name="Init">
       <tstamp/>
       <mkdir dir="${tempDir}"/>
-      <mkdir dir="${classesDestination}"/>
       <mkdir dir="${releaseDir}"/>
       <mkdir dir="${javadocDir}"/>
+      <mkdir dir="${classesDestination}"/>
+      <mkdir dir="${rollover-classesDestination}"/>
       <mkdir dir="${commonsAdapter-classesDestination}"/>
       <mkdir dir="${slf4jImplementation-classesDestination}"/>
    </target>
@@ -85,6 +95,7 @@ limitations under the License.
       <copy todir="www/release">
          <fileset dir="${releaseDir}">
             <include name="simple-log.jar"/>
+            <include name="simple-log-rollover.jar"/>
             <include name="simplelog.properties"/>
             <include name="ChangeLog.txt"/>
             <include name="LICENSE.txt"/>
@@ -109,6 +120,7 @@ limitations under the License.
 
    <target name="Clean">
       <delete dir="${classesDestination}"/>
+      <delete dir="${rollover-classesDestination}"/>
       <delete dir="${commonsAdapter-classesDestination}"/>
       <delete dir="${slf4jImplementation-classesDestination}"/>
       <delete dir="${releaseDir}"/>
@@ -118,7 +130,13 @@ limitations under the License.
 
    <target name="BuildCodeJars" depends="CompileJavas, CopyResources">
 
-      <jar jarfile="${codeJar}" basedir="${classesDestination}"
+      <jar jarfile="${codeJar}"
+           basedir="${classesDestination}"
+           includes="${applicationRootDir}/**/*.class,meta-inf/**"
+           excludes="${applicationRootDir}/rollover/*.class"/>
+
+      <jar jarfile="${rollover-codeJar}"
+           basedir="${rollover-classesDestination}"
            includes="${applicationRootDir}/**/*.class,meta-inf/**"/>
 
       <jar jarfile="${commonsAdapter-codeJar}"
@@ -134,9 +152,16 @@ limitations under the License.
    <target name="CompileJavas" depends="Clean,Init">
 
       <javac srcdir="${sourceDir}"
-         destdir="${classesDestination}"
-         includes="${applicationRootDir}/**/*.java">
+         destdir="${classesDestination}">
+         <include name="${applicationRootDir}/*.java"/>
+         <exclude name="${applicationRootDir}/rollover/*.java"/>
          <classpath refid="classpath"/>
+      </javac>
+
+      <javac srcdir="${sourceDir}"
+         destdir="${rollover-classesDestination}"
+         includes="${applicationRootDir}/**/rollover/*.java">
+         <classpath refid="rollover-classpath"/>
       </javac>
 
       <javac srcdir="${commonsAdapter-sourceDir}"
@@ -167,14 +192,20 @@ limitations under the License.
    </target>
 
    <target name="CopyResources" depends="Init">
+
       <copy todir="${releaseDir}" flatten="true">
          <fileset dir="${etcDir}" includes="simplelog.properties,README.txt,ChangeLog.txt,LICENSE.txt,VERSION.txt"/>
          <filterset>
             <filter token="VERSION" value="${product.version}" />
           </filterset>
       </copy>
+
       <copy todir="${classesDestination}/meta-inf/${ant.project.name}" flatten="true">
          <fileset dir="${releaseDir}" includes="README.txt,ChangeLog.txt,LICENSE.txt,VERSION.txt"/>
+      </copy>
+
+      <copy todir="${rollover-classesDestination}/meta-inf/${ant.project.name}" flatten="true">
+         <fileset dir="${releaseDir}" includes="VERSION.txt"/>
       </copy>
 
       <copy todir="${commonsAdapter-classesDestination}/meta-inf/${ant.project.name}" flatten="true">
