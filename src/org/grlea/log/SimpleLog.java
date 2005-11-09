@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.12 2005-08-08 14:31:00 grlea Exp $
+// $Id: SimpleLog.java,v 1.13 2005-11-09 21:56:13 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,12 +15,17 @@ package org.grlea.log;
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import org.grlea.log.rollover.RolloverManager;
+import org.grlea.log.rollover.RolloverManager.ErrorReporter;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -32,13 +37,13 @@ import java.text.MessageFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Date;
-import java.util.Enumeration;
 
 /**
  * <p>Controls the configuration and formatting of a group of <code>SimpleLogger</code>s.</p>
@@ -48,7 +53,7 @@ import java.util.Enumeration;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  * @author $Author: grlea $
  */
 public final class
@@ -131,6 +136,9 @@ SimpleLog
    /** The default value for the print stack traces property. */
    private static final String PRINT_STACK_TRACES_DEFAULT = "true";
 
+   /** The property key for the rollover strategy. */
+   private static final String KEY_ROLLOVER_STRATEGY = "simplelog.rollover";
+
    /**
     * The period (in milliseconds) between checks of the properties file (must be a FILE, not inside
     * a JAR).
@@ -151,6 +159,9 @@ SimpleLog
     * The string to use to print a new line between the debug exception line and the stack trace.
     */
    private static final String LINE_SEP = System.getProperty("line.separator");
+
+   /** The class name of the RolloverManager. */
+   private static final String ROLLOVER_WRITER_CLASS = "org.grlea.log.rollover.RolloverManager";
 
    // Default Message Formats
    //..........................................................................................
@@ -204,6 +215,9 @@ SimpleLog
 
    /** The destination of this <code>SimpleLog</code>'s output. */
    private PrintWriter out;
+
+   /** The writer that the print writer is printing to. */
+   private Writer currentWriter;
 
    /** Indicates whether the output writer has been set programatically. */
    private boolean outputSetProgramatically = false;
@@ -383,6 +397,7 @@ SimpleLog
       InputStream inputStream = configurationSource.openStream();
       Properties newProperties = new Properties();
       newProperties.load(inputStream);
+      inputStream.close();
 
       properties.clear();
       properties.putAll(newProperties);
@@ -397,69 +412,41 @@ SimpleLog
    {
       if (!outputSetProgramatically)
       {
-         // Read the log file
-         String newLogFile = properties.getProperty(KEY_LOG_FILE);
-
-         boolean interpretName = INTREPRET_NAME_DEFAULT;
-         String interpretNameStr = properties.getProperty(KEY_INTERPRET_NAME);
-         // The strategy here is to only turn interpret off if the property definitely says false
-         if (interpretNameStr != null)
-            interpretName = !(interpretNameStr.trim().equalsIgnoreCase("false"));
-
-         // Substitue the date into the name if necessary
-         boolean newLogFileNotNull = newLogFile != null;
-         boolean nameContainsBraces = newLogFileNotNull && newLogFile.indexOf('{') != -1;
-         if (newLogFileNotNull && nameContainsBraces && interpretName)
+         try
          {
-            try
+            String rolloverStrategyString = properties.getProperty(KEY_ROLLOVER_STRATEGY);
+            boolean useRollover =
+               rolloverStrategyString != null && rolloverStrategyString.trim().length() != 0;
+
+            Writer newWriter;
+
+            if (useRollover)
+               newWriter = configureRolloverWriter();
+            else
+               newWriter = configureFileWriter();
+
+            if (newWriter != currentWriter)
             {
-               MessageFormat logFileNameFormat = new MessageFormat(newLogFile);
-               newLogFile = logFileNameFormat.format(new Object[] {new Date()});
-            }
-            catch (Exception e)
-            {
-               printError("Error generating log file name", e, true);
-               newLogFile = null;
+               out = new PrintWriter(newWriter, true);
+
+               if (currentWriter != null)
+               {
+                  try
+                  {
+                     currentWriter.close();
+                  }
+                  catch (IOException e)
+                  {
+                     printError("Error while closing log file", e, true);
+                  }
+               }
+
+               currentWriter = newWriter;
             }
          }
-
-         // The log file has changed if it used to be null and now isn't, or vice versa...
-         boolean logFileChanged = (logFile == null) != (newLogFile == null);
-         // or it's changed if it wasn't null and still isn't null but the name has changed.
-         logFileChanged |= logFile != null && newLogFileNotNull && !newLogFile.equals(logFile);
-         if (logFileChanged)
+         catch (IOException e)
          {
-            try
-            {
-               if (newLogFile == null)
-               {
-                  out = new PrintWriter(System.err, true);
-                  printWriterGoesToConsole = true;
-               }
-               else
-               {
-                  File file = new File(newLogFile).getAbsoluteFile();
-                  File parentFile = file.getParentFile();
-                  if (parentFile != null)
-                     parentFile.mkdirs();
-
-                  boolean append = APPEND_DEFAULT;
-                  String appendStr = properties.getProperty(KEY_APPEND);
-                  // The strategy here is to only turn append off if the property definitely says
-                  // false
-                  if (appendStr != null)
-                     append = !(appendStr.trim().equalsIgnoreCase("false"));
-
-                  FileWriter fileWriter = new FileWriter(file, append);
-                  out = new PrintWriter(fileWriter, true);
-                  printWriterGoesToConsole = false;
-               }
-               logFile = newLogFile;
-            }
-            catch (IOException e)
-            {
-               printError("Error opening log file for writing", e, true);
-            }
+            printError("Error opening log file for writing", e, true);
          }
       }
 
@@ -560,6 +547,119 @@ SimpleLog
             newProperties.put(key.replace('$', '.'), properties.getProperty(key));
       }
       properties.putAll(newProperties);
+   }
+
+   private Writer
+   configureFileWriter()
+   throws IOException
+   {
+      Writer writer;
+      // Read the log file name
+      String newLogFile = properties.getProperty(KEY_LOG_FILE);
+
+      boolean interpretName = INTREPRET_NAME_DEFAULT;
+      String interpretNameStr = properties.getProperty(KEY_INTERPRET_NAME);
+      // The strategy here is to only turn interpret off if the property definitely says false
+      if (interpretNameStr != null)
+         interpretName = !(interpretNameStr.trim().equalsIgnoreCase("false"));
+
+      // Substitue the date into the name if necessary
+      boolean newLogFileNotNull = newLogFile != null;
+      boolean nameContainsBraces = newLogFileNotNull && newLogFile.indexOf('{') != -1;
+      if (newLogFileNotNull && nameContainsBraces && interpretName)
+      {
+         try
+         {
+            MessageFormat logFileNameFormat = new MessageFormat(newLogFile);
+            newLogFile = logFileNameFormat.format(new Object[] {new Date()});
+         }
+         catch (Exception e)
+         {
+            printError("Error generating log file name", e, true);
+            newLogFile = null;
+         }
+      }
+
+      // The log file has changed if it used to be null and now isn't, or vice versa...
+      boolean logFileChanged = (logFile == null) != (newLogFile == null);
+
+      // or it's changed if it wasn't null and still isn't null but the name has changed.
+      logFileChanged |= logFile != null && newLogFileNotNull && !newLogFile.equals(logFile);
+
+      // or it's changed if rollover was on before (but it's now off if we're in here)
+      boolean rolloverWasInUse =
+         currentWriter != null &&
+         currentWriter.getClass().getName().equals(ROLLOVER_WRITER_CLASS);
+
+      logFileChanged |= rolloverWasInUse;
+
+      if (logFileChanged)
+      {
+         if (newLogFile == null)
+         {
+            writer = new OutputStreamWriter(System.err);
+            printWriterGoesToConsole = true;
+         }
+         else
+         {
+            File file = new File(newLogFile).getAbsoluteFile();
+
+            if (file.isDirectory())
+            {
+               throw new IOException(
+                  "The specified log file name already exists as a directory.");
+            }
+
+            File parentFile = file.getParentFile();
+            if (parentFile != null)
+               parentFile.mkdirs();
+
+            boolean append = APPEND_DEFAULT;
+            String appendStr = properties.getProperty(KEY_APPEND);
+            // The strategy here is to only turn append off if the property definitely says
+            // false
+            if (appendStr != null)
+               append = !(appendStr.trim().equalsIgnoreCase("false"));
+
+            writer = new FileWriter(file, append);
+
+            printWriterGoesToConsole = false;
+         }
+
+         logFile = newLogFile;
+      }
+      else
+      {
+         writer = currentWriter;
+      }
+
+      return writer;
+   }
+
+   private Writer
+   configureRolloverWriter()
+   throws IOException
+   {
+      Writer writer;
+      if (currentWriter != null && currentWriter.getClass().getName().equals(ROLLOVER_WRITER_CLASS))
+      {
+         ((RolloverManager) currentWriter).configure(properties);
+         writer = currentWriter;
+      }
+      else
+      {
+         ErrorReporter errorReporter = new ErrorReporter()
+         {
+            public void
+            error(String description, Throwable t, boolean printExceptionType)
+            {
+               printError(description, t, printExceptionType);
+            }
+         };
+
+         writer = new RolloverManager(properties, errorReporter);
+      }
+      return writer;
    }
 
    /**
