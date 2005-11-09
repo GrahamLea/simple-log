@@ -1,6 +1,6 @@
 package org.grlea.log.test;
 
-// $Id: TestOfDefaultConfiguration.java,v 1.1 2005-08-08 14:13:44 grlea Exp $
+// $Id: TestOfDefaultConfiguration.java,v 1.2 2005-11-09 21:58:48 grlea Exp $
 // Copyright (c) 2004 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@ package org.grlea.log.test;
 // limitations under the License.
 
 
-import org.grlea.log.SimpleLog;
 import org.grlea.log.DebugLevel;
 
 import junit.framework.TestSuite;
@@ -25,7 +24,7 @@ import junit.framework.TestSuite;
  * <p>Tests that logging for instance loggers works and is configurable.</p>
  *
  * @author Graham Lea
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class
 TestOfDefaultConfiguration

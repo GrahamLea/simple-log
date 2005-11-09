@@ -1,6 +1,6 @@
 package org.grlea.log.test;
 
-// $Id: AbstractLoggingTest.java,v 1.1 2005-08-08 14:13:43 grlea Exp $
+// $Id: AbstractLoggingTest.java,v 1.2 2005-11-09 21:58:48 grlea Exp $
 // Copyright (c) 2004 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,20 +19,19 @@ import org.grlea.log.SimpleLog;
 
 import junit.framework.TestCase;
 
-import java.lang.Object;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.io.IOException;
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.util.Properties;
 
 /**
  * <p></p>
  *
  * @author Graham Lea
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public abstract class
 AbstractLoggingTest

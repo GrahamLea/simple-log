@@ -1,6 +1,6 @@
 package org.grlea.log.test;
 
-// $Id: TestOfSettingLogOutput.java,v 1.1 2005-08-08 14:13:44 grlea Exp $
+// $Id: TestOfSettingLogOutput.java,v 1.2 2005-11-09 21:58:49 grlea Exp $
 // Copyright (c) 2004 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,20 +22,19 @@ import org.grlea.log.SimpleLogger;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import java.util.Properties;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
-import java.io.PrintStream;
-import java.io.IOException;
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.Properties;
 
 /**
  * <p>Test setting the output of a {@link SimpleLog}.</p>
  *
  * @author Graham Lea
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class
 TestOfSettingLogOutput
