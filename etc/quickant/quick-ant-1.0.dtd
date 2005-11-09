@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-$Id: quick-ant-1.0.dtd,v 1.2 2005-05-16 00:53:23 grlea Exp $
+$Id: quick-ant-1.0.dtd,v 1.3 2005-11-09 22:01:46 grlea Exp $
 Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,16 +40,15 @@ limitations under the License.
          <!ATTLIST resource publish (true|false) "false">
          <!ELEMENT dir (#PCDATA)>
 
-   <!ELEMENT component (id, name, source-dir, source-files, manifest?, dependencies)>
+   <!ELEMENT component (id, name, source-dir, source-files, manifest?, dependencies?)>
       <!ELEMENT source-files (#PCDATA)>
       <!ELEMENT manifest (#PCDATA)>
       <!ELEMENT dependencies (component-ref*,library*)>
          <!ELEMENT component-ref (#PCDATA)>
          <!ELEMENT library (#PCDATA)>
 
-   <!ELEMENT javadoc (package-names, header, bottom, source-link*, group*)>
+   <!ELEMENT javadoc (package-names, source-link*, group*)>
       <!ELEMENT package-names (#PCDATA)>
-      <!ELEMENT bottom (#PCDATA)>
       <!ELEMENT source-link (remote,local?)>
          <!ELEMENT remote (#PCDATA)>
          <!ELEMENT local (#PCDATA)>
