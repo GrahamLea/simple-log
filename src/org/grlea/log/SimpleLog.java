@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.13 2005-11-09 21:56:13 grlea Exp $
+// $Id: SimpleLog.java,v 1.14 2005-11-10 21:46:33 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,7 +53,7 @@ import java.util.TimerTask;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  * @author $Author: grlea $
  */
 public final class
@@ -69,6 +69,9 @@ SimpleLog
 
    /** The prefix for all special properties keys. */
    private static final String KEY_PREFIX = "simplelog.";
+
+   /** The property key for a list of files to import. */
+   private static final String KEY_IMPORT = KEY_PREFIX + "import";
 
    /** The prefix for all format-related properties keys. */
    private static final String KEY_FORMAT_PREFIX = KEY_PREFIX + "format.";
@@ -396,8 +399,52 @@ SimpleLog
       // Load the properties into a new object, then replace the current ones if the read suceeds.
       InputStream inputStream = configurationSource.openStream();
       Properties newProperties = new Properties();
-      newProperties.load(inputStream);
-      inputStream.close();
+      try
+      {
+         newProperties.load(inputStream);
+      }
+      finally
+      {
+         inputStream.close();
+      }
+
+      // Import any properties files as specified
+      String importList = newProperties.getProperty(KEY_IMPORT);
+      if (importList != null)
+      {
+         importList = importList.trim();
+         if (importList.length() > 0)
+         {
+            String[] filesToImport = importList.split(",");
+            for (int i = 0; i < filesToImport.length; i++)
+            {
+               String fileToImport = filesToImport[i];
+               URL urlToImport = SimpleLog.class.getClassLoader().getResource(fileToImport);
+               if (urlToImport != null)
+               {
+                  InputStream importStream = null;
+                  try
+                  {
+                     importStream = urlToImport.openStream();
+                     newProperties.load(importStream);
+                  }
+                  catch (IOException e)
+                  {
+                     printError("Error importing properties file: " + fileToImport, e, true);
+                  }
+                  finally
+                  {
+                     if (importStream != null)
+                        importStream.close();
+                  }
+               }
+               else
+               {
+                  printError("Properties file specified as import not found: " + fileToImport);
+               }
+            }
+         }
+      }
 
       properties.clear();
       properties.putAll(newProperties);
@@ -549,6 +596,12 @@ SimpleLog
       properties.putAll(newProperties);
    }
 
+   /**
+    * Configures this <code>SimpleLog</code> to use a plain FileWriter, according to the properties
+    * in the current properties object.
+    *
+    * @return the writer to be used to write log output.
+    */
    private Writer
    configureFileWriter()
    throws IOException
@@ -636,10 +689,30 @@ SimpleLog
       return writer;
    }
 
+   /**
+    * Configures this <code>SimpleLog</code> to use a {@link RolloverManager}, according to the
+    * properties in the current properties object.
+    *
+    * @return the writer to be used to write log output.
+    */
    private Writer
    configureRolloverWriter()
    throws IOException
    {
+      // Test we've got the RolloverManager class, so we can throw something really meaningful.
+      try
+      {
+         Class.forName(ROLLOVER_WRITER_CLASS);
+      }
+      catch (ClassNotFoundException e)
+      {
+         throw new IOException("The RolloverManager class is not available: " + e);
+      }
+      catch (Throwable t)
+      {
+         // Ignore anything else that might be thrown (e.g. SecurityException).
+      }
+
       Writer writer;
       if (currentWriter != null && currentWriter.getClass().getName().equals(ROLLOVER_WRITER_CLASS))
       {
@@ -912,12 +985,23 @@ SimpleLog
     * Prints an error message from this <code>SimpleLog</code>.
     *
     * @param description a description the error
-    * @param t the exception that occurred to cause the error
+    */
+   private static void
+   printError(String description)
+   {
+      printError(description, null, false);
+   }
+
+   /**
+    * Prints an error message from this <code>SimpleLog</code>.
+    *
+    * @param description a description the error
+    * @param error the exception that occurred to cause the error (may be <code>null</code>)
     * @param printExceptionType whether the whole toString of the exception should be printed (true)
     * of just the exception's 'message' (false).
     */
    private static void
-   printError(String description, Throwable t, boolean printExceptionType)
+   printError(String description, Throwable error, boolean printExceptionType)
    {
       String printStackTracesStr = System.getProperty("simplelog.dev.printStackTraces");
       boolean printStackTraces = printStackTracesStr != null &&
@@ -929,18 +1013,25 @@ SimpleLog
 
          System.err.print("   SimpleLog ERROR: ");
          System.err.print(description);
-         System.err.print(": ");
-         if (printExceptionType)
-            System.err.print(t);
+
+         if (error != null)
+         {
+            System.err.print(": ");
+            if (printExceptionType)
+               System.err.println(error);
+            else
+               System.err.println(error.getMessage());
+
+            if (printStackTraces)
+               error.printStackTrace(System.err);
+
+            System.err.println();
+         }
          else
-            System.err.print(t.getMessage());
-
-         System.err.println();
-
-         if (printStackTraces)
-            t.printStackTrace(System.err);
-
-         System.err.println();
+         {
+            System.err.println();
+            System.err.println();
+         }
       }
    }
 
