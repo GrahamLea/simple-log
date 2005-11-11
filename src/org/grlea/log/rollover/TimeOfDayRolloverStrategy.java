@@ -1,6 +1,6 @@
 package org.grlea.log.rollover;
 
-// $Id: TimeOfDayRolloverStrategy.java,v 1.1 2005-11-09 21:47:56 grlea Exp $
+// $Id: TimeOfDayRolloverStrategy.java,v 1.2 2005-11-11 11:36:41 grlea Exp $
 // Copyright (c) 2004 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * records that are slightly past the rollover time (depending on the rollover interval).</p>
  *
  * @author Graham Lea
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class
 TimeOfDayRolloverStrategy
@@ -60,7 +60,14 @@ implements RolloverStrategy
    private int minute;
 
    /**
-    * Creates a new <code>SetTimeRolloverStrategy</code>.
+    * Whether the current rollover time was set programatically, rather than by calling configure.
+    */
+   private boolean timeSetProgramatically = false;
+
+   /**
+    * <p>Creates a new <code>SetTimeRolloverStrategy</code>.</p>
+    *
+    * <p>This constructor is only intended to be used by {@link RolloverManager}.</p>
     */
    TimeOfDayRolloverStrategy()
    {
@@ -87,6 +94,9 @@ implements RolloverStrategy
    configure(Map properties)
    throws IOException
    {
+      if (timeSetProgramatically)
+         return;
+      
       String rolloverTime = (String) properties.get(KEY_ROLLOVER_TIME);
       if (rolloverTime == null)
          rolloverTime = ROLLOVER_TIME_DEFAULT;
@@ -126,7 +136,8 @@ implements RolloverStrategy
    }
 
    /**
-    * Sets the time at which a rollover should be requested.
+    * Sets the time at which a rollover should be requested. Once the time has been set by this
+    * method, it will not be changed by calls to {@link #configure}.
     *
     * @param timeZone the time zone in which the time is being specified
     * @param hour the hour of the day at which to roll over (in 24 hour time, where 0 = midnight)
@@ -134,6 +145,21 @@ implements RolloverStrategy
     */
    public void
    setRolloverTime(TimeZone timeZone, int hour, int minute)
+   {
+      setRolloverTimeInternal(timeZone, hour, minute);
+      this.timeSetProgramatically = true;
+   }
+
+   /**
+    * Sets the time at which a rollover should be requested. This method does not set
+    * {@link #timeSetProgramatically}.
+    *
+    * @param timeZone the time zone in which the time is being specified
+    * @param hour the hour of the day at which to roll over (in 24 hour time, where 0 = midnight)
+    * @param minute the minute of the hour to roll over
+    */
+   private void
+   setRolloverTimeInternal(TimeZone timeZone, int hour, int minute)
    {
       if (timeZone == null)
       {

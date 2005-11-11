@@ -1,6 +1,6 @@
 package org.grlea.log.rollover;
 
-// $Id: RolloverManager.java,v 1.1 2005-11-09 21:47:55 grlea Exp $
+// $Id: RolloverManager.java,v 1.2 2005-11-11 11:36:41 grlea Exp $
 // Copyright (c) 2004 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,10 +37,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * <p></p>
+ * <p>The RolloverManager is a {@link Writer} implementation used by Simple Log to enable periodic
+ * log-rolling functionality. It is a writer which writes to an "active" log file and, when told by
+ * its {@link RolloverStrategy} that the file is due to be rolled over, moves the content of the
+ * active log file into a new rollover log file. Sufficient mechanics are employed to ensure that
+ * no log content is lost while the roll over is being conducted.</p>
  *
  * @author Graham Lea
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class
 RolloverManager
@@ -131,14 +135,40 @@ extends Writer
    /** An object to which errors should be reported. */
    private ErrorReporter errorReporter;
 
+   /**
+    * Creates a new <code>RolloverManager</code>, configuring it with provided properties. The given
+    * {@link ErrorReporter} object is retained and used to report errors for the life of the new
+    * <code>RolloverManager</code> instance.
+    *
+    * @param properties properties to be used to configure the new <code>RolloverManager</code>
+    *
+    * @param errorReporter and object to which errors that occur while the
+    * <code>RolloverManager</code> is running will be reported. May be <code>null</code>.
+    *
+    * @throws IOException if an error occurs while configuring the <code>RolloverManager</code> or
+    * opening the files it will be logging to.
+    *
+    * @throws IllegalArgumentException if <code>properties</code> is <code>null</code>.
+    */
    public
    RolloverManager(Properties properties, ErrorReporter errorReporter)
    throws IOException
    {
+      if (properties == null)
+         throw new IllegalArgumentException("properties cannot be null.");
+
       this.errorReporter = errorReporter;
       configure(properties);
    }
 
+   /**
+    * Configures this <code>RolloverManager</code> using the given properties.
+    *
+    * @param properties properties to be used to configure this <code>RolloverManager</code>
+    *
+    * @throws IOException if an error occurs while configuring the <code>RolloverManager</code> or
+    * opening the files it will be logging to.
+    */
    public void
    configure(Properties properties)
    throws IOException
@@ -147,6 +177,9 @@ extends Writer
       configureWriter(properties);
    }
 
+   /**
+    * Configures the strategy of this <code>RolloverManager</code>.
+    */
    private void
    configureStrategy(Properties properties)
    throws IOException
@@ -236,6 +269,9 @@ extends Writer
       currentRolloverStrategyName = rolloverStrategyString;
    }
 
+   /**
+    * Configures the writer of this <code>RolloverManager</code>.
+    */
    private void
    configureWriter(Properties properties)
    throws IOException
@@ -365,6 +401,14 @@ extends Writer
       }
    }
 
+   /**
+    * Opens the specified file as an active log file for this <code>RolloverManager</code>. This
+    * will also result in the creation of a "creation date" file if necessary.
+    *
+    * @param newActiveLogFile the file that will be opened as the active log file
+    *
+    * @param activeLogFileDirectory the directory in which the active log file resides
+    */
    private void
    openWriter(File newActiveLogFile, File activeLogFileDirectory)
    throws IOException
@@ -413,6 +457,14 @@ extends Writer
       }
    }
 
+   /**
+    * Writes the creation time (which is the current time) of the active log file to a new file if
+    * necessary (i.e. if the creation file doesn't already exist).
+    *
+    * @param newActiveLogFile the file that will be opened as the active log file
+    *
+    * @param activeLogFileDirectory the directory in which the active log file resides
+    */
    private void
    storeFileCreationTimeIfNecessary(File activeLogFileDirectory, File newActiveLogFile)
    throws IOException
@@ -438,6 +490,16 @@ extends Writer
       }
    }
 
+   /**
+    * Reads and returns the time (in milliseconds since the 1970 epoch) that the active log file was
+    * created, according to its associated creation date file.
+    *
+    * @return the time the active log file was created (in millis since the epoch) or -1 if the
+    * creation date file is not available.
+    *
+    * @throws IOException if any error occurs opening or reading and interpreting the contents of
+    * the file
+    */
    private long
    readCreationTime()
    throws IOException
@@ -446,6 +508,10 @@ extends Writer
       {
          File creationTimeFile =
             getCreationTimeFile(currentActiveLogFileDirectory, currentActiveLogFile);
+
+         if (!creationTimeFile.exists())
+            storeFileCreationTimeIfNecessary(currentActiveLogFileDirectory, currentActiveLogFile);
+
          FileReader fileIn = new FileReader(creationTimeFile);
          BufferedReader in = new BufferedReader(fileIn);
          String firstLine = in.readLine();
@@ -462,15 +528,30 @@ extends Writer
       }
    }
 
+   /**
+    * Returns the name of the creation date file associated with the specified active log file.
+    *
+    * @param newActiveLogFile the file that will be opened as the active log file
+    *
+    * @param activeLogFileDirectory the directory in which the active log file resides
+    *
+    * @return the file used to store the creation date of the active log file. It doesn't
+    * necessarily exist when this method returns.
+    */
    private File
    getCreationTimeFile(File activeLogFileDirectory, File newActiveLogFile)
    {
       return new File(activeLogFileDirectory, newActiveLogFile.getName() + "-CREATED");
    }
 
+
+   /**
+    * Closes the file resources associated with this <code>RolloverManager</code> and releases any
+    * other resources used by it. Any errors occurring during this operation are captured and
+    * reported to the error reporter.
+    */
    public void
    close()
-   throws IOException
    {
       synchronized (WRITER_CHANGE_GATE)
       {
@@ -513,6 +594,16 @@ extends Writer
       }
    }
 
+   /**
+    * Reports the given error to the error reporter, if there is one.
+    *
+    * @param description a description of the error
+    *
+    * @param e the exception that indicates the error
+    *
+    * @param printExceptionType a flag indicating whether the type of the exception should be
+    * printed.
+    */
    private void
    reportError(String description, IOException e, boolean printExceptionType)
    {
@@ -520,12 +611,19 @@ extends Writer
          errorReporter.error(description, e, printExceptionType);
    }
 
+   /**
+    * Does nothing, as the <code>RolloverManager</code> auto-flushes after every write()
+    */
    public void
    flush()
-   throws IOException
    {
    }
 
+   /**
+    * Writes the output to the current writer and flushes it.
+    *
+    * @throws IOException if an error occurs writing to the current writer.
+    */
    public void
    write(char cbuf[], int off, int len)
    throws IOException
@@ -541,20 +639,31 @@ extends Writer
          printerCount++;
       }
 
-      writer.write(cbuf, off, len);
-      writer.flush();
-
-      // Decrement the printers semaphore and notify if we are last out
-      synchronized (PRINTERS_SEMAPHORE)
+      try
       {
-         printerCount--;
-         if (printerCount == 0)
+         writer.write(cbuf, off, len);
+         writer.flush();
+      }
+      finally
+      {
+         // Decrement the printers semaphore and notify if we are last out
+         synchronized (PRINTERS_SEMAPHORE)
          {
-            PRINTERS_SEMAPHORE.notifyAll();
+            printerCount--;
+            if (printerCount == 0)
+            {
+               PRINTERS_SEMAPHORE.notifyAll();
+            }
          }
       }
    }
 
+   /**
+    * Prompts the <code>RolloverManager</code> to check whether the log file needs to be rolled and
+    * to perform that rolling if necessary.
+    *
+    * @throws IOException if an error occurs while rolling the log file.
+    */
    public void
    rolloverIfNecessary()
    throws IOException
@@ -601,7 +710,7 @@ extends Writer
          if (!rolloverDirectory.exists())
             rolloverDirectory.mkdirs();
          File rolloverFile = new File(rolloverDirectory, rolloverFileName);
-         FileOutputStream rolloverOut = new FileOutputStream(rolloverFile);
+         FileOutputStream rolloverOut = new FileOutputStream(rolloverFile, false);
 
          // Copy all the contents of the real file over to the rollover file
          FileChannel rolloverChannel = rolloverOut.getChannel();
@@ -649,12 +758,25 @@ extends Writer
       }
    }
 
+   /**
+    * Returns the {@link RolloverStrategy} object currently in use by this
+    * <code>RolloverManager</code>.
+    */
    public RolloverStrategy
    getStrategy()
    {
       return strategy;
    }
 
+   /**
+    * Sets the {@link RolloverStrategy} to be used by this <code>RolloverManager</code>. Once the
+    * strategy has been set using this method, it will never be changed by calls to
+    * {@link #configure}, which includes auto-reloading of the properties.
+    *
+    * @param strategy the new strategy implementation to be used
+    *
+    * @throws IllegalArgumentException if <code>strategy</code> is <code>null</code>.
+    */
    public void
    setStrategy(RolloverStrategy strategy)
    {
@@ -667,6 +789,9 @@ extends Writer
       strategySetProgramatically = true;
    }
 
+   /**
+    * A {@link TimerTask} used to initiate {@link RolloverManager#rolloverIfNecessary}.
+    */
    private final class
    RolloverTask
    extends TimerTask
@@ -685,7 +810,11 @@ extends Writer
       }
    }
 
-   public interface
+   /**
+    * An interface an object wishing to be notified of errors occurring in a {@link RolloverManager}
+    * while it is running.
+    */
+   public static interface
    ErrorReporter
    {
       public void

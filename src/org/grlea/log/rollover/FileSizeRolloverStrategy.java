@@ -1,6 +1,6 @@
 package org.grlea.log.rollover;
 
-// $Id: FileSizeRolloverStrategy.java,v 1.1 2005-11-09 21:47:54 grlea Exp $
+// $Id: FileSizeRolloverStrategy.java,v 1.2 2005-11-11 11:36:40 grlea Exp $
 // Copyright (c) 2004 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,7 @@ import java.util.Map;
  * slightly more than the specified size before being rolled.</p>
  *
  * @author Graham Lea
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class
 FileSizeRolloverStrategy
@@ -42,8 +42,13 @@ implements RolloverStrategy
    /** The file size at which to rollover. */
    private long rolloverSize;
 
+   /** Whether the current file size was set programatically, rather than by a call to configure. */
+   private boolean rolloverSizeSetProgramatically = false;
+
    /**
-    * Creates a new <code>FileSizeRolloverStrategy</code>.
+    * <p>Creates a new <code>FileSizeRolloverStrategy</code>.</p>
+    *
+    * <p>This constructor is only intended to be used by {@link RolloverManager}.</p>
     */
    FileSizeRolloverStrategy()
    {
@@ -52,7 +57,8 @@ implements RolloverStrategy
 
    /**
     * Creates a new <code>FileSizeRolloverStrategy</code> that will request log files be rolled
-    * when they reach the specified size.
+    * when they reach the specified size. The rollover file size set by using this method will not
+    * be changed by calls to {@link #configure}.
     *
     * @param rolloverSize the size (in bytes) at which files shoud be rolled over.
     *
@@ -68,6 +74,9 @@ implements RolloverStrategy
    configure(Map properties)
    throws IOException
    {
+      if (rolloverSizeSetProgramatically)
+         return;
+
       String fileSizeString = (String) properties.get(KEY_FILE_SIZE);
       if (fileSizeString == null)
          fileSizeString = FILE_SIZE_DEFAULT;
@@ -78,7 +87,7 @@ implements RolloverStrategy
          fileSizeString = FILE_SIZE_DEFAULT;
 
       long fileSize = decodeFileSize(fileSizeString);
-      setRolloverSize(fileSize);
+      setRolloverSizeInernal(fileSize);
    }
 
    /**
@@ -156,7 +165,8 @@ implements RolloverStrategy
    }
 
    /**
-    * Sets the size at which files should be rolled over.
+    * Sets the size at which files should be rolled over. One the rollover file size has been set
+    * using this method, it will not be changed by calls to {@link #configure}.
     *
     * @param rolloverSize the new size (in bytes) at which files should be rolled over.
     *
@@ -164,6 +174,19 @@ implements RolloverStrategy
     */
    public void
    setRolloverSize(long rolloverSize)
+   {
+      setRolloverSizeInernal(rolloverSize);
+      this.rolloverSizeSetProgramatically = true;
+   }
+
+   /**
+    * Sets the size at which files should be rolled over. This method does not set
+    * {@link #rolloverSizeSetProgramatically}.
+    *
+    * @param rolloverSize the new size (in bytes) at which files should be rolled over.
+    */
+   private void
+   setRolloverSizeInernal(long rolloverSize)
    {
       if (rolloverSize < 1)
       {
