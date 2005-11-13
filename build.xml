@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <!--
-$Id: build.xml,v 1.10 2005-11-09 21:56:45 grlea Exp $
+$Id: build.xml,v 1.11 2005-11-13 06:00:20 grlea Exp $
 Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,7 +31,7 @@ limitations under the License.
    <property name="sourceDir" value="${basedir}/src"/>
    <property name="etcDir" value="${basedir}/etc"/>
    <property name="libDir" value="${basedir}/lib"/>
-   <property name="javadocPackages" value="org.grlea.*,org.slf4j.*"/>
+   <property name="javadocPackages" value="org.grlea.*"/>
 
    <!-- Classpath -->
    <path id="classpath">
@@ -39,10 +39,11 @@ limitations under the License.
 
    <!-- Outputs -->
    <property name="tempDir" value="${basedir}/temp"/>
-   <property name="sourceZip" value="${releaseDir}/${ant.project.name}-src.zip"/>
-   <property name="javadocDir" value="${releaseDir}/doc/api"/>
-
    <property name="releaseDir" value="${basedir}/release/${product.version}"/>
+   <property name="sourceZip" value="${releaseDir}/${ant.project.name}-src.zip"/>
+   <property name="docDir" value="${releaseDir}/doc"/>
+   <property name="javadocDir" value="${docDir}/api"/>
+
    <property name="releaseName" value="${ant.project.name}-${product.version}"/>
    <property name="releaseZipName" value="${releaseName}.zip"/>
    <property name="releaseZip" value="${releaseDir}/${releaseZipName}"/>
@@ -80,6 +81,7 @@ limitations under the License.
       <tstamp/>
       <mkdir dir="${tempDir}"/>
       <mkdir dir="${releaseDir}"/>
+      <mkdir dir="${docDir}"/>
       <mkdir dir="${javadocDir}"/>
       <mkdir dir="${classesDestination}"/>
       <mkdir dir="${rollover-classesDestination}"/>
@@ -97,6 +99,8 @@ limitations under the License.
             <include name="simple-log.jar"/>
             <include name="simple-log-rollover.jar"/>
             <include name="simplelog.properties"/>
+            <include name="simplelog-config.properties"/>
+            <include name="simplelog-rollover.properties"/>
             <include name="ChangeLog.txt"/>
             <include name="LICENSE.txt"/>
             <include name="README.txt"/>
@@ -194,10 +198,15 @@ limitations under the License.
    <target name="CopyResources" depends="Init">
 
       <copy todir="${releaseDir}" flatten="true">
-         <fileset dir="${etcDir}" includes="simplelog.properties,README.txt,ChangeLog.txt,LICENSE.txt,VERSION.txt"/>
+         <fileset dir="${etcDir}"
+                  includes="simplelog.properties,simplelog-config.properties,simplelog-rollover.properties,README.txt,ChangeLog.txt,LICENSE.txt,VERSION.txt"/>
          <filterset>
             <filter token="VERSION" value="${product.version}" />
           </filterset>
+      </copy>
+
+      <copy todir="${docDir}">
+         <fileset dir="etc/doc" includes="*" />
       </copy>
 
       <copy todir="${classesDestination}/meta-inf/${ant.project.name}" flatten="true">
@@ -240,14 +249,13 @@ limitations under the License.
          </group>
 
          <group>
-            <title>Adapters</title>
-            <package name="org.grlea.log.adapters.*"/>
+            <title>Simple Log Rollover</title>
+            <package name="org.grlea.log.rollover"/>
          </group>
 
          <group>
-            <title>SLF4J Framework</title>
-            <package name="org.slf4j"/>
-            <package name="org.slf4j.impl"/>
+            <title>Adapters</title>
+            <package name="org.grlea.log.adapters.*"/>
          </group>
 
          <header>
