@@ -7,6 +7,15 @@
 
 CHANGE LOG
 
+2.0
+
+   + Issue 15: Log file rollover
+   + Issue 21: Properties file not closed
+   + Issue 22: Copyright for SLF4J javadoc
+   + Issue 23: Allow importing of other properties files
+   + Split the existing properties file into three (-config and -rollover)
+   + Added an HTML file documenting the properties
+
 1.7
 
    + Issue 9  (RFE): Provide connections to commons-logging and SLF4J
