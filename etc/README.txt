@@ -28,13 +28,38 @@ Download Java now   @   http://java.com/
 
 USAGE
 
-To use Simple Log in your application, you will need to:
+To use Simple Log in your application, you need jars and properties:
 
-1. Have the simple-log.jar in your classpath.
+1. JARS
 
-2. Have a 'simplelog.properties' file in a directory or JAR that is on your classpath.
+   You need to have the simple-log.jar in your classpath.
+   If you want rolling logs, you'll also need simple-log-rollover.jar.
+
+2. PROPERTIES
+
+   You need to have a 'simplelog.properties' file in a directory or JAR that is on your classpath.
    Simple Log will not fail if this file is not present, but it will not produce any output.
+
+   As of Simple Log 2, it is possible for the simplelog.properties file to import other files.
+   Any files you want to import must also be in the classpath.
+
    A template properties file is included with the release.
+   The template 'simplelog.properties' file imports two other files:
+
+      simplelog-config.properties
+      simplelog-rollover.properties
+
+   The standard file contains the default debug level and trace flag, and the documentation for
+   writing properties to configure the levels and flags for your own classes and packages.
+
+   The -config file contains properties for almost all the optional features, including writing log
+   output to a file, enabling reloading properties and changing the format of log messages.
+
+   The -rollover file contains the properties needed to enable log rolling.
+
+   If you want to use any of these options, you will need to include the corresponding files.
+   Otherwise, you should remove their names from the import property to prevent Simple Log from
+   printing error messages.
 
 
 COMMONS LOGGING
@@ -87,7 +112,6 @@ Some features that might be added in the future *if people ask for them* are:
 * Programmatic access to the log formats
 * Ability to turn logging off for a class/package (rather than just down to "Fatal")
 * Option to use a different filename/location for the default SimpleLog instance's properties
-* Log file rolling
 
 If you think you need one of these features, or some other feature, please feel free to contact me
 and I should be able to hack it up within a couple of days (assuming I haven't gone camping).
