@@ -1,6 +1,6 @@
 package org.grlea.log.adapters.slf4j;
 
-// $Id: Slf4jAdapter.java,v 1.1 2005-08-09 10:13:40 grlea Exp $
+// $Id: Slf4jAdapter.java,v 1.2 2005-11-20 00:35:33 grlea Exp $
 // Copyright (c) 2004 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -63,7 +63,7 @@ import org.slf4j.impl.MessageFormatter;
  * <p><b>"Tracing"</b></p>
  *
  * <p>
- * Note that the SLF4J has not notion of tracing whatsoever, so the tracing properties in Simple Log
+ * Note that the SLF4J has no notion of tracing whatsoever, so the tracing properties in Simple Log
  * will have no bearing on the output.
  * </p>
  *
@@ -105,7 +105,7 @@ import org.slf4j.impl.MessageFormatter;
  * </p>
  *
  * @author Graham Lea
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class
 Slf4jAdapter
