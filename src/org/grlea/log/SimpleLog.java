@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.14 2005-11-10 21:46:33 grlea Exp $
+// $Id: SimpleLog.java,v 1.15 2005-11-20 00:27:23 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@ package org.grlea.log;
 // limitations under the License.
 
 import org.grlea.log.rollover.RolloverManager;
-import org.grlea.log.rollover.RolloverManager.ErrorReporter;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -53,7 +52,7 @@ import java.util.TimerTask;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  * @author $Author: grlea $
  */
 public final class
@@ -721,17 +720,11 @@ SimpleLog
       }
       else
       {
-         ErrorReporter errorReporter = new ErrorReporter()
-         {
-            public void
-            error(String description, Throwable t, boolean printExceptionType)
-            {
-               printError(description, t, printExceptionType);
-            }
-         };
-
-         writer = new RolloverManager(properties, errorReporter);
+         writer = RolloverManager.createRolloverManager(properties, ErrorReporter.create());
       }
+
+      printWriterGoesToConsole = false;
+
       return writer;
    }
 
@@ -1383,6 +1376,23 @@ SimpleLog
             reloadProperties();
             previousLastModified = lastModified;
          }
+      }
+   }
+
+   private static class
+   ErrorReporter
+   implements RolloverManager.ErrorReporter
+   {
+      public void
+      error(String description, Throwable t, boolean printExceptionType)
+      {
+         printError(description, t, printExceptionType);
+      }
+
+      private static RolloverManager.ErrorReporter
+      create()
+      {
+         return new ErrorReporter();
       }
    }
 }

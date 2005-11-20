@@ -1,6 +1,6 @@
 package org.grlea.log.rollover;
 
-// $Id: RolloverManager.java,v 1.2 2005-11-11 11:36:41 grlea Exp $
+// $Id: RolloverManager.java,v 1.3 2005-11-20 00:27:46 grlea Exp $
 // Copyright (c) 2004 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,7 +44,7 @@ import java.util.TimerTask;
  * no log content is lost while the roll over is being conducted.</p>
  *
  * @author Graham Lea
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class
 RolloverManager
@@ -443,7 +443,7 @@ extends Writer
                   }
                }
 
-               RandomAccessFile newFileOut = new RandomAccessFile(newActiveLogFile, "rwd");
+               RandomAccessFile newFileOut = new RandomAccessFile(newActiveLogFile, "rws");
                FileChannel channel = newFileOut.getChannel();
                long initialChannelSize = channel.size();
                newFileOut.seek(initialChannelSize);
@@ -808,6 +808,13 @@ extends Writer
             reportError("SimpleLog ERROR: Failed to check or attempt rollover", e, true);
          }
       }
+   }
+
+   public static Writer
+   createRolloverManager(Properties properties, ErrorReporter errorReporter)
+   throws IOException
+   {
+      return new RolloverManager(properties, errorReporter);
    }
 
    /**
