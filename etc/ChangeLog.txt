@@ -9,11 +9,14 @@ CHANGE LOG
 
 2.0
 
+   + Issue 2: Provide options for properties file location
    + Issue 15: Log file rollover
    + Issue 21: Properties file not closed
    + Issue 22: Copyright for SLF4J javadoc
    + Issue 23: Allow importing of other properties files
-   + Issue 25: Should put the release version number in the properties file 
+   + Issue 24: SimpleLog's List of SimpleLoggers should use WeakReferences
+   + Issue 25: Should put the release version number in the properties file
+   + Issue 27: Add a simplelog-plain.properties file
    + Split the existing properties file into three (-config and -rollover)
    + Added an HTML file documenting the properties
 
