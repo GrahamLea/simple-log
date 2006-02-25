@@ -1,6 +1,6 @@
 package org.grlea.log.rollover;
 
-// $Id: TimeOfDayRolloverStrategy.java,v 1.2 2005-11-11 11:36:41 grlea Exp $
+// $Id: TimeOfDayRolloverStrategy.java,v 1.3 2006-02-25 15:24:50 grlea Exp $
 // Copyright (c) 2004 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,9 +29,9 @@ import java.util.regex.Pattern;
  * records that are slightly past the rollover time (depending on the rollover interval).</p>
  *
  * @author Graham Lea
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
-public class
+class
 TimeOfDayRolloverStrategy
 implements RolloverStrategy
 {
@@ -132,7 +132,7 @@ implements RolloverStrategy
          timeZone = TimeZone.getDefault();
       }
 
-      setRolloverTime(timeZone, hour, minute);
+      setRolloverTimeInternal(timeZone, hour, minute);
    }
 
    /**
