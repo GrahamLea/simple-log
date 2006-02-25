@@ -51,7 +51,8 @@
          border: 1px solid #999999;
          margin-left: 7px;
          margin-right: 7px;
-         padding: 1em;
+         padding-top: 1em;
+         padding-bottom: 1em;
       }
 
       code {
@@ -911,25 +912,127 @@ simplelog.defaultTrace = true
 
 <h3>Simple Log</h3>
 <p>
-
+   To enable log rolling in Simple Log, you need to:
 </p>
+<ul>
+   <li>ensure simple-log-rollover.jar is in your classpath</li>
+   <li>specify the name of the main log file</li>
+   <li>specify the Rollover Strategy to be used</li>
+</ul>
+<p class="example">
+<code>
+simplelog.logFile=application.log
+simplelog.rollover=timeOfDay
+</code>
+</p>
+<p>
+   By default, rolled log files are placed in the same directory as the main log file, and are given
+   the same name as the main log file, prefixed with a unique, incrementing number and a hyphen
+   (e.g. <span class="code">00-application.log</span>).
+   The directory for rolled log files can be configured by setting the
+   <span class="code">simplelog.rollover.directory</span> property.
+   The name of rolled log files can be configured by setting the
+   <span class="code">simplelog.rollover.filename</span>, which can include the incrementing number
+   and/or the date the rollover file is created.
+</p>
+<p>
+   Simple Log comes bundled with two strategies: File Size and Time of Day.
+   By default, the File Size strategy rolls the log every 100 megabytes and the Time of Day strategy
+   rolls at midnight based on the timezone of the local machine.
+   The strategies can be configured using the properties
+   <span class="code">simplelog.rollover.fileSize.size</span>,
+   <span class="code">simplelog.rollover.timeOfDay.time</span> and
+   <span class="code">simplelog.rollover.timeOfDay.timezone</span>.
+</p>
+<p class="example">
+<code>
+simplelog.logFile=application.log
+simplelog.rollover=timeOfDay
+simplelog.rollover.timeOfDay.time=02:00
+simplelog.rollover.timeOfDay.timezone=GMT+10:00
+</code>
+</p>
+<p>
+   You can also easily write your own implementation of <span class="code">RolloverStrategy</span>
+   which will have access to all the Simple Log properties.
+</p>
+
 
 <h3>Log4J</h3>
 <p>
-
+   To enable log rolling in Log4J, you need to:
 </p>
-
+<ul>
+   <li>create a <span class="code">RollingFileAppender</span></li>
+   <li>specify the name of the main log file</li>
+   <li>specify the layout for the appender</li>
+   <li>attach the appender to your logger hierarchy</li>
+</ul>
+<p class="example">
+<code>
+log4j.rootLogger=info,File
+log4j.appender.File=org.apache.log4j.RollingFileAppender
+log4j.appender.File.File=application.log
+log4j.appender.File.layout=org.apache.log4j.SimpleLayout
+</code>
+</p>
+<p>
+   Rolled log files are placed in the same directory as the main log file.
+   They are given the same name as the main log file, with an increasing number appended.
+   The directory for rolled log files cannot be configured.
+   The name of rolled log files cannot be configured.
+</p>
+<p>
+   Log4J's <span class="code">RollingFileAppender</span> only maintains a specified number of
+   rolled log files, defaulting to one.
+   This can be configured by setting the
+   <span class="code">log4j.appender.File.MaxBackupIndex</span> property.
+   By default, the Rolling File Appender rolls the log every 10 megabytes.
+   This can be configured by setting the property <span class="code">MaxFileSize</span> property
+   of the appender.
+</p>
+<p class="example">
+<code>
+log4j.rootLogger=info,File
+log4j.appender.File=org.apache.log4j.RollingFileAppender
+log4j.appender.File.File=application.log
+log4j.appender.File.layout=org.apache.log4j.SimpleLayout
+log4j.appender.File.MaxFileSize=100MB
+log4j.appender.File.MaxBackupIndex=9
+</code>
+</p>
+<p>
+   Log4J also comes with a <span class="code">DailyRollingFileAppender</span>, which uses a date
+   pattern that enables rolling on a monthly, weekly, daily, half-daily, hourly, or minutely
+   schedule.
+</p>
+<p class="example">
+<code>
+log4j.rootLogger=info,File
+log4j.appender.File=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.File.File=application.log
+log4j.appender.File.layout=org.apache.log4j.SimpleLayout
+log4j.appender.File.DatePattern='.'yyyy-MM-dd
+</code>
+</p>
 
 <h2>Amount of Documentation in Provided Configuration Files</h2>
 
 <h3>Simple Log</h3>
 <p>
-
+   The Simple Log release includes properties files containing all the properties you will ever need
+   to configure Simple Log, except, of course, those or configuring the levels for your classes.
+   The properties files also contain full documentation of each of the properties.
 </p>
 
 <h3>Log4J</h3>
 <p>
-
+   The Log4J release includes a number of example properties files that show how to set up Log4J
+   for a number of different common logging requirements.
+   It does not include a "complete" properties file or set of files that give all the properties
+   that can be used for configuration.
+   The documentation for many of the configuration options for Log4J are contained within the API
+   documentation.
 </p>
 
 
@@ -1276,19 +1379,6 @@ log4j.logger.TreeNode.frequentlyOccurringLeaf = Info
 </p>
 
 
-<h2>Screenshot of Type Completion?</h2>
-
-<h3>Simple Log</h3>
-<p>
-
-</p>
-
-<h3>Log4J</h3>
-<p>
-
-</p>
-
-
 <h2>Printing Fixed-Width Log Messages</h2>
 
 <h3>Simple Log</h3>
@@ -1442,19 +1532,6 @@ Thu 2006/02/09 08:38:11.269|main                |Test                |OUT: main(
       <span class="code">Appender</span>'s output stream.
    </li>
 </ol>
-
-
-<h2>Micro Benchmarks</h2>
-
-<h3>Simple Log</h3>
-<p>
-
-</p>
-
-<h3>Log4J</h3>
-<p>
-
-</p>
 
 
 <br>
