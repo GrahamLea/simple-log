@@ -115,16 +115,17 @@
    Simple Log was written out of frustration with other "logging frameworks".
    Many of its features are designed to contrast with the way in which these frameworks are used.
    Because of this, it seemed sensible to show a comparison between Simple Log and one of these
-   frameworks so that you can see the difference without having to commit to using Simple Log in
+   frameworks so that you can see the difference before committing to using Simple Log in
    your own code.
-   I have chosen Log4J for the comparison, as this appears to be the most widely used logging framework.
+   I have chosen Log4J for the comparison, as this is undoubtedly the most widely used logging
+   framework.
 </p>
 
 <p>
    Not all of the comparisons will show Simple Log having an advantage. Some of them are just there
    to say "Simple Log can do the same" or "here's how you'd do that in Simple Log".
    I intend this to be a fair comparison, so if you see something that's not fair or is wrong,
-   <a href="mailto:grlea@dev.java.net">let me know</a>.
+   <a href="mailto:%67%72%6c%65%61%40%64%65%76%2e%6a%61%76%61%2e%6e%65%74">please let me know</a>.
 </p>
 
 <h2>Don't Make Me Think!</h2>
@@ -141,7 +142,8 @@
 <p>
    In the examples below, if I consider the work necessary to use a feature in one of the logging
    packages requires more thinking than should be necessary, I have flagged it using the
-   "Don't Make Me Think" banner shown on the right.
+   "Don't Make Me Think" banner shown on the right. There aren't many of these, but I think they
+   flag some of the most important differences.
 </p>
 
 
@@ -475,6 +477,9 @@ log.dbo(DebugLevel.L5_DEBUG, <span class="literal">"id"</span>, id);
 </p>
 
 <h3>Log4J</h3>
+<div class="dontMakeMeThink">
+   <p>Don't Make Me Think !</p>
+</div>
 <p>
    As with objects, Log4J requires you to concatenate primitives yourself, after the all-important
    level-check:
@@ -694,7 +699,7 @@ log4j.logger.org.grlea.application.Processor = Debug
    I know I'm being picky and anal here, but in the past when I've been debugging code and needing
    to change the log levels frequently, I've experienced that reading, scanning and editing this
    file is <b>really</b> annoying.
-   Being able to just type the FQ name of a class followed by a level is much easier.
+   Being able to just type (or copy/paste) the FQ name of a class followed by a level is much easier.
 </p>
 <p>
    As shown above, the default level and output semantics of Log4J are set by configuring the
@@ -908,6 +913,127 @@ simplelog.defaultTrace = true
 </p>
 
 
+<h2>Logging to a File</h2>
+
+<h3>Simple Log</h3>
+<p>
+   To log to a file using Simple Log, simply specify the name of the file with the
+   <span class="code">simplelog.logFile</span> property.
+</p>
+<p class="example">
+<code>
+simplelog.logFile = application.log
+</code>
+</p>
+<p>
+   The log file name can be either absolute or relative.
+   If relative, it will be interpreted as being relative to the working directory of the application.
+</p>
+
+<h3>Log4J</h3>
+<p>
+   To log to a file using Log4J, you need to properties for:
+</p>
+<ul>
+   <li>creating a FileAppender</li>
+   <li>specifying the file name</li>
+   <li>specifying the layout for the appender</li>
+   <li>adding the appender to your logger hierarchy</li>
+</ul>
+<p>
+   In the simplest scenario, you'd have something like this:
+</p>
+<p class="example">
+<code>
+log4j.rootLogger=info,File
+log4j.appender.File=org.apache.log4j.FileAppender
+log4j.appender.File.File=application.log
+log4j.appender.File.layout=org.apache.log4j.SimpleLayout
+</code>
+</p>
+
+
+<h2>Appending to/Overwriting a File</h2>
+
+<h3>Simple Log</h3>
+<p>
+   By default, Simple Log will always append to its log file.
+   To change this, set the <span class="code">simplelog.logFile.append</span> property to
+   <span class="code">false</span>.
+</p>
+<p class="example">
+<code>
+simplelog.logFile.append = false
+</code>
+</p>
+
+<h3>Log4J</h3>
+<p>
+   Log4J's <span class="code">FileAppender</span> also appends to its file by default, but can be
+   prevented from doing so by
+   setting the 'append' property of the appender to <span class="code">false</span>.
+</p>
+<p class="example">
+<code>
+log4j.appender.File.append=false
+</code>
+</p>
+
+
+<h2>Logging to a File and the Console</h2>
+
+<h3>Simple Log</h3>
+<p>
+   Simple Log can be made to log to both a file and to the console by setting the value of the
+   <span class="code">simplelog.logFile.andConsole</span> property.
+</p>
+<p class="example">
+<code>
+simplelog.logFile = application.log
+simplelog.logFile.andConsole = true
+</code>
+</p>
+
+<h3>Log4J</h3>
+<p>
+   To log to both a file and the console using Log4J, you have to define two
+   <span class="code">Appender</span>s and add
+   both of them to your <span class="code">Logger</span> hierarchy.
+</p>
+<p class="example">
+<code>
+log4j.rootLogger=info,File,Console
+log4j.appender.File=org.apache.log4j.FileAppender
+log4j.appender.File.File=application.log
+log4j.appender.File.layout=org.apache.log4j.SimpleLayout
+log4j.appender.Console=org.apache.log4j.ConsoleAppender
+log4j.appender.Console.layout=org.apache.log4j.SimpleLayout
+</code>
+</p>
+
+
+<h2>Generating a Log File Name containing the Date</h2>
+
+<h3>Simple Log</h3>
+<p>
+   To place the date of a log file's creation in the file's name using Simple Log,
+   you need to place <span class="code">{0}</span> in the log file where you want the date to appear.
+   If you want to specify the format of the date, simply use the standard formatting parameters
+   specified by <span class="code">java.text.MessageFormat</span>.
+</p>
+<p class="example">
+<code>
+simplelog.logFile = application-{0,date,yyyy_MM_dd}.log
+</code>
+</p>
+
+<h3>Log4J</h3>
+<p>
+   So far as I can determine from the documentation, there is no way to include the date in the name
+   of Log4J's main log file, but only in its rolled over logs.
+</p>
+
+
 <h2>Log File Rolling</h2>
 
 <h3>Simple Log</h3>
@@ -1016,119 +1142,6 @@ log4j.appender.File.DatePattern='.'yyyy-MM-dd
 </code>
 </p>
 
-<h2>Amount of Documentation in Provided Configuration Files</h2>
-
-<h3>Simple Log</h3>
-<p>
-   The Simple Log release includes properties files containing all the properties you will ever need
-   to configure Simple Log, except, of course, those or configuring the levels for your classes.
-   The properties files also contain full documentation of each of the properties.
-</p>
-
-<h3>Log4J</h3>
-<p>
-   The Log4J release includes a number of example properties files that show how to set up Log4J
-   for a number of different common logging requirements.
-   It does not include a "complete" properties file or set of files that give all the properties
-   that can be used for configuration.
-   The documentation for many of the configuration options for Log4J are contained within the API
-   documentation.
-</p>
-
-
-<h2>Logging to a File</h2>
-
-<h3>Simple Log</h3>
-<p>
-   To log to a file using Simple Log, simply specify the name of the file with the
-   <span class="code">simplelog.logFile</span> property.
-</p>
-<p class="example">
-<code>
-simplelog.logFile = application.log
-</code>
-</p>
-<p>
-   The log file name can be either absolute or relative.
-   If relative, it will be interpreted as being relative to the working directory of the application.
-</p>
-
-<h3>Log4J</h3>
-<p>
-   To log to a file using Log4J, you need to properties for:
-</p>
-<ul>
-   <li>creating a FileAppender</li>
-   <li>specifying the file name</li>
-   <li>specifying the layout for the appender</li>
-   <li>adding the appender to your logger hierarchy</li>
-</ul>
-<p>
-   In the simplest scenario, you'd have something like this:
-</p>
-<p class="example">
-<code>
-log4j.rootLogger=info,File
-log4j.appender.File=org.apache.log4j.FileAppender
-log4j.appender.File.File=application.log
-log4j.appender.File.layout=org.apache.log4j.SimpleLayout
-</code>
-</p>
-
-
-<h2>Logging to a File and the Console</h2>
-
-<h3>Simple Log</h3>
-<p>
-   Simple Log can be made to log to both a file and to the console by setting the value of the
-   <span class="code">simplelog.logFile.andConsole</span> property.
-</p>
-<p class="example">
-<code>
-simplelog.logFile = application.log
-simplelog.logFile.andConsole = true
-</code>
-</p>
-
-<h3>Log4J</h3>
-<p>
-   To log to both a file and the console using Log4J, you have to define two
-   <span class="code">Appender</span>s and add
-   both of them to your <span class="code">Logger</span> hierarchy.
-</p>
-<p class="example">
-<code>
-log4j.rootLogger=info,File,Console
-log4j.appender.File=org.apache.log4j.FileAppender
-log4j.appender.File.File=application.log
-log4j.appender.File.layout=org.apache.log4j.SimpleLayout
-log4j.appender.Console=org.apache.log4j.ConsoleAppender
-log4j.appender.Console.layout=org.apache.log4j.SimpleLayout
-</code>
-</p>
-
-
-<h2>Generating a Log File Name containing the Date</h2>
-
-<h3>Simple Log</h3>
-<p>
-   To place the date of a log file's creation in the file's name using Simple Log,
-   you need to place <span class="code">{0}</span> in the log file where you want the date to appear.
-   If you want to specify the format of the date, simply use the standard formatting parameters
-   specified by <span class="code">java.text.MessageFormat</span>.
-</p>
-<p class="example">
-<code>
-simplelog.logFile = application-{0,date,yyyy_MM_dd}.log
-</code>
-</p>
-
-<h3>Log4J</h3>
-<p>
-   So far as I can determine from the documentation, there is no way to include the date in the name
-   of Log4J's main log file, but only in its rolled over logs.
-</p>
-
 
 <h2>Outputting the Source File, Method Name and Line Number</h2>
 
@@ -1159,39 +1172,12 @@ log4j.appender.Console.layout.ConversionPattern=%d{EEE yyyy/MM/dd HH:mm:ss.SSS}|
 </p>
 
 
-<h2>Appending to/Overwriting a File</h2>
-
-<h3>Simple Log</h3>
-<p>
-   By default, Simple Log will always append to its log file.
-   To change this, set the <span class="code">simplelog.logFile.append</span> property to
-   <span class="code">false</span>.
-</p>
-<p class="example">
-<code>
-simplelog.logFile.append = false
-</code>
-</p>
-
-<h3>Log4J</h3>
-<p>
-   Log4J's <span class="code">FileAppender</span> also appends to its file by default, but can be
-   prevented from doing so by
-   setting the 'append' property of the appender to <span class="code">false</span>.
-</p>
-<p class="example">
-<code>
-log4j.appender.File.append=false
-</code>
-</p>
-
-
 <h2>Reloading Configuration</h2>
 
 <h3>Simple Log</h3>
 <p>
-   Simple can periodically check the modified date of the configuration file in use and reconfigure
-   itself if the file changes.
+   Simple Log can periodically check the modified date of the configuration file in use and
+   reconfigure itself if the file changes.
    To enable this, you set the <span class="code">simplelog.reloading</span> property to
    <span class="code">true</span>.
 </p>
@@ -1209,7 +1195,7 @@ simplelog.reloading = true
 <p>
    The <span class="code">org.apache.log4j.varia</span> package contains a class called
    <span class="code">ReloadingPropertyConfigurator</span>, though the class is entirely
-   undocumented.
+   undocumented, so I've no idea how it works or how you'd install it.
    There is no <span class="code">ReloadingDOMConfigurator</span>.
 </p>
 
@@ -1421,6 +1407,26 @@ Thu 2006/02/09 08:38:11.269|Event Dispatch Threa|ApplicationMainWindo|IN: Applic
 Thu 2006/02/09 08:38:11.269|Event Dispatch Threa|ApplicationMainWindo|OUT: ApplicationMainWindow()
 Thu 2006/02/09 08:38:11.269|main                |Test                |OUT: main()
 </code>
+</p>
+
+
+<h2>Amount of Documentation in Provided Configuration Files</h2>
+
+<h3>Simple Log</h3>
+<p>
+   The Simple Log release includes properties files containing all the properties you will ever need
+   to configure Simple Log, except, of course, those or configuring the levels for your classes.
+   The properties files also contain full documentation of each of the properties.
+</p>
+
+<h3>Log4J</h3>
+<p>
+   The Log4J release includes a number of example properties files that show how to set up Log4J
+   for a number of different common logging requirements.
+   It does not include a "complete" properties file or set of files that give all the properties
+   that can be used for configuration.
+   The documentation for many of the configuration options for Log4J are contained within the API
+   documentation.
 </p>
 
 
