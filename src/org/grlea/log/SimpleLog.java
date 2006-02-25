@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.15 2005-11-20 00:27:23 grlea Exp $
+// $Id: SimpleLog.java,v 1.16 2006-02-25 15:22:00 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,10 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -52,7 +56,7 @@ import java.util.TimerTask;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  * @author $Author: grlea $
  */
 public final class
@@ -62,6 +66,15 @@ SimpleLog
 
    // Constants
    //...............................................................................................
+
+   /** The name of the system property defining the location of the properties. */
+   private static final String CONFIG_PROPERTY = "simplelog.configuration";
+
+   /** The prefix used when the configuration is coming from a file. */
+   private static final String FILE_CONFIG_PREFIX = "file:";
+
+   /** The prefix used when the configuration is coming from the classpath. */
+   private static final String CLASSPATH_CONFIG_PREFIX = "classpath:";
 
    /** The default name of the properties file used to configure a <code>SimpleLog</code>. */
    private static final String DEFAULT_PROPERTIES_FILE_NAME = "simplelog.properties";
@@ -242,8 +255,19 @@ SimpleLog
    /** The default trace flag of this <code>SimpleLog</code>. */
    private boolean defaultTracing = false;
 
-   /** The {@link SimpleLogger}s attached to this <code>SimpleLog</code>. */
+   /**
+    * The non-instance {@link SimpleLogger}s attached to this <code>SimpleLog</code>.
+    */
    private final List loggers = new ArrayList(32);
+
+   /**
+    * A list of {@link WeakReference}s to instance {@link SimpleLogger}s attached to this
+    * <code>SimpleLog</code>.
+    */
+   private final List instanceLoggerReferences = new ArrayList(16);
+
+   /** Queue of references to SimpleLoggers now unreachable. */
+   private ReferenceQueue instanceLoggersReferenceQueue = null;
 
    /** An object to synchronize on when accessing or modifying the {@link #loggers} list. */
    private final Object LOGGERS_LOCK = new Object();
@@ -326,7 +350,9 @@ SimpleLog
    SimpleLog(Properties properties)
    {
       if (properties == null)
+      {
          throw new IllegalArgumentException("properties cannot be null.");
+      }
 
       this.configurationSource = null;
       this.properties = properties;
@@ -393,7 +419,9 @@ SimpleLog
    throws IOException
    {
       if (properties == null)
+      {
          return;
+      }
 
       // Load the properties into a new object, then replace the current ones if the read suceeds.
       InputStream inputStream = configurationSource.openStream();
@@ -434,7 +462,9 @@ SimpleLog
                   finally
                   {
                      if (importStream != null)
+                     {
                         importStream.close();
+                     }
                   }
                }
                else
@@ -467,9 +497,13 @@ SimpleLog
             Writer newWriter;
 
             if (useRollover)
+            {
                newWriter = configureRolloverWriter();
+            }
             else
+            {
                newWriter = configureFileWriter();
+            }
 
             if (newWriter != currentWriter)
             {
@@ -501,7 +535,9 @@ SimpleLog
       // The strategy here is to only turn andConsole on if the property definitely says true
       pipingOutputToConsole = PIPE_TO_CONSOLE_DEFAULT;
       if (pipeOutputToConsoleString != null)
+      {
          pipingOutputToConsole = pipeOutputToConsoleString.trim().equalsIgnoreCase("true");
+      }
 
 
       // Read the Default level
@@ -590,7 +626,9 @@ SimpleLog
       {
          String key = (String) propertyNames.nextElement();
          if (key.indexOf('$') != -1)
+         {
             newProperties.put(key.replace('$', '.'), properties.getProperty(key));
+         }
       }
       properties.putAll(newProperties);
    }
@@ -613,7 +651,9 @@ SimpleLog
       String interpretNameStr = properties.getProperty(KEY_INTERPRET_NAME);
       // The strategy here is to only turn interpret off if the property definitely says false
       if (interpretNameStr != null)
+      {
          interpretName = !(interpretNameStr.trim().equalsIgnoreCase("false"));
+      }
 
       // Substitue the date into the name if necessary
       boolean newLogFileNotNull = newLogFile != null;
@@ -664,14 +704,18 @@ SimpleLog
 
             File parentFile = file.getParentFile();
             if (parentFile != null)
+            {
                parentFile.mkdirs();
+            }
 
             boolean append = APPEND_DEFAULT;
             String appendStr = properties.getProperty(KEY_APPEND);
             // The strategy here is to only turn append off if the property definitely says
             // false
             if (appendStr != null)
+            {
                append = !(appendStr.trim().equalsIgnoreCase("false"));
+            }
 
             writer = new FileWriter(file, append);
 
@@ -737,7 +781,9 @@ SimpleLog
       try
       {
          if (configurationSource != null)
+         {
             loadProperties();
+         }
 
          readSettingsFromProperties();
          reconfigureAllLoggers();
@@ -791,10 +837,7 @@ SimpleLog
       {
          if (defaultInstance == null)
          {
-            // TODO (grahaml) Option for different file name?
-
-            URL propertiesUrl =
-               SimpleLog.class.getClassLoader().getResource(DEFAULT_PROPERTIES_FILE_NAME);
+            URL propertiesUrl = getPropertiesUrl();
 
             if (propertiesUrl != null)
             {
@@ -818,6 +861,73 @@ SimpleLog
       return defaultInstance;
    }
 
+   private static URL
+   getPropertiesUrl()
+   {
+      // Read the system property
+      String propertiesDefinition = null;
+      try
+      {
+         propertiesDefinition = System.getProperty(CONFIG_PROPERTY);
+      }
+      catch (SecurityException e)
+      {
+         printError("SecurityException while trying to read system property", e, true);
+      }
+
+      URL propertiesUrl = null;
+      if (propertiesDefinition != null)
+      {
+         // File
+         if (propertiesDefinition.startsWith(FILE_CONFIG_PREFIX))
+         {
+            String propertiesLocation =
+               propertiesDefinition.substring(FILE_CONFIG_PREFIX.length());
+
+            File propertiesFile = new File(propertiesLocation);
+
+            if (propertiesFile.exists())
+            {
+               try
+               {
+                  propertiesUrl = propertiesFile.toURL();
+               }
+               catch (MalformedURLException e)
+               {
+                  printError("Error creating URL from filename '" + propertiesLocation + "'", e,
+                             false);
+               }
+            }
+            else
+            {
+               printError("Properties file not found at '" + propertiesLocation + "'");
+            }
+         }
+         // Classpath
+         else if (propertiesDefinition.startsWith(CLASSPATH_CONFIG_PREFIX))
+         {
+            String propertiesLocation =
+               propertiesDefinition.substring(CLASSPATH_CONFIG_PREFIX.length());
+
+            propertiesUrl = SimpleLog.class.getClassLoader().getResource(propertiesLocation);
+            if (propertiesUrl == null)
+               printError("Properties not found in classpath at '" + propertiesLocation + "'");
+         }
+         // Junk
+         else
+         {
+            printError(CONFIG_PROPERTY + " property must begin with '" + FILE_CONFIG_PREFIX +
+                       "' or '" + CLASSPATH_CONFIG_PREFIX + "' ('" + propertiesDefinition + "')");
+         }
+      }
+
+      // Default: simplelog.properties in the root of the classpath
+      if (propertiesUrl == null)
+         propertiesUrl = SimpleLog.class.getClassLoader().getResource(DEFAULT_PROPERTIES_FILE_NAME);
+
+      return propertiesUrl;
+   }
+
    /**
     * Prints the given string to this <code>SimpleLog</code>'s output destination, followed by a
     * newline sequence.
@@ -833,7 +943,9 @@ SimpleLog
       {
          out.println(s);
          if (!printWriterGoesToConsole && pipingOutputToConsole)
+         {
             System.err.println(s);
+         }
       }
    }
 
@@ -861,7 +973,9 @@ SimpleLog
    getDebugLevel(SimpleLogger logger)
    {
       if (properties == null)
+      {
          return defaultLevel;
+      }
 
       String loggerConfigName = logger.getConfigName();
 
@@ -904,7 +1018,9 @@ SimpleLog
 
       // If we found no level, use the default.
       if (debugLevel == null)
+      {
          debugLevel = defaultLevel;
+      }
 
       return debugLevel;
    }
@@ -920,7 +1036,9 @@ SimpleLog
    getTracingFlag(SimpleLogger logger)
    {
       if (properties == null)
+      {
          return defaultTracing;
+      }
 
       String loggerConfigName = logger.getConfigName();
 
@@ -954,9 +1072,57 @@ SimpleLog
    {
       synchronized (LOGGERS_LOCK)
       {
-         loggers.add(logger);
+         if (!logger.isInstanceDebugger())
+         {
+            loggers.add(logger);
+         }
+         else
+         {
+            // Instance loggers get weak referenced, because they're much more likely to be GC'd.
+            if (instanceLoggersReferenceQueue == null)
+            {
+               createInstanceLoggersReferenceQueue();
+            }
+            instanceLoggerReferences.add(new WeakReference(logger, instanceLoggersReferenceQueue));
+         }
       }
       configure(logger);
+   }
+
+   /**
+    * Creates the {@link ReferenceQueue} for instance loggers and starts a daemon thread to clear
+    * queue.
+    */
+   private void
+   createInstanceLoggersReferenceQueue()
+   {
+      instanceLoggersReferenceQueue = new ReferenceQueue();
+      Thread thread = new Thread(new Runnable()
+      {
+         public void
+         run()
+         {
+            while (true)
+            {
+               try
+               {
+                  Thread.yield();
+                  Reference reference = instanceLoggersReferenceQueue.remove();
+                  synchronized (LOGGERS_LOCK)
+                  {
+                     instanceLoggerReferences.remove(reference);
+                  }
+               }
+               catch (Throwable t)
+               {
+                  // Ignore - who cares?
+               }
+            }
+         }
+      }, "SimpleLog Instance Logger Cleaner");
+      thread.setDaemon(true);
+      thread.setPriority(Thread.MIN_PRIORITY);
+      thread.start();
    }
 
    /**
@@ -970,6 +1136,14 @@ SimpleLog
          for (Iterator iter = loggers.iterator(); iter.hasNext();)
          {
             configure((SimpleLogger) iter.next());
+         }
+
+         for (Iterator iter = instanceLoggerReferences.iterator(); iter.hasNext();)
+         {
+            Reference loggerReference = (Reference) iter.next();
+            SimpleLogger logger = (SimpleLogger) loggerReference.get();
+            if (logger != null)
+               configure(logger);
          }
       }
    }
@@ -996,9 +1170,17 @@ SimpleLog
    private static void
    printError(String description, Throwable error, boolean printExceptionType)
    {
-      String printStackTracesStr = System.getProperty("simplelog.dev.printStackTraces");
-      boolean printStackTraces = printStackTracesStr != null &&
-                                 printStackTracesStr.trim().equalsIgnoreCase("true");
+      boolean printStackTraces = false;
+      try
+      {
+         String printStackTracesStr = System.getProperty("simplelog.dev.printStackTraces");
+         printStackTraces = printStackTracesStr != null &&
+                            printStackTracesStr.trim().equalsIgnoreCase("true");
+      }
+      catch (SecurityException e)
+      {
+         // Ignore SecurityExceptions from trying to read system properties
+      }
 
       synchronized (System.err)
       {
@@ -1011,12 +1193,25 @@ SimpleLog
          {
             System.err.print(": ");
             if (printExceptionType)
+            {
                System.err.println(error);
+            }
             else
+            {
                System.err.println(error.getMessage());
+            }
 
             if (printStackTraces)
-               error.printStackTrace(System.err);
+            {
+               try
+               {
+                  error.printStackTrace(System.err);
+               }
+               catch (SecurityException e)
+               {
+                  // Ignore SecurityExceptions from trying to print stack traces
+               }
+            }
 
             System.err.println();
          }
@@ -1048,7 +1243,9 @@ SimpleLog
    setDefaultLevel(DebugLevel defaultLevel)
    {
       if (defaultLevel == null)
+      {
          throw new IllegalArgumentException("defaultLevel cannot be null.");
+      }
       this.defaultLevel = defaultLevel;
       reconfigureAllLoggers();
    }
@@ -1094,9 +1291,13 @@ SimpleLog
    setDateFormat(DateFormat newDateFormat)
    {
       if (newDateFormat == null)
+      {
          dateFormat = new SimpleDateFormat(DATE_FORMAT_DEFAULT);
+      }
       else
+      {
          dateFormat = newDateFormat;
+      }
 
       updateDateFormats();
    }
@@ -1254,7 +1455,9 @@ SimpleLog
       format(Object obj, StringBuffer buf, FieldPosition pos)
       {
          if (!(obj instanceof Throwable))
+         {
             throw new IllegalArgumentException(getClass().getName() + " only formats Throwables.");
+         }
 
          Throwable t = (Throwable) obj;
          buf.append(t);
@@ -1364,7 +1567,9 @@ SimpleLog
                InputStream inputStream = configurationSource.openStream();
                currentProperties.load(inputStream);
                if (!currentProperties.equals(properties))
+               {
                   reloadProperties();
+               }
             }
             catch (IOException e)
             {
