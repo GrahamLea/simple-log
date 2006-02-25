@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-// $Id: DebugLevel.java,v 1.7 2005-11-09 21:48:22 grlea Exp $
+// $Id: DebugLevel.java,v 1.8 2006-02-25 15:14:42 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,7 @@ import java.util.Map;
  * <p>Note that tracing is not related to the debug levels, as tracing is controlled
  * independently.</p>
  *
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  * @author $Author: grlea $
  */
 public final class
@@ -194,7 +194,6 @@ DebugLevel
 
       DebugLevel level = (DebugLevel) levelsByName.get(name.toLowerCase());
       if (level == null)
-         // TODO (grahaml) Use a checked exception ?
          throw new IllegalArgumentException("Unrecognised DebugLevel name: '" + name + "'");
 
       return level;
