@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <!--
-$Id: build.xml,v 1.12 2005-11-20 00:33:38 grlea Exp $
+$Id: build.xml,v 1.13 2006-02-26 00:28:05 grlea Exp $
 Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -98,6 +98,7 @@ limitations under the License.
             <include name="simple-log-rollover.jar"/>
             <include name="simplelog.properties"/>
             <include name="simplelog-config.properties"/>
+            <include name="simplelog-plain.properties"/>
             <include name="simplelog-rollover.properties"/>
             <include name="ChangeLog.txt"/>
             <include name="LICENSE.txt"/>
@@ -194,7 +195,7 @@ limitations under the License.
 
       <copy todir="${releaseDir}" flatten="true">
          <fileset dir="${etcDir}"
-                  includes="README.txt,ChangeLog.txt,LICENSE.txt,VERSION.txt,simplelog.properties,simplelog-config.properties,simplelog-rollover.properties"/>
+                  includes="README.txt,ChangeLog.txt,LICENSE.txt,VERSION.txt,simplelog.properties,simplelog-config.properties,simplelog-plain.properties,simplelog-rollover.properties"/>
          <filterset>
             <filter token="VERSION" value="${product.version}" />
           </filterset>
