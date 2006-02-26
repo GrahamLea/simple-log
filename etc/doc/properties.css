@@ -1,0 +1,55 @@
+body {
+   font-size: 14px;
+}
+
+h1,h2, h3 {
+   font-family: Verdana, Arial, Helvetica, Sans-Serif;
+   font-weight: bold;
+}
+
+h1 {
+   font-size: 1.7em;
+   background-color: inherit;
+}
+
+h2 {
+   font-size: 1.3em;
+   background-color: #AAAAAA;
+   vertical-align: middle;
+   padding: 0.3em;
+}
+
+h3 {
+   font-size: 1em;
+   background-color: #CCCCCC;
+   height: 2em;
+   vertical-align: middle;
+   padding: 0.4em;
+   font-family: monospace;
+}
+
+h3.notAProperty {
+   font-family: Verdana, Arial, Helvetica, Sans-Serif;
+}
+
+p, ul {
+   margin: 0px;
+   margin-top: 1em;
+   margin-bottom: 1em;
+}
+
+table {
+   text-align: left;
+   border: 1px solid #000000;
+}
+
+th, td {
+   padding: 0.3em;
+}
+
+p.copyright {
+   font-size: 0.9em;
+   font-weight: bold;
+   color: #333333;
+   margin-top: 3em;
+}
