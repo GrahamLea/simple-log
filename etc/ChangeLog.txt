@@ -17,6 +17,7 @@ CHANGE LOG
    + Issue 24: SimpleLog's List of SimpleLoggers should use WeakReferences
    + Issue 25: Should put the release version number in the properties file
    + Issue 27: Add a simplelog-plain.properties file
+   + Issue 30: Default rollover filename fails when active log file is absolute
    + Split the existing properties file into three (-config and -rollover)
    + Added an HTML file documenting the properties
 

@@ -1,6 +1,6 @@
 package org.grlea.log.rollover;
 
-// $Id: RolloverManager.java,v 1.4 2006-02-25 15:22:47 grlea Exp $
+// $Id: RolloverManager.java,v 1.5 2006-03-27 09:50:06 grlea Exp $
 // Copyright (c) 2004 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,7 +44,7 @@ import java.util.TimerTask;
  * no log content is lost while the roll over is being conducted.</p>
  *
  * @author Graham Lea
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class
 RolloverManager
@@ -296,7 +296,7 @@ extends Writer
       // Rollover log file name pattern
       String newRolloverLogFileNamePattern = properties.getProperty(KEY_ROLLOVER_LOG_FILE);
       if (newRolloverLogFileNamePattern == null)
-         newRolloverLogFileNamePattern = "{1}-" + newActiveLogFileName;
+         newRolloverLogFileNamePattern = "{1}-" + newActiveLogFile.getName();
 
       newRolloverLogFileNamePattern = newRolloverLogFileNamePattern.trim();
 
