@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.19 2006-05-29 22:16:45 grlea Exp $
+// $Id: SimpleLog.java,v 1.20 2006-05-29 22:26:29 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
@@ -33,6 +34,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.FieldPosition;
 import java.text.Format;
@@ -58,7 +60,7 @@ import java.util.Map;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  * @author $Author: grlea $
  */
 public final class
@@ -987,6 +989,19 @@ SimpleLog
          printDebugIfEnabled(
             "Attempting to load default properties (simplelog.properties) from classpath");
          propertiesUrl = SimpleLog.class.getClassLoader().getResource(DEFAULT_PROPERTIES_FILE_NAME);
+      }
+
+      // Encode any spaces in the URL
+      if (propertiesUrl != null && propertiesUrl.toExternalForm().indexOf(' ') != -1)
+      {
+         try
+         {
+            propertiesUrl = new URL(propertiesUrl.toString().replaceAll(" ", "%20"));
+         }
+         catch (MalformedURLException e)
+         {
+            printError("Failed to encode spaces in properties URL", e, true);
+         }
       }
 
       return propertiesUrl;
