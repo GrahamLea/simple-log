@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.18 2006-05-29 22:11:13 grlea Exp $
+// $Id: SimpleLog.java,v 1.19 2006-05-29 22:16:45 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -58,7 +58,7 @@ import java.util.Map;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  * @author $Author: grlea $
  */
 public final class
@@ -467,8 +467,6 @@ SimpleLog
       try
       {
          newProperties.load(inputStream);
-         if (devDebug)
-            newProperties.list(System.err);
       }
       finally
       {
@@ -515,6 +513,20 @@ SimpleLog
          }
       }
 
+      // List all loaded properties if debug is on
+      if (devDebug)
+      {
+         Set properties = newProperties.entrySet();
+         printDebugIfEnabled("_____ Properties List START _____");
+         for (Iterator iterator = properties.iterator(); iterator.hasNext();)
+         {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            printDebugIfEnabled((String) entry.getKey(), entry.getValue());
+         }
+         printDebugIfEnabled("______ Properties List END ______");
+      }
+
+      // Replace the current properties with the loaded ones
       properties.clear();
       properties.putAll(newProperties);
    }
@@ -1584,7 +1596,7 @@ SimpleLog
          }
          catch (URISyntaxException e)
          {
-            throw new IllegalArgumentException("Failed to create URI from URL");
+            throw new IllegalArgumentException("Failed to create URI from URL due to " + e);
          }
       }
 
