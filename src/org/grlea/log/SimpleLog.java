@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.17 2006-05-29 11:55:08 grlea Exp $
+// $Id: SimpleLog.java,v 1.18 2006-05-29 22:11:13 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,6 +47,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Set;
+import java.util.Map;
 
 /**
  * <p>Controls the configuration and formatting of a group of <code>SimpleLogger</code>s.</p>
@@ -56,7 +58,7 @@ import java.util.TimerTask;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  * @author $Author: grlea $
  */
 public final class
@@ -249,7 +251,7 @@ SimpleLog
    //...............................................................................................
 
    /**
-    * The URL where this <code>SimpleLog</code> loaded (and may reload) its configuration from.
+    * The URL from where this <code>SimpleLog</code> loaded (and may reload) its configuration.
     */
    private final URL configurationSource;
 
@@ -481,12 +483,16 @@ SimpleLog
          if (importList.length() > 0)
          {
             String[] filesToImport = importList.split(",");
-            for (int i = 0; i < filesToImport.length; i++)
+            if (filesToImport != null && filesToImport.length != 0)
             {
-               String fileToImport = filesToImport[i];
-               URL urlToImport = SimpleLog.class.getClassLoader().getResource(fileToImport);
-               if (urlToImport != null)
+               String configurationContext = configurationSource.toExternalForm();
+               int lastSlash = configurationContext.lastIndexOf('/');
+               lastSlash += 1;
+               configurationContext = configurationContext.substring(0, lastSlash);
+               for (int i = 0; i < filesToImport.length; i++)
                {
+                  String filenameToImport = filesToImport[i];
+                  URL urlToImport = new URL(configurationContext + filenameToImport);
                   InputStream importStream = null;
                   try
                   {
@@ -496,19 +502,14 @@ SimpleLog
                   }
                   catch (IOException e)
                   {
-                     printError("Error importing properties file: " + fileToImport, e, true);
+                     printError("Error importing properties file: " + filenameToImport +
+                                "(" + urlToImport + ")", e, true);
                   }
                   finally
                   {
                      if (importStream != null)
-                     {
                         importStream.close();
-                     }
                   }
-               }
-               else
-               {
-                  printError("Properties file specified as import not found: " + fileToImport);
                }
             }
          }
@@ -1285,6 +1286,7 @@ SimpleLog
             {
                try
                {
+                  System.err.println();
                   error.printStackTrace(System.err);
                }
                catch (SecurityException e)
