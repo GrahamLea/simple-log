@@ -18,6 +18,7 @@ CHANGE LOG
    + Issue 25: Should put the release version number in the properties file
    + Issue 27: Add a simplelog-plain.properties file
    + Issue 30: Default rollover filename fails when active log file is absolute
+   + Issue 31: Need Simple Log internal debugging (simplelog.dev.debug system property)
    + Split the existing properties file into three (-config and -rollover)
    + Added an HTML file documenting the properties
 

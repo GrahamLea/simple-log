@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.16 2006-02-25 15:22:00 grlea Exp $
+// $Id: SimpleLog.java,v 1.17 2006-05-29 11:55:08 grlea Exp $
 // Copyright (c) 2004-2005 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -56,7 +56,7 @@ import java.util.TimerTask;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  * @author $Author: grlea $
  */
 public final class
@@ -69,6 +69,12 @@ SimpleLog
 
    /** The name of the system property defining the location of the properties. */
    private static final String CONFIG_PROPERTY = "simplelog.configuration";
+
+   /** The name of the system property for debugging Simple Log itself. */
+   private static final String DEV_DEBUG_PROPERTY = "simplelog.dev.debug";
+
+   /** The name of the system property printing Simple Log stack traces. */
+   private static final String DEV_STACKTRACES_PROPERTY = "simplelog.dev.printStackTraces";
 
    /** The prefix used when the configuration is coming from a file. */
    private static final String FILE_CONFIG_PREFIX = "file:";
@@ -216,6 +222,28 @@ SimpleLog
     * An object to synchronize on when checking or changing the {@link #defaultInstance}.
     */
    private static final Object defaultInstanceLock = new Object();
+
+   /**
+    * Specifies whether Simple Log will output debug information about itself.
+    */
+   private static boolean devDebug = false;
+
+   static
+   {
+      try
+      {
+         String devDebugString = System.getProperty(DEV_DEBUG_PROPERTY);
+         if (devDebugString != null && "true".equalsIgnoreCase(devDebugString.trim()))
+         {
+            devDebug = true;
+            printDebugIfEnabled("Simple Log DEV Debugging enabled (-Dsimplelog.dev.debug)");
+         }
+      }
+      catch (Exception e)
+      {
+         printError("Exception while reading system property '" + DEV_DEBUG_PROPERTY + "'", e, true);
+      }
+   }
 
    // Constants
    //...............................................................................................
@@ -387,6 +415,8 @@ SimpleLog
       boolean reloading = Boolean.valueOf(reloadingString).booleanValue();
       if (reloading)
       {
+         printDebugIfEnabled("Configuration reloading enabled");
+
          Timer timer = new Timer(true);
          TimerTask reloadTask;
          int reloadPeriod;
@@ -404,6 +434,10 @@ SimpleLog
          }
 
          timer.schedule(reloadTask, reloadPeriod, reloadPeriod);
+      }
+      else
+      {
+         printDebugIfEnabled("Configuration reloading is disabled");
       }
    }
 
@@ -423,12 +457,16 @@ SimpleLog
          return;
       }
 
+      printDebugIfEnabled("Loading properties");
+
       // Load the properties into a new object, then replace the current ones if the read suceeds.
       InputStream inputStream = configurationSource.openStream();
       Properties newProperties = new Properties();
       try
       {
          newProperties.load(inputStream);
+         if (devDebug)
+            newProperties.list(System.err);
       }
       finally
       {
@@ -452,6 +490,7 @@ SimpleLog
                   InputStream importStream = null;
                   try
                   {
+                     printDebugIfEnabled("Importing file", urlToImport);
                      importStream = urlToImport.openStream();
                      newProperties.load(importStream);
                   }
@@ -561,8 +600,8 @@ SimpleLog
             }
             catch (IllegalArgumentException e2)
             {
-               printError("Error parsing debug level for " + KEY_DEFAULT_LEVEL, e1, true);
-               printError("Error parsing debug level for " + KEY_DEFAULT_LEVEL, e2, false);
+               printError("Error parsing debug level for '" + KEY_DEFAULT_LEVEL + "'", e1, true);
+               printError("Error parsing debug level for '" + KEY_DEFAULT_LEVEL + "'", e2, false);
             }
          }
       }
@@ -837,10 +876,13 @@ SimpleLog
       {
          if (defaultInstance == null)
          {
+            printDebugIfEnabled("Creating default SimpleLog instance");
+
             URL propertiesUrl = getPropertiesUrl();
 
             if (propertiesUrl != null)
             {
+               printDebugIfEnabled("Attempting to configure using properties at", propertiesUrl);
                try
                {
                   defaultInstance = new SimpleLog(propertiesUrl);
@@ -853,6 +895,10 @@ SimpleLog
 
             if (defaultInstance == null)
             {
+               printDebugIfEnabled("");
+               printDebugIfEnabled("FAILED to load any SimpleLog configuration.");
+               printDebugIfEnabled("");
+               printDebugIfEnabled("NO LOG OUTPUT WILL BE GENERATED.");
                defaultInstance = new SimpleLog(new Properties());
                defaultInstance.setWriter(null);
             }
@@ -874,6 +920,7 @@ SimpleLog
       {
          printError("SecurityException while trying to read system property", e, true);
       }
+      printDebugIfEnabled("System property '" + CONFIG_PROPERTY + "'", propertiesDefinition);
 
       URL propertiesUrl = null;
       if (propertiesDefinition != null)
@@ -923,7 +970,11 @@ SimpleLog
 
       // Default: simplelog.properties in the root of the classpath
       if (propertiesUrl == null)
+      {
+         printDebugIfEnabled(
+            "Attempting to load default properties (simplelog.properties) from classpath");
          propertiesUrl = SimpleLog.class.getClassLoader().getResource(DEFAULT_PROPERTIES_FILE_NAME);
+      }
 
       return propertiesUrl;
    }
@@ -1006,8 +1057,8 @@ SimpleLog
                }
                catch (IllegalArgumentException e2)
                {
-                  printError("Error parsing debug level for " + loggerConfigName, e1, true);
-                  printError("Error parsing debug level for " + loggerConfigName, e2, false);
+                  printError("Error parsing debug level for '" + loggerConfigName + "'", e1, true);
+                  printError("Error parsing debug level for '" + loggerConfigName + "'", e2, false);
                }
             }
          }
@@ -1133,6 +1184,8 @@ SimpleLog
    {
       synchronized (LOGGERS_LOCK)
       {
+         printDebugIfEnabled("Re-configuring all loggers");
+
          for (Iterator iter = loggers.iterator(); iter.hasNext();)
          {
             configure((SimpleLogger) iter.next());
@@ -1146,6 +1199,33 @@ SimpleLog
                configure(logger);
          }
       }
+   }
+
+   /**
+    * Prints the given debug message to System.err if Simple Log dev debugging is enabled.
+    *
+    * @param message a message to print
+    */
+   private static void
+   printDebugIfEnabled(String message)
+   {
+      if (devDebug)
+         System.err.println("SimpleLog [dev.debug]: " + message);
+   }
+
+   /**
+    * Prints the given debug message and object value to System.err if Simple Log dev debugging is
+    * enabled.
+    *
+    * @param message a message to print
+    *
+    * @param value an object to print
+    */
+   private static void
+   printDebugIfEnabled(String message, Object value)
+   {
+      if (devDebug)
+         System.err.println("SimpleLog [dev.debug]: " + message + ": " + value);
    }
 
    /**
@@ -1173,7 +1253,7 @@ SimpleLog
       boolean printStackTraces = false;
       try
       {
-         String printStackTracesStr = System.getProperty("simplelog.dev.printStackTraces");
+         String printStackTracesStr = System.getProperty(DEV_STACKTRACES_PROPERTY);
          printStackTraces = printStackTracesStr != null &&
                             printStackTracesStr.trim().equalsIgnoreCase("true");
       }
