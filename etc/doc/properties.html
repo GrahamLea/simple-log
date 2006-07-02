@@ -1,20 +1,73 @@
 <html>
-   <!-- $Id: properties.html,v 1.1 2006-02-26 00:29:55 grlea Exp $ -->
+   <!-- $Id: properties.html,v 1.2 2006-07-02 22:55:12 grlea Exp $ -->
    <head>
       <title>Simple Log Properties</title>
       <meta http-equiv="description" content="Documentation of the properties accepted by Simple Log" />
-      <link type="text/css" rel="stylesheet" href="properties.css" />
+      <link type="text/css" rel="stylesheet" href="style.css" />
+      <link type="text/css" rel="stylesheet" href="code.css" />
    </head>
 
    <body>
 
+      <div class="topMenu">
+         <h1>Simple Log User Guide</h1>
+         <ul>
+            <li><a href="quickStart.html">Quick&nbsp;Start</a></li>
+            <li><a href="philosophy.html">Philosophy</a></li>
+            <li><a href="recommendedUse.html">Recommended&nbsp;Use</a></li>
+            <li><a href="properties.html">Properties</a></li>
+            <li><a href="rollover.html">Log&nbsp;Rolling</a></li>
+            <li><a href="log4jComparison.html">Comparison&nbsp;with&nbsp;Log4J</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="donations.html">Donations</a></li>
+            <li><a href="meaningOfLife.html">The Meaning of Life</a></li>
+         </ul>
+      </div>
+
       <h1>Simple Log Properties</h1>
 
+      <h2>System Properties</h2>
+
+      <p>
+         Simple Log responds to the following System Properties, which can be defined either
+         using the -D command line argument to your Java Virtual Machine, or by calling
+         <span class="code">System.setProperty()</span>.
+      </p>
+
+      <a name="simplelog.dev.debug"/>
+      <h3 class="propertyName">simplelog.dev.debug</h3>
+
+      <p>
+         Setting this property to <span class="configuration">true</span> will result in Simple Log
+         itself outputting debugging information. This option is particularly useful if you find
+         yourself in the scenario where Simple Log isn't creating any output and you think it should
+         be. The output will be written to <span class="code">System.err</span> and will look similar
+         to the following example.
+      </p>
+
+<pre class="output">
+SimpleLog [dev.debug]: Simple Log DEV Debugging enabled (-Dsimplelog.dev.debug)
+SimpleLog [dev.debug]: Creating default SimpleLog instance
+SimpleLog [dev.debug]: System property 'simplelog.configuration': null
+SimpleLog [dev.debug]: Attempting to load default properties (simplelog.properties) from classpath
+SimpleLog [dev.debug]:
+SimpleLog [dev.debug]: FAILED to load any SimpleLog configuration.
+SimpleLog [dev.debug]:
+SimpleLog [dev.debug]: NO LOG OUTPUT WILL BE GENERATED.</pre>
+
+      <h3 class="propertyName">simplelog.dev.printStackTraces</h3>
+
+      <p>
+         Normally, if Simple Log encounters an internal error, it will print a message to
+         <span class="code">System.err</span> and, where necessary, the type and message exception
+         that caused the error. Setting this property to <span class="configuration">true</span>
+         will cause the stack trace of the exceptions to also be printed in these circumstances.
+      </p>
 
       <h2>Debug and Trace Levels</h2>
 
 
-      <h3 class="notAProperty">Debug Levels</h3>
+      <h3>Debug Levels</h3>
 
       <p>
          Debug levels for classes and packages are defined simply by entering a fully-qualified class or
@@ -96,7 +149,7 @@ org.grlea.application.InstanceObject = error</pre>
       </p>
 
 
-      <h3 class="notAProperty">Tracing Flags</h3>
+      <h3>Tracing Flags</h3>
 
       <p>
          Tracing flags are set in the same manner as debug levels (you just need the
@@ -116,7 +169,7 @@ org.grlea.application#trace false</pre>
       </p>
 
 
-      <h3>simplelog.defaultLevel</h3>
+      <h3 class="propertyName">simplelog.defaultLevel</h3>
 
       <p>
          Default level for classes for which no debug level hierarchy exists:
@@ -126,7 +179,7 @@ org.grlea.application#trace false</pre>
       <p>Default: <code>4</code> <i>(Info)</i></p>
 
 
-      <h3>simplelog.defaultTrace</h3>
+      <h3 class="propertyName">simplelog.defaultTrace</h3>
 
       <p>Default tracing for classes for which no tracing hierarchy exists: true or false</p>
 
@@ -136,7 +189,7 @@ org.grlea.application#trace false</pre>
 
       <h2>Import List</h2>
 
-      <h3>simplelog.import</h3>
+      <h3 class="propertyName">simplelog.import</h3>
 
       <p>
          A comma-separated list of other properties files to import.
@@ -156,7 +209,7 @@ org.grlea.application#trace false</pre>
       <h2>Log File Properties</h2>
 
 
-      <h3>simplelog.logFile</h3>
+      <h3 class="propertyName">simplelog.logFile</h3>
 
       <p>
          Send log output to a file (rather than to System.err): relative or absolute file name.
@@ -179,7 +232,7 @@ org.grlea.application#trace false</pre>
       <p>Default: <i>blank (write to System.err)</i></p>
 
 
-      <h3>simplelog.logFile.interpretName</h3>
+      <h3 class="propertyName">simplelog.logFile.interpretName</h3>
 
       <p>
          Whether the logFile property should be interpreted using a MessageFormat: true or false
@@ -192,7 +245,7 @@ org.grlea.application#trace false</pre>
 
       <p>Default: <code>true</code></p>
 
-      <h3>simplelog.logFile.append</h3>
+      <h3 class="propertyName">simplelog.logFile.append</h3>
 
       <p>
          When writing log output to a file, append to the file if it already exists: true or false
@@ -205,7 +258,7 @@ org.grlea.application#trace false</pre>
       <p>Default: <code>true</code></p>
 
 
-      <h3>simplelog.logFile.andConsole</h3>
+      <h3 class="propertyName">simplelog.logFile.andConsole</h3>
 
       <p>
          Whether the logging output going to a file should also be output to the console: true or false
@@ -218,7 +271,7 @@ org.grlea.application#trace false</pre>
 
       <h2>Configuration Management</h2>
 
-      <h3>simplelog.reloading</h3>
+      <h3 class="propertyName">simplelog.reloading</h3>
 
       <p>
          Reload the properties if they change: true or false
@@ -231,14 +284,14 @@ org.grlea.application#trace false</pre>
       <h2>General Format Properties</h2>
 
 
-      <h3>simplelog.printStackTraces</h3>
+      <h3 class="propertyName">simplelog.printStackTraces</h3>
 
       <p>Whether the exception message should print a stack trace: true or false</p>
 
       <p>Default: <code>true</code></p>
 
 
-      <h3>simplelog.dateFormat</h3>
+      <h3 class="propertyName">simplelog.dateFormat</h3>
 
       <p>
          Date format for ALL message formats: see
@@ -286,7 +339,7 @@ org.grlea.application#trace false</pre>
       </p>
 
 
-      <h3>simplelog.format.*</h3>
+      <h3 class="propertyName">simplelog.format.*</h3>
 
       <p>
          These are the default values for the formats for each non-instance message type.
@@ -298,7 +351,7 @@ org.grlea.application#trace false</pre>
       <p><pre>simplelog.format.entry =           {0}|&gt;&gt;&gt;|{1}|{2}|{5}</pre></p>
       <p><pre>simplelog.format.exit =            {0}|&lt;&lt;&lt;|{1}|{2}|{5}</pre></p>
 
-      <h3>simplelog.format.*.instance</h3>
+      <h3 class="propertyName">simplelog.format.*.instance</h3>
 
       <p>
          These are the default values for the formats for each instance message type.
@@ -313,7 +366,7 @@ org.grlea.application#trace false</pre>
 
       <h2>Log Rolling Properties</h2>
 
-      <h3>simplelog.rollover</h3>
+      <h3 class="propertyName">simplelog.rollover</h3>
 
       <p>
          Enables the rolling of log files, using the specified strategy.
@@ -328,7 +381,8 @@ org.grlea.application#trace false</pre>
       <p>Default: <i>blank (no rollover)</i></p>
 
 
-      <h3>simplelog.rollover.directory</h3>
+      <a name="simplelog.rollover.directory"/>
+      <h3 class="propertyName">simplelog.rollover.directory</h3>
 
       <p>
          When rollover is in use, specifies the directory, either absolute or relative to the working
@@ -341,7 +395,8 @@ org.grlea.application#trace false</pre>
       <p>Default: <i>blank (same directory as active log file)</i></p>
 
 
-      <h3>simplelog.rollover.filename</h3>
+      <a name="simplelog.rollover.filename"/>
+      <h3 class="propertyName">simplelog.rollover.filename</h3>
 
       <p>
          When rollover is in use, specifies the format of the file name to use for rolloed-over log files.
@@ -384,7 +439,8 @@ org.grlea.application#trace false</pre>
       <p>Default: <code>{1}-<i>&lt;active log file pattern&gt;</i></code></p>
 
 
-      <h3>simplelog.rollover.period</h3>
+      <a name="simplelog.rollover.period"/>
+      <h3 class="propertyName">simplelog.rollover.period</h3>
 
       <p>
          Specifies how often the rollover strategy will be consulted to decide whether to roll or not.
@@ -394,7 +450,8 @@ org.grlea.application#trace false</pre>
       <p>Default: <code>60</code></p>
 
 
-      <h3>simplelog.rollover.fileSize.size</h3>
+      <a name="simplelog.rollover.fileSize.size"/>
+      <h3 class="propertyName">simplelog.rollover.fileSize.size</h3>
 
       <p>
          When '<code>fileSize</code>' rollover is in use, specifies the size at which log files should be rolled.
@@ -405,7 +462,8 @@ org.grlea.application#trace false</pre>
       <p>Default: <code>100M</code></p>
 
 
-      <h3>simplelog.rollover.timeOfDay.time</h3>
+      <a name="simplelog.rollover.timeOfDay.time"/>
+      <h3 class="propertyName">simplelog.rollover.timeOfDay.time</h3>
 
       <p>
          When '<code>timeOfDay</code>' rollover is in use, specifies the time of the day at which the logs should roll
@@ -416,7 +474,8 @@ org.grlea.application#trace false</pre>
       <p>Default: <code>0:00</code> <i>(12 midnight)</i></p>
 
 
-      <h3>simplelog.rollover.timeOfDay.timezone</h3>
+      <a name="simplelog.rollover.timeOfDay.timezone"/>
+      <h3 class="propertyName">simplelog.rollover.timeOfDay.timezone</h3>
 
       <p>
          When '<code>timeOfDay</code>' rollover is in use, specifies the TimeZone in which the rollover time
@@ -444,8 +503,23 @@ org.grlea.application#trace false</pre>
       <p>Default: <i>blank (Uses the system's default TimeZone)</i></p>
 
       <p class="copyright">
-         Copyright (c) 2005 Graham Lea. All rights reserved.
+         Copyright (c) 2006 Graham Lea. All rights reserved.
       </p>
+
+      <div class="bottomMenu">
+         <h1>Simple Log User Guide</h1>
+         <ul>
+            <li><a href="quickStart.html">Quick&nbsp;Start</a></li>
+            <li><a href="philosophy.html">Philosophy</a></li>
+            <li><a href="recommendedUse.html">Recommended&nbsp;Use</a></li>
+            <li><a href="properties.html">Properties</a></li>
+            <li><a href="rollover.html">Log&nbsp;Rolling</a></li>
+            <li><a href="log4jComparison.html">Comparison&nbsp;with&nbsp;Log4J</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="donations.html">Donations</a></li>
+            <li><a href="meaningOfLife.html">The Meaning of Life</a></li>
+         </ul>
+      </div>
 
    </body>
 

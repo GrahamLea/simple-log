@@ -1,0 +1,111 @@
+<html>
+   <!-- $Id: rollover.html,v 1.1 2006-07-02 22:55:13 grlea Exp $ -->
+   <head>
+      <title>Simple Log - Log Rolling</title>
+      <meta http-equiv="description" content="Explanation of Log Roliing in Simple Log" />
+      <link type="text/css" rel="stylesheet" href="style.css" />
+      <link type="text/css" rel="stylesheet" href="code.css" />
+   </head>
+
+   <body>
+
+      <div class="topMenu">
+         <h1>Simple Log User Guide</h1>
+         <ul>
+            <li><a href="quickStart.html">Quick&nbsp;Start</a></li>
+            <li><a href="philosophy.html">Philosophy</a></li>
+            <li><a href="recommendedUse.html">Recommended&nbsp;Use</a></li>
+            <li><a href="properties.html">Properties</a></li>
+            <li><a href="rollover.html">Log&nbsp;Rolling</a></li>
+            <li><a href="log4jComparison.html">Comparison&nbsp;with&nbsp;Log4J</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="donations.html">Donations</a></li>
+            <li><a href="meaningOfLife.html">The Meaning of Life</a></li>
+         </ul>
+      </div>
+
+      <h1>Simple Log - Log Rolling</h1>
+
+      <h2>What Is Rollover?</h2>
+
+      <p>
+         Log rolling, or log rollover, allows you to have your logging distributed across multiple files over time, rather than continuing to accumulate it all in a single huge file.
+      </p>
+
+      <h2>How Simple Log's Rollover Works</h2>
+
+      <p>
+         Log rolling in Simle Log uses the concept of an <i>active</i> log file and <i>rolled</i> log files. Simple Log will always write new output to the active log file. When it is time to roll the active log file, its entire contents are copied to a new "rolled" log file, the active log file is emptied and Simple Log begins writing again at the start of the (now empty) active log file.
+      </p>
+
+      <p>
+         As for how Simple Log decides when it is time to roll the active log file, this depends on the Rollover Strategy being used.
+      </p>
+
+      <h2>Explanation of the Strategies</h2>
+
+      <p>
+         Simple Log comes with two Rollover Strategies, although you can also write your own if necessary.
+         The <a href="javadoc/org/grlea/log/rollover/FileSizeRolloverStrategy.html">'File Size'</a> strategy will roll the active log file whenever it reaches a particular size,
+         while the <a href="javadoc/org/grlea/log/rollover/TimeOfDayRolloverStrategy.html">'Time of Day'</a> strategy rolls the active log file at a particular time of day.
+      </p>
+
+      <p>
+         <a href="properties.html#simplelog.rollover.fileSize.size">The size at which the File Size strategy will roll the log file</a> is of course configurable and defaults to 100 MB.
+      </p>
+
+      <p>
+         <a href="properties.html#simplelog.rollover.timeOfDay.time">The time at which the Time of Day strategy will roll the log file</a> is configuragble and defaults to 12:00 Midnight.
+         <a href="properties.html#simplelog.rollover.timeOfDay.timezone">The Timezone in which the rolling time is specified</a> is also configurable and by default uses the system's default Timezone. If you're thinking "What if my application isn't running at that time?", don't worry - we handle that.
+      </p>
+
+      <h2>How to Enable Log Rolling</h2>
+
+      <p>
+         To turn on log rolling in Simple Log you simply need to specify the strategy to use. You can specify either '<span class="configuration">fileSize</span>' or '<span class="configuration">timeOfDay</span>', or specify your own custom strategy.
+         This will enable log rolling, with the rolled logs being placed in the same directory as the active log file and the rolled log file names being the same as the active log file name but with a unique, incrementing number prepended (e.g. 02-application.log).
+      </p>
+
+         <p>
+         Both <a href="properties.html#simplelog.rollover.directory">the directory where the logs are placed</a> and <a href="properties.html#simplelog.rollover.directory">the format of the rolled log file names</a> is configurable.
+         If you're really anal, you can also configure <a href="properties.html#simplelog.rollover.period">how often Simple Log will check whether it needs to roll the logs</a>. By default this is done every 60 seconds.
+      </p>
+
+      <h2>Write and Use Your Own Strategy</h2>
+
+      <p>
+         If you have some other requirement for determining when your logs are rolled, for example "once a week", "when the moonlight is at just the right angle", or using the "Schimke Random Rolling" algorithm,
+         you can easily write your own implementation of <a href="javadoc/org/grlea/log/rollover/RolloverStrategy.html">RolloverStrategy</a>.
+         It's as simple as creating a zero-argument constructor and implementing the <pre class="code">configure(Map properties)</pre> method and the all-important <pre class="code">boolean rolloverNow(Date fileCreated, long fileLength)</pre> function. The documentation is pretty straight-forward, and there's of course the source code of the other two strategies for you to look at.
+      </p>
+
+      <p>
+         Your strategy will be able to read properties out of the Simple Log properties file, so you can make it as configurable as you like. If you're planning on giving your strategy to other people, just remember to have sensible defaults for all the properties so that they don't have to configure it if they don't want to.
+      </p>
+
+      <p>
+         To make use of your own strategy, you simply need to enter its fully-qualified class name as the value for the <span class="configuration">simplelog.rollover</span> property and make sure that your class is available in the same classloader that is loading Simple Log.
+      </p>
+
+      <p class="copyright">
+         Copyright (c) 2006 Graham Lea. All rights reserved.
+      </p>
+
+      <div class="bottomMenu">
+         <h1>Simple Log User Guide</h1>
+         <ul>
+            <li><a href="quickStart.html">Quick&nbsp;Start</a></li>
+            <li><a href="philosophy.html">Philosophy</a></li>
+            <li><a href="recommendedUse.html">Recommended&nbsp;Use</a></li>
+            <li><a href="properties.html">Properties</a></li>
+            <li><a href="rollover.html">Log&nbsp;Rolling</a></li>
+            <li><a href="log4jComparison.html">Comparison&nbsp;with&nbsp;Log4J</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="donations.html">Donations</a></li>
+            <li><a href="meaningOfLife.html">The Meaning of Life</a></li>
+         </ul>
+      </div>
+
+   </body>
+
+</html>

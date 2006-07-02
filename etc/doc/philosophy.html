@@ -1,0 +1,236 @@
+<html>
+   <!-- $Id: philosophy.html,v 1.1 2006-07-02 22:55:11 grlea Exp $ -->
+   <head>
+      <title>Simple Log Philosophy</title>
+      <meta http-equiv="description" content="The philosophy behind Simple Log" />
+      <link type="text/css" rel="stylesheet" href="style.css" />
+      <link type="text/css" rel="stylesheet" href="code.css" />
+   </head>
+
+   <body>
+
+      <div class="topMenu">
+         <h1>Simple Log User Guide</h1>
+         <ul>
+            <li><a href="quickStart.html">Quick&nbsp;Start</a></li>
+            <li><a href="philosophy.html">Philosophy</a></li>
+            <li><a href="recommendedUse.html">Recommended&nbsp;Use</a></li>
+            <li><a href="properties.html">Properties</a></li>
+            <li><a href="rollover.html">Log&nbsp;Rolling</a></li>
+            <li><a href="log4jComparison.html">Comparison&nbsp;with&nbsp;Log4J</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="donations.html">Donations</a></li>
+            <li><a href="meaningOfLife.html">The Meaning of Life</a></li>
+         </ul>
+      </div>
+
+      <h1>Simple Log Philosophy</h1>
+
+      <p>
+         This page is a little about the philosophy behind Simple Log. There's a few different logging libraries available for Java, and there's a few different ways to discern between them. One way is to look at the features offered, another to look at the API and the documentation, maybe how active the development team or the mailing list are. Another is to look at the philosophy behind the libarary:
+      </p>
+
+      <p class="emphasis">
+         What does it promise to help you achieve?
+      </p>
+
+      <p>
+         I have to admit that I didn't start Simple Log with a philosophy. In fact, I started with a list of things that I didn't want to do. I didn't want to do them because I'd seen them done in other logging libraries and they annoyed me a lot. There were also a couple of things that I did want to do, and I wanted to do them because they hadn't been done in other libraries and that really annoyed me, too. Some of the things I didn't want were XML configuration files or really long lines of code just to log a variable. Some of the things I did want were lots of debug levels and tracing config that was independent of the levels. But I digress...
+      </p>
+
+
+      <p>
+         What's the point of Simple Log? <a href="http://headrush.typepad.com/creating_passionate_users/2006/02/its_the_stupid.html">It's Simple, Stupid!</a>
+         Yes, the overiding principle in Simple Log is to be simple. (How surprising.) Everything must be simple. If it's not simple it's wrong; not universally wrong, but it's wrong in the context of Simple Log.
+      </p>
+
+      <p>
+         But this doesn't answer the previous question, which is what Simple Log is supposed to help you achieve. If you take the first principle - everything being simple - and spin it round to look at it from a customer's perspective, they should be able to expect the software to comply with this simple request:
+      </p>
+
+      <p class="emphasis">
+         <b>Don't make me think!</b>
+      </p>
+
+      <p>
+         So the promise of Simple Log is to let you put logging in your program without having to think about it. You still have to actually put the logging in, but if all goes to plan it should be a relatively brainless activity.
+      </p>
+
+      <h2>
+         Sphere of Influence
+      </h2>
+
+      <p>
+         Something very important to note about Simple Log is that the scope of its intended use is actually very narrow. It is only intended to be used for the logging that is provided as a means of monitoring and/or debugging an application. This was a concious decision right from the start, and there's two good reasons why I made it.
+      </p>
+
+      <p>
+         Firstly, most people that put logging into their applications are doing it for exactly this purpose. They want output from their application that will give their customers general diagnostics. If there happens to be a problem, they want to be able to "turn the logging up" and see information that is meaningful only to them and which should help them find, if not fix, the problem. I have no statistics to prove that this is what most people are doing, but if you think I'm wrong I'd be amused to watch you try and prove me so.
+      </p>
+
+      <p>
+         Secondly, on the few occasions where I have used a logging library to do something other than debug logging (usually called "business logging"), I have always, every time, come away thinking "That would have been much easier if I'd just ignored the logging package and written the code myself." The logging library got in the way. I had to write custom event classes; I had to set up special pipelines and filters; I had to write my own output classes. It created more work than it saved.
+      </p>
+
+
+      <h2>
+         The Consequences of Huge Assumptions
+      </h2>
+
+      <p>
+         The consequence of this decision to limit Simple Log's scope is that it allowed me to make some huge assumptions that allowed me to use a really simple design and, in turn, create a very simple API. The core of the package is only three classes, and even one of these you'll probably never have to look at.
+      </p>
+
+      <p>
+         As you work with Simple Log, you won't notice that a lot of things make sense. You shouldn't notice them, because they do makse sense; you'd only notice them if they didn't make sense.
+      </p>
+
+      <p>
+         Part of making sure that things always make sense is to make it so that they just work. That means not requiring you to do anything to get things to work, or, at the very worst, requiring you to do an absolute minimum.
+      </p>
+
+      <p>
+         For example, you don't have to write code to configure Simple Log. It will pick up the configuration file and configure itself. You can tell it to look somewhere else if you want to. Or you can configure the whole thing using code if you want to do that, too. But by default, you don't have to do anything except have a configuration file. This is the absolute minimum. The configuration file can be empty. But you must have one before Simple Log will give you any output.
+      </p>
+
+      <p>
+         Here's some more ways in which Simple Log strives to make sense, to just work, and to avoid making you think about logging:
+      </p>
+
+      <ul class="lotsOfText">
+
+         <li>The names of properties in the properties files are just short, sensible property names. I don't try to use them to do any reflection or anything tricky like that. The names were chosen specifically so they would make sense when you read them out aloud.<br/></li>
+
+         <li>You don't need to create any custom DebugLevels to increase the fidelity of your logging. Simple Log has seven levels, and because method tracing is configured orthogonally of debug logging, that's seven whole levels of debugging output. Hence why the highest level is called 'Ludicrous'.<br/></li>
+
+         <li>
+            If you want to debug an object with Simple Log, you just debug it, like this:
+
+<pre class="code">log.debugObject("someObject", someObject);</pre>
+
+            Even though this is one of the most common things for which logging is used, some packages don't have any support for it. In many, you have to take special steps to avoid creating StringBuffers for messages that won't even be logged by writing code like this every time you want to debug an object:
+
+<pre class="code">
+if (log.isDebugEnabled())
+log.debug("someObject: " + someObject);</pre>
+
+            To me, that just doesn't make sense. This is what logging is for. Why should I have to write two lines of code?!
+         </li>
+
+         <li>
+            Simple Log will give you meaningful output for arrays, and special output for bytes and byte arrays, without you having to do anything. Have you ever logged an array and then, when you've gone to look its output, you found this:
+
+<pre class="code">
+[Ljava.lang.String;@18a7efd</pre>
+
+            Gah! Well, after writing an <span class="code">arrayToString()</span> method about fifteen hundred times, I decided it was about time I wrote it for one last time - inside a logging package.
+         </li>
+
+         <li>Simple Log also lets you log the value of any primitives without wrapping them or converting them to strings. It does this for you, and it does it after checking whether the value will actually be output to the log.</li>
+
+         <li>
+            The API contains a raft of convenience methods, the intent of most of them being to prevent you from having to pass a DebugLevel object when you log. So you can call
+<pre class="code">
+log.info("Just some info")</pre>
+            rather than
+<pre class="code">
+log.db(DebugLevel.L4_INFO, "Just some info");</pre>
+         </li>
+      </ul>
+
+      <p>
+         If you'd like to read more about ways in which I've tried to make Simple Log more straight-forward than other logging packages, you might like to read the comparison with Log4J.
+      </p>
+
+
+      <h2>
+         Things Simple Log DOESN'T Have
+      </h2>
+
+      <p>
+         As important to me as the things that I had decided Simple Log must have were the things which I was adamant from the start that it wouldn't have. Here is a list of things that, due to bad experiences with other logging packages, I intentionally banned during the creation of Simple Log.
+      </p>
+
+      <p>
+         <b>An XML Configuration File (or any XML, for that matter)</b><br/>
+         Simple Log's properties-based configuration file is simple and easier to read and maintain than XML.
+      </p>
+
+      <p>
+         <b>Any concept of a "Logging Pipeline" or "Log Event" objects</b><br/>
+         As well as consuming memory unnecessarily, such architectures are overkill for the simple level-based logging that most applications require.
+      </p>
+
+      <p>
+         <b>Extendable Debug Levels</b><br/>
+         If seven levels is not enough, you probably have bigger issues than which logging package to use.
+      </p>
+
+      <p>
+         <b>Custom Filters</b><br/>
+         All messages are either logged or not based on the level of the message compared to the level assigned to the class that created it. If you need something fancier, Simple Log is not the package for you.
+      </p>
+
+      <p>
+         <b>Custom Formatters/Renderers</b><br/>
+         The format of log messages can be controlled, from the properties file, using the extremely flexible java.text.MessageFormat.
+      </p>
+
+      <p>
+         <b>A 200-page Manual</b><br/>
+         If you can't understand the javadoc for 3 classes, you probably shouldn't be programming.
+      </p>
+
+
+      <h2>
+         Small Log or Tiny Log?
+      </h2>
+
+      <p>
+         At the time that I decided to publish Simple Log, I had to choose between whether to call it Simple Log or Tiny Log. Having a logging package that had a really small deployment JAR size is probably something a lot of people would be looking for, and keeping the size of the API and the resulting code small was definitely one of my secondary goals.
+      </p>
+
+      <p>
+         I went with Simple Log, because simplicity was the thing I was most focussed on, and that was the word I wanted people to associate with this package. However, I continue to go to lengths to ensure that Simple Log remains small. After implementing the log rolling features for version 2.0, I spent hours refactoring the code to make certain that Simple Log could be used without deploying the rollover classes. It took a lot of playing, a few trips to Sun's Java forums[link?] and a lesson about how the JVM class verifier works, but eventually I made it work. All to save you from having to deploy an extra 12 KB with your application. That's how serious I am about keeping the size of Simple Log small.
+      </p>
+
+
+      <h2>
+         In Conclusion...
+      </h2>
+
+      <p>
+         Simple Log doesn't try to do everything. It does one thing, and it does it well, and it makes it really easy for you to do it. Because it only does one thing, it's really small, and because it only does one thing, it comes with a complete, documented configuration file that you only need to tweak. You don't have to understand the internals of the logger before you can configure it. In fact, you should never need to understand them at all.
+      </p>
+
+      <p class="emphasis">
+         <b>You shouldn't have to think.</b><br/>
+         Simple Log makes it so.
+      </p>
+
+      <p>
+         If you want to discuss the philosophy of Simple Log, or maybe point out an area where you think I've violated my own Laws of Simplicity, please join the <a href="mailto:users-subscribe@simple-log.dev.java.net">Simple Log Users mailing list</a>. I'd love to hear what you think.
+      </p>
+
+      <p class="copyright">
+         Copyright (c) 2006 Graham Lea. All rights reserved.
+      </p>
+
+      <div class="bottomMenu">
+         <h1>Simple Log User Guide</h1>
+         <ul>
+            <li><a href="quickStart.html">Quick&nbsp;Start</a></li>
+            <li><a href="philosophy.html">Philosophy</a></li>
+            <li><a href="recommendedUse.html">Recommended&nbsp;Use</a></li>
+            <li><a href="properties.html">Properties</a></li>
+            <li><a href="rollover.html">Log&nbsp;Rolling</a></li>
+            <li><a href="log4jComparison.html">Comparison&nbsp;with&nbsp;Log4J</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="donations.html">Donations</a></li>
+            <li><a href="meaningOfLife.html">The Meaning of Life</a></li>
+         </ul>
+      </div>
+
+   </body>
+
+</html>

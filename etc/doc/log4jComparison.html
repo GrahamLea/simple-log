@@ -1,0 +1,1486 @@
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+   <head>
+      <title>Simple Log - Comparison with Log4J</title>
+      <meta http-equiv="description" content="A comparison of the use of Simple Log and Log4J" />
+      <meta http-equiv="keywords" content="logging java framework simple log log4j comparison alternative" />
+      <link type="text/css" rel="stylesheet" href="style.css" />
+      <link type="text/css" rel="stylesheet" href="log4jComparison.css" />
+
+   </head>
+
+   <body>
+
+      <div class="topMenu">
+         <h1>Simple Log User Guide</h1>
+         <ul>
+            <li><a href="quickStart.html">Quick&nbsp;Start</a></li>
+            <li><a href="philosophy.html">Philosophy</a></li>
+            <li><a href="recommendedUse.html">Recommended&nbsp;Use</a></li>
+            <li><a href="properties.html">Properties</a></li>
+            <li><a href="rollover.html">Log&nbsp;Rolling</a></li>
+            <li><a href="log4jComparison.html">Comparison&nbsp;with&nbsp;Log4J</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="donations.html">Donations</a></li>
+            <li><a href="meaningOfLife.html">The Meaning of Life</a></li>
+         </ul>
+      </div>
+
+      <div id="log4jComparison">
+         <h1>Simple Log Comparison with Log4J</h1>
+
+         <p>
+            Simple Log was written out of frustration with other "logging frameworks".
+            Many of its features are designed to contrast with the way in which these frameworks are used.
+            Because of this, it seemed sensible to show a comparison between Simple Log and one of these
+            frameworks so that you can see the difference before committing to using Simple Log in
+            your own code.
+            I have chosen Log4J for the comparison, as this is undoubtedly the most widely used logging
+            framework.
+         </p>
+
+         <p>
+            Not all of the comparisons will show Simple Log having an advantage. Some of them are just there
+            to say "Simple Log can do the same" or "here's how you'd do that in Simple Log".
+            I intend this to be a fair comparison, so if you see something that's not fair or is wrong,
+            <a href="mailto:%67%72%6c%65%61%40%64%65%76%2e%6a%61%76%61%2e%6e%65%74">please let me know</a>.
+         </p>
+
+         <h2>Don't Make Me Think!</h2>
+
+         <div class="dontMakeMeThink">
+            <p>Don't Make Me Think !</p>
+         </div>
+
+         <p>
+            One of the driving principles of Simple Log is "Don't Make Me Think!".
+            You should be able to use all but the most advanced features of your logger without having to
+            think about what you're doing.
+         </p>
+         <p>
+            In the examples below, if I consider the work necessary to use a feature in one of the logging
+            packages requires more thinking than should be necessary, I have flagged it using the
+            "Don't Make Me Think" banner shown on the right. There aren't many of these, but I think they
+            flag some of the most important differences.
+         </p>
+
+
+         <h2>Creating a Logger</h2>
+
+         <h3>Simple Log</h3>
+         <p class="example">
+            <code><span class="keywords">private static final</span> SimpleLogger log = <span class="keywords">new</span> SimpleLogger(Test.<span class="keywords">class</span>);</code>
+         </p>
+
+         <h3>Log4J</h3>
+         <p class="example">
+            <code><span class="keywords">private static final</span> Logger log = Logger.getLogger(Test.<span class="keywords">class</span>);</code>
+         </p>
+
+
+         <h2>Logger Output With No Configuration</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            Given <b>no configuration file</b>, Simple Log produces <b>no</b> output.
+            This is a feature that allows you to easily have zero output in deployment if desired.
+         </p>
+
+         <h3>Log4J</h3>
+         <p class="example">
+<code>
+log4j:WARN No appenders could be found for logger (test.Test).
+log4j:WARN Please initialize the log4j system properly.
+</code>
+         </p>
+
+
+         <h2>Most Basic Configuration</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            Given an <b>empty configuration file</b>, Simple Log writes all messages logged at the Fatal,
+            Error, Warn and Info levels to <span class="code">System.err</span>.
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            With Log4J, the minimum configuration required to produce output (ignoring the BasicConfigurator)
+            is:
+         </p>
+         <p class="example">
+<code>
+log4j.rootLogger=INFO,Console
+log4j.appender.Console=org.apache.log4j.ConsoleAppender
+log4j.appender.Console.layout=org.apache.log4j.SimpleLayout
+</code>
+         </p>
+         <div class="dontMakeMeThink">
+            <p>Don't Make Me Think !</p>
+         </div>
+         <p>
+            However, even that only gets you the most basic of output. To generate the same format of output
+            that Simple Log gives by default, you'd need to switch to a PatternLayout and then author
+            something like this as well:
+         </p>
+         <p class="example">
+<code>
+log4j.appender.Console.layout.ConversionPattern=%d{EEE yyyy/MM/dd HH:mm:ss.SSS}|   |%t|%c|%m%n
+</code>
+         </p>
+
+
+         <h2>Default Output</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            The default output of a Simple Log text log message is shown below.
+         </p>
+         <p class="example">
+<code>
+Thu 2006/02/09 08:38:11.269|   |main|Test|Plain message
+</code>
+         </p>
+         <p>
+            The output shows:
+         </p>
+         <ul>
+            <li>the current system date and time, including milliseconds,in a non-ambiguous format</li>
+            <li>the type of log message (three spaces indicating a text message)</li>
+            <li>the name of the thread from which the message was logged ('<span class="code">main</span>')</li>
+            <li>the class from which the message was logged ('<span class="code">Test</span>')</li>
+            <li>the log message ('<span class="code">Plain message</span>')</li>
+         </ul>
+         <p>
+            Each field of the output is separated by a pipe, making it easy to parse the line (if necessary)
+            using a simple string parsing method like <span class="code">split()</span>.
+         </p>
+         <p>
+            All this information was produced with only an empty properties file and one line of code:
+         </p>
+         <p class="example">
+<code>
+log.info(<span class="literal">"Plain message"</span>);
+</code>
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            Log4J has no default output, except error messages saying that it hasn't been configured.
+         </p>
+         <p>
+            The easiest way to get output from Log4J is to install a
+            <span class="code">BasicConfigurator</span>, which gives the following output:
+         </p>
+         <p class="example">
+<code>
+0 [main] INFO test.Test  - Plain message
+</code>
+         </p>
+         <p>
+            The output shows:
+         </p>
+         <ul>
+            <li>the number of milliseconds elapsed since the first message was logged</li>
+            <li>the name of the thread from which the message was logged ('<span class="code">main</span>')</li>
+            <li>the class from which the message was logged ('<span class="code">test.Test</span>')</li>
+            <li>the log message ('<span class="code">Plain message</span>')</li>
+         </ul>
+         <p>
+            Log4J's default output uses three different types of separators; there are
+            spaces between most fields, brackets around the thread name and an extra hyphen and space
+            before the log message.
+            This output would require a regular expression or some custom code in order
+            to be parsed into its components.
+         </p>
+         <p>
+            To get this information, I needed to configure Log4J from within my code:
+         </p>
+         <p class="example">
+<code>
+BasicConfigurator.configure();
+log.info(<span class="literal">"Plain message"</span>);
+</code>
+         </p>
+
+         <h2>Type of Output</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            Simple Log maintains a concept of having different types of log messages. There are plain text
+            messages, object values, exceptions and tracing (entry and exit). Each of these five message
+            types has its own format, making it simple to have different message types being easily
+            distinguished from each other in your log file.
+         </p>
+         <p>
+            Shown below is an example of one of each type of message: an entry, a plain message,
+            an object value, an exception and an exit.
+         </p>
+         <p class="example">
+<code>
+Thu 2006/02/09 08:38:11.269|&gt;&gt;&gt;|main|Test|main()
+Thu 2006/02/09 08:38:11.269|   |main|Test|Plain message
+Thu 2006/02/09 08:38:11.269|---|main|Test|object|java.lang.Object@bf2d5e
+Thu 2006/02/09 08:38:11.269|***|main|Test|java.lang.Exception: Test Exception
+java.lang.Exception: Test Exception
+      at test.Test.main(Test.java:52)
+      at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+      at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+      at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+      at java.lang.reflect.Method.invoke(Method.java:324)
+      at com.intellij.rt.execution.application.AppMain.main(AppMain.java:90)
+Thu 2006/02/09 08:38:11.279|&lt;&lt;&lt;|main|Test|main()
+</code>
+         </p>
+         <p>
+            Below is the code used to produce the above output.
+         </p>
+         <p class="example">
+<code>
+log.entry(<span class="literal">"main()"</span>);
+log.info(<span class="literal">"Plain message"</span>);
+log.infoObject(<span class="literal">"object"</span>, <span class="keywords">new</span> Object());
+log.errorException(<span class="keywords">new</span> Exception(<span class="literal">"Test Exception"</span>));
+log.exit(<span class="literal">"main()"</span>);
+</code>
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            Log4J has no concept of different log message types. All messages, regardless of whether they are
+            text, an object, an exception or tracing, are seen as just a message, and get rendered using a
+            single <span class="code">Layout</span> (per <span class="code">Appender</span>) with a single
+            pattern.
+         </p>
+         <p>
+            The output produced by Simple Log could probably be achieved with Log4J by having five
+            <span class="code">Logger</span>s for every category (i.e. five <span class="code">Logger</span>s
+            per class), one for each type of message, though this would undoubtedly not be worth the effort.
+         </p>
+
+
+         <h2>Logging a Message</h2>
+
+         <h3>Simple Log</h3>
+         <p class="example">
+         log.info(<span class="literal">"Message"</span>);
+         </p>
+
+         <h3>Log4J</h3>
+         <p class="example">
+         log.info(<span class="literal">"Message"</span>);
+         </p>
+
+
+         <h2>Logging an Object</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            Simple Log provides methods for debugging objects that will check the log level before performing
+            any concatenation.
+            As long as the object or value you are passing is not produced using concatenation, this means
+            you don't need to check the level yourself before logging your object.
+         </p>
+         <p>
+            Note that, while the below example shows the use of the method <span class="code">debugObject()</span>, there are
+            corresponding convenience methods for all <span class="code">DebugLevel</span>s at which you
+            might normally debug an object, e.g. <span class="code">infoObject()</span>, as well as the
+            generic <span class="code">dbo()</span> methods that take any level.
+         </p>
+         <p class="example">
+<code>
+log.debugObject(<span class="literal">"new Object()"</span>, <span class="keywords">new</span> Object());
+</code>
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            Log4J doesn't provide any methods specifically designed for debugging objects.
+            Most people use something like the following code.
+         </p>
+         <p class="example">
+<code>
+<span class="keywords">if</span> (log.isDebugEnabled())
+   log.debug(<span class="literal">"new Object(): "</span> + <span class="keywords">new</span> Object());
+</code>
+         </p>
+         <div class="dontMakeMeThink">
+            <p>Don't Make Me Think !</p>
+         </div>
+         <p>
+            Note that, because you have to perform a concatenation in order to log both the object's name and
+            value, best practice is to check whether the message will actually be logged before performing
+            the concatenation.
+         </p>
+         <p>
+            I should note that it is actually possible to do something <i>like</i> what Simple Log does with
+            objects by using Log4J's <span class="code">l7dlog()</span> method:
+         </p>
+         <p class="example">
+<code>
+log.l7dlog(Level.DEBUG, <span class="literal">"newObject"</span>, <span class="keywords">new</span> Object[] {<span class="keywords">new</span> Object()}, <span class="keywords">null</span>);
+</code>
+         </p>
+         <p>
+            However, to make this happen you have to do two other undesirable things:
+         </p>
+         <ul>
+            <li>
+               The messages you're going to use in such statements have to be provided in a ResourceBundle;
+            </li>
+            <li>
+               You have to create an <span class="code">Object[]</span> to pass your object value(s) to
+               the method.
+            </li>
+         </ul>
+         <p>
+            Because of the latter point, you probably would still want to do the pre-logging level-check
+            anyway, which totally defeats the point of trying to use this method.
+         </p>
+
+
+         <h2>Testing the Log Level Before Logging</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            In case you're wondering, it is possible to check whether a message will be logged before
+            logging it using Simple Log.
+         </p>
+         <p class="example">
+<code>
+<span class="keywords">if</span> (log.wouldLog(DebugLevel.L5_DEBUG))
+   ...
+</code>
+         </p>
+         <p>
+            And I can't think why you'd ever want to use this one, but it's there just in case:
+         </p>
+         <p class="example">
+<code>
+<span class="keywords">if</span> (log.isTracing())
+   ...
+</code>
+         </p>
+
+         <h3>Log4J</h3>
+         <p class="example">
+<code>
+<span class="keywords">if</span> (log.isDebugEnabled())
+   ...
+</code>
+         </p>
+
+
+         <h2>Logging a Primitive</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            Basically the same story as above; Simple Log lets you log any primitive just by passing it in.
+            There are convenience methods for <span class="keywords">int</span> and
+            <span class="keywords">boolean</span> at the most frequently-used levels
+            (e.g. <span class="code">debugObject(String, int)</span>,
+            <span class="code">verboseObject(String, boolean)</span>).
+            For other primitive types or for other levels, you can pass any
+            <span class="code">DebugLevel</span> and primitive to a <span class="code">dbo()</span> method.
+         </p>
+         <p class="example">
+<code>
+List kittens = ...;
+<span class="keywords">long</span> id = ...;
+
+log.debugObject(<span class="literal">"kittens"</span>, kittens.size());
+log.dbo(DebugLevel.L5_DEBUG, <span class="literal">"id"</span>, id);
+</code>
+         </p>
+
+         <h3>Log4J</h3>
+         <div class="dontMakeMeThink">
+            <p>Don't Make Me Think !</p>
+         </div>
+         <p>
+            As with objects, Log4J requires you to concatenate primitives yourself, after the all-important
+            level-check:
+         </p>
+         <p class="example">
+<code>
+List kittens = ...;
+<span class="keywords">long</span> id = ...;
+
+<span class="keywords">if</span> (log.isDebugEnabled()) {
+   log.debug(<span class="literal">"kittens: "</span> + kittens.size());
+   log.debug(<span class="literal">"id: "</span> + id);
+}
+</code>
+         </p>
+
+
+         <h2>Logging an Array/Byte Array/Char Array</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            Simple Log applies special formatting to object arrays, byte arrays and char arrays to ensure you
+            always get useful output without having to think about it.
+         </p>
+         <p class="example">
+<code>
+log.debugObject(<span class="literal">"strings"</span>, <span class="keywords">new</span> String[] {<span class="literal">"One"</span>, <span class="literal">"Two"</span>, <span class="literal">"Three"</span>});
+log.debugObject(<span class="literal">"chars"</span>,
+   new char[] {<span class="literal">'c'</span>, <span class="literal">'h'</span>, <span class="literal">'a'</span>, <span class="literal">'r'</span>, <span class="literal">'a'</span>, <span class="literal">'c'</span>, <span class="literal">'t'</span>, <span class="literal">'e'</span>, <span class="literal">'r'</span>, <span class="literal">'s'</span>});
+
+byte[] bytes = new byte[10];
+new Random().nextBytes(bytes);
+log.debugObject("bytes", bytes);
+</code>
+         </p>
+         <p>
+            The above code produces the following output:
+         </p>
+         <p class="example">
+<code>
+Fri 2006/02/10 07:51:41.250|---|main|Test|strings|[One, Two, Three]
+Fri 2006/02/10 07:51:41.250|---|main|Test|chars|characters
+Fri 2006/02/10 07:51:41.250|---|main|Test|bytes|0x[06, 9A, 2D, FC, BA, A0, F1, 63, B9, E0]
+</code>
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            Because Log4J has no special allowances for printing objects, you either get the hashcode
+            of your array as the output, or you have to do the work yourself to get it's contents.
+         </p>
+         <p>
+            Printing the array normally will get you its hashcode:
+         </p>
+         <p class="example">
+<code>
+<span class="keywords">if</span> (log.isDebugEnabled())
+   log.debug(<span class="literal">"strings: "</span> + <span class="keywords">new</span> String[] {<span class="literal">"One"</span>, <span class="literal">"Two"</span>, <span class="literal">"Three"</span>});
+</code>
+         </p>
+         <p class="example">
+<code>
+Fri 2006/02/10 08:01:15.256|   |main|test.Test|strings: [Ljava.lang.String;@df8ff1
+</code>
+         </p>
+         <div class="dontMakeMeThink">
+            <p>Don't Make Me Think !</p>
+         </div>
+         <p>
+            Or you can do the work yourself to get the same output for object arrays as Simple Log gives by
+            default:
+            <br/><br/>
+         </p>
+         <p class="example">
+<code>
+<span class="comment">// If you can guarantee Java 5 you could do it like this:</span>
+<span class="keywords">if</span> (log.isDebugEnabled())
+   log.debug(<span class="literal">"strings: "</span> + Arrays.toString(<span class="keywords">new</span> String[] {<span class="literal">"One"</span>, <span class="literal">"Two"</span>, <span class="literal">"Three"</span>}));
+
+<span class="comment">// Otherwise you have to do this:</span>
+String[] strings = ...;
+<span class="keywords">if</span> (log.isDebugEnabled()) {
+   StringBuffer buffer = <span class="keywords">new</span> StringBuffer(<span class="literal">"["</span>);
+   <span class="keywords">for</span> (<span class="keywords">int</span> i = 0; i &lt; strings.length; i++) {
+      <span class="keywords">if</span> (i != 0)
+         buffer.append(<span class="literal">", "</span>);
+      buffer.append(strings[i]);
+   }
+   buffer.append("]");
+   log.debug("strings: " + buffer);
+}
+</code>
+         </p>
+         <p>
+            As <span class="code">Arrays.toString()</span> has no special formatting for bytes, to get the
+            same hexadecimal output as Simple Log you would have to write your own code to produce it.
+            For character arrays you can use <span class="code">String.valueOf()</span>.
+         </p>
+
+
+         <h2>Logging an Exception</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            Simple Log has specific methods for logging exceptions. There are convenience methods for the
+            Fatal, Error and Warn levels, and the <span class="code">dbe()</span> method for less-frequently
+            used levels.
+         </p>
+         <p class="example">
+<code>
+log.errorException(<span class="keywords">new</span> Throwable(<span class="literal">"Pretty Bad Exception"</span>));
+log.warnException(<span class="keywords">new</span> Throwable(<span class="literal">"Recoverable Exception"</span>));
+log.debug(<span class="literal">"Caught Expected Exception"</span>);
+log.dbe(DebugLevel.L6_VERBOSE, <span class="keywords">new</span> Throwable(<span class="literal">"Expected Exception"</span>));
+</code>
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            Log4J also has specific method signatures for logging exceptions. With Log4J, you are encouraged
+            to log your message at the same time as your exception, meaning that your exception will always
+            be printed at the same level as your message.
+         </p>
+         <p class="example">
+<code>
+log.debug(<span class="literal">"Caught Expected Exception"</span>, <span class="keywords">new</span> Throwable(<span class="literal">"Expected Exception"</span>));
+</code>
+         </p>
+
+
+         <h2>Configuring Logging</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            In Simple Log, the level for a particular logger is set by creating a property with the name of
+            the logger and a value of either of the desired <span class="code">DebugLevel</span>'s name or
+            numeric value.
+            The level names are case-insensitive.
+         </p>
+         <p class="example">
+<code>
+org.grlea.application.Main = Error
+org.grlea.application.Processor = 5
+</code>
+         </p>
+         <p>
+            As in most logging packages, the levels specified are inherited based on the package name
+            hierarchy.
+            So, for example, you can set the level for all classes in the
+            <span class="code">org.glea.application</span> package and its subpackages using the following:
+         </p>
+         <p class="example">
+<code>
+org.grlea.application = Info
+</code>
+         </p>
+         <p>
+            Loggers for which there is no level set - either for the class of the logger or for any of the
+            packages in which the class resides - will have their level set to the default level, which is
+            defined and configured by the property <span class="code">simplelog.defaultLevel</span>.
+         </p>
+         <p class="example">
+<code>
+simplelog.defaultLevel = Warn
+</code>
+         </p>
+         <p>
+            Note that, while the levels for loggers in Simple Log are calculated using a hierarchical
+            namespace, there is not actually any logger hierarchy maintained within the code.
+         </p>
+
+
+         <h3>Log4J</h3>
+         <p>
+            In Log4J, the level for a particular logger is set by creating a property that is the name of
+            the logger prefixed with '<span class="code">log4j.logger.</span>'.
+            The value must be the name of the desired <span class="code">Level</span>.
+            The level names are case-insensitive.
+         </p>
+         <p class="example">
+<code>
+log4j.rootLogger=Info,Console
+log4j.logger.org.grlea.application.Main = Error
+log4j.logger.org.grlea.application.Processor = Debug
+</code>
+         </p>
+         <p>
+            In my experience, people are using XML to configure Log4J more often than a properties file.
+            The equivalent XML is of course more verbose than simple properties, and looks like this:
+         </p>
+         <p class="example">
+<code>
+&lt;category name="org.grlea.application.Main"&gt;
+   &lt;priority value="Error" /&gt;
+&lt;/category&gt;
+
+&lt;category name="org.grlea.application.Processor"&gt;
+   &lt;priority value="Debug" /&gt;
+&lt;/category&gt;
+
+&lt;root&gt;
+    &lt;priority value="Info" /&gt;
+    &lt;appender-ref ref="Console" /&gt;
+&lt;/root&gt;
+</code>
+         </p>
+         <p>
+            Using this format will mean that, every time you need to specify a level for a class or package
+            that isn't currently specified, you need to copy three or four lines (depending on whether you
+            like whitespace) and then change information on two of those lines.
+            The values you need to change are also not at the start or the end of any lines, but kind of
+            towards the end of them.
+            The amount of boilerplate text in this style of configuration also makes it much harder to
+            scan with the naked eye, as the important data is obscured by repetitious tags.
+         </p>
+         <p>
+            I know I'm being picky and anal here, but in the past when I've been debugging code and needing
+            to change the log levels frequently, I've experienced that reading, scanning and editing this
+            file is <b>really</b> annoying.
+            Being able to just type (or copy/paste) the FQ name of a class followed by a level is much easier.
+         </p>
+         <p>
+            As shown above, the default level and output semantics of Log4J are set by configuring the
+            "Root Logger", an object which sits at the top of Log4J's internally-maintained hierarchy of
+            <span class="code">Logger</span> objects.
+         </p>
+
+
+         <h2>Available Levels</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            Simple Log provides seven distinct <span class="code">DebugLevel</span>s.
+            The first five levels are common to many logging packages.
+            The last two are intended to allow more fine-grained control of debugging output.
+         </p>
+         <ol>
+            <li>Fatal</li>
+            <li>Error</li>
+            <li>Warn</li>
+            <li>Info</li>
+            <li>Debug</li>
+            <li>Verbose</li>
+            <li>Ludicrous</li>
+         </ol>
+         <p>
+            Debugging is what most
+            developers are using logging packages for, so having three grades of debugging levels makes a lot
+            of sense. Some packages, Log4J included, are distributed with only one debugging level, which
+            means that debugging for any particular class must be either on or off.
+
+            If you have a class that is doing a lot of work, e.g. an implementation of a
+            SAX <span class="code">DefaultHandler</span>, then it very useful to be able to turn on only
+            the most important debug information first.
+            Then, if more detail is required to solve the problem, you can get that detail by setting the
+            level up to Verbose or Ludicrous.
+
+            The alternative is to always
+            receive reems of output and to waste time trawling through mounds of useless detail messages that
+            may come in use one day but most of the time will just get in your way.
+         </p>
+         <p>
+            The <a href="http://www.grlea.org/projects/simple-log/api/">Simple Log API Documentation</a>
+            is very specific about the intended use of each level.
+            It gives examples of what kinds of messages and objects should be logged at each of the levels.
+            This removes the need for team meetings on the topic "What should we be logging at each level".
+         </p>
+         <p>
+            Tracing, that is, printing information about the entering and exiting of methods, is configured
+            indepently of debug levels.
+         </p>
+         <p>
+            Simple Log's <span class="code">DebugLevel</span> class is not extendable.
+            No one has ever complained about this.
+            Seven appears to be the holy number.
+         </p>
+
+
+         <h3>Log4J</h3>
+         <p>
+            Log4J provides five <span class="code">Level</span>s intended to be used for logging.
+         </p>
+         <ol>
+            <li>Fatal</li>
+            <li>Error</li>
+            <li>Warn</li>
+            <li>Info</li>
+            <li>Debug</li>
+         </ol>
+         <p>
+            It also has two levels intended for use only in configuration.
+         </p>
+         <ol>
+            <li>All</li>
+            <li>Off</li>
+         </ol>
+         <p>
+            As discussed above, there are a number of disadvantages associated with only having one level for
+            debug statements.
+         </p>
+         <p>
+            Unlike Simple Log's <span class="code">DebugLevel</span>, Log4J's <span class="code">Level</span>
+            class can be extended. Many developers use this fact to rectify Log4J's lack of debugging
+            granularity by creating their own level below Debug, very often called "Trace".
+            I have seen this cause a number of other issues, including more repetetive text in the
+            configuration file (and silent errors when this repetetive text is omitted) and difficulty in
+            upgrading Log4J versions due to the need to have your own build of Log4J.
+         </p>
+
+
+         <h2>API Simplicity</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            The core package of Simple Log contains three classes, of which most people will only ever need
+            to know about two - <span class="code">SimpleLogger</span> and perhaps
+            <span class="code">DebugLevel</span>.
+         </p>
+         <p>
+            In total, Simple Log version 2 will be released with about 9 public classes, of which:
+         </p>
+         <ul>
+            <li>3 are part of the core logging package</li>
+            <li>3 are related to log rolling (but can be ignored unless you're creating a custom
+                <span class="code">RolloverStrategy</span>)</li>
+            <li>3 are used for plugging Simple Log in to either Commons Logging or SLF4J</li>
+         </ul>
+
+         <h3>Log4J</h3>
+         <p>
+            The core package of Log4J contains 23 classes. Of these, you will need to use or at least
+            understand the concept of the following before getting Log4J to do anything useful:
+         </p>
+         <ul>
+            <li><span class="code">Logger</span></li>
+            <li><span class="code">Level</span></li>
+            <li><span class="code">Appender</span></li>
+            <li><span class="code">Layout</span></li>
+            <li><span class="code">PatternLayout</span></li>
+         </ul>
+         <p>
+            In total, the Log4J 1.2.9 API includes 123 public classes and interfaces.
+         </p>
+
+
+         <h2>Tracing</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            Simple Log has explicit support for tracing, which means logging messages when the thread of
+            control enters and exits a method, or any arbitrary section you might be interested in.
+            Tracing is performed using the <span class="code">entry()</span> and
+            <span class="code">exit()</span> methods, demostrated below and followed by the default output.
+         </p>
+         <p class="example">
+<code>
+log.entry(<span class="literal">"main()"</span>);
+log.exit(<span class="literal">"main()"</span>);
+</code>
+         </p>
+         <p class="example">
+<code>
+Thu 2006/02/09 08:38:11.269|&gt;&gt;&gt;|main|Test|main()
+Thu 2006/02/09 08:38:11.279|&lt;&lt;&lt;|main|Test|main()
+</code>
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            As Log4J has no concept of different types of log messages, it has no concept of a tracing
+            message. It doesn't have a level specifically for tracing, and as a result many people end up
+            creating their own custom level just for this purpose.
+         </p>
+         <p>
+            People who want to do tracing in Log4J usually do it something like the following.
+         </p>
+         <p class="example">
+<code>
+log.debug(<span class="literal">"IN: main()"</span>);
+log.debug(<span class="literal">"OUT: main()"</span>);
+</code>
+         </p>
+
+
+         <h2>Configuring Tracing</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            In Simple Log, tracing is configured independently of the debug levels.
+            To enable or disable tracing for any class or package you create a property with the name of the
+            logger followed by <span class="code">#trace</span> (a hash followed by the word 'trace'), and
+            with a value of either <span class="code">true</span> or <span class="code">false</span>.
+         </p>
+         <p class="example">
+<code>
+org.grlea.application#trace = false
+org.grlea.application.Main#trace = true
+org.grlea.application.processing#trace = true
+org.grlea.application.processing.XmlHandler#trace = false
+</code>
+         </p>
+         <p>
+            As with debug levels, tracing is inherited through the package name hierarchy.
+            So, using the above example, tracing would be active for the <span class="code">Main</span>
+            class and for all classes in and under the <span class="code">processing</span> package,
+            except for the <span class="code">XmlHandler</span> class.
+         </p>
+         <p>
+            The default for tracing is configured by setting the
+            <span class="code">simplelog.defaultTrace</span> property.
+         </p>
+         <p class="example">
+<code>
+simplelog.defaultTrace = true
+</code>
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            Seeing as Log4J has no dedicated tracing capability, you can't configure your trace statements
+            separately.
+            The impact of this is that, if you have tracing-like debug logs in a class, you have to get
+            all the debug output for that class to see the tracing.
+         </p>
+         <p>
+            As noted, some people create their own custom <span class="code">Level</span> so that they can
+            have tracing at a different level to their debug logs.
+            While doing so will allow you to see your debug messages without seeing your tracing
+            (assuming you make your Trace level lower than your Debug level), the opposite will not be true,
+            so to see your tracing you will also have to see all your debug statements.
+         </p>
+
+
+         <h2>Logging to a File</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            To log to a file using Simple Log, simply specify the name of the file with the
+            <span class="code">simplelog.logFile</span> property.
+         </p>
+         <p class="example">
+<code>
+simplelog.logFile = application.log
+</code>
+         </p>
+         <p>
+            The log file name can be either absolute or relative.
+            If relative, it will be interpreted as being relative to the working directory of the application.
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            To log to a file using Log4J, you need to properties for:
+         </p>
+         <ul>
+            <li>creating a FileAppender</li>
+            <li>specifying the file name</li>
+            <li>specifying the layout for the appender</li>
+            <li>adding the appender to your logger hierarchy</li>
+         </ul>
+         <p>
+            In the simplest scenario, you'd have something like this:
+         </p>
+         <p class="example">
+<code>
+log4j.rootLogger=info,File
+log4j.appender.File=org.apache.log4j.FileAppender
+log4j.appender.File.File=application.log
+log4j.appender.File.layout=org.apache.log4j.SimpleLayout
+</code>
+         </p>
+
+
+         <h2>Appending to/Overwriting a File</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            By default, Simple Log will always append to its log file.
+            To change this, set the <span class="code">simplelog.logFile.append</span> property to
+            <span class="code">false</span>.
+         </p>
+         <p class="example">
+<code>
+simplelog.logFile.append = false
+</code>
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            Log4J's <span class="code">FileAppender</span> also appends to its file by default, but can be
+            prevented from doing so by
+            setting the 'append' property of the appender to <span class="code">false</span>.
+         </p>
+         <p class="example">
+<code>
+log4j.appender.File.append = false
+</code>
+         </p>
+
+
+         <h2>Logging to a File and the Console</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            Simple Log can be made to log to both a file and to the console by setting the value of the
+            <span class="code">simplelog.logFile.andConsole</span> property.
+         </p>
+         <p class="example">
+<code>
+simplelog.logFile = application.log
+simplelog.logFile.andConsole = true
+</code>
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            To log to both a file and the console using Log4J, you have to define two
+            <span class="code">Appender</span>s and add
+            both of them to your <span class="code">Logger</span> hierarchy.
+         </p>
+         <p class="example">
+<code>
+log4j.rootLogger=info,File,Console
+
+log4j.appender.File=org.apache.log4j.FileAppender
+log4j.appender.File.File=application.log
+log4j.appender.File.layout=org.apache.log4j.SimpleLayout
+   
+log4j.appender.Console=org.apache.log4j.ConsoleAppender
+log4j.appender.Console.layout=org.apache.log4j.SimpleLayout
+</code>
+         </p>
+
+
+         <h2>Generating a Log File Name containing the Date</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            To place the date of a log file's creation in the file's name using Simple Log,
+            you need to place <span class="code">{0}</span> in the log file where you want the date to appear.
+            If you want to specify the format of the date, simply use the standard formatting parameters
+            specified by <span class="code">java.text.MessageFormat</span>.
+         </p>
+         <p class="example">
+<code>
+simplelog.logFile = application-{0,date,yyyy_MM_dd}.log
+</code>
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            So far as I can determine from the documentation, there is no way to include the date in the name
+            of Log4J's main log file, but only in its rolled over logs.
+         </p>
+
+
+         <h2>Log File Rolling</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            To enable log rolling in Simple Log, you need to:
+         </p>
+         <ul>
+            <li>ensure simple-log-rollover.jar is in your classpath</li>
+            <li>specify the name of the main log file</li>
+            <li>specify the Rollover Strategy to be used</li>
+         </ul>
+         <p class="example">
+<code>
+simplelog.logFile=application.log
+simplelog.rollover=timeOfDay
+</code>
+         </p>
+         <p>
+            By default, rolled log files are placed in the same directory as the main log file, and are given
+            the same name as the main log file, prefixed with a unique, incrementing number and a hyphen
+            (e.g. <span class="code">00-application.log</span>).
+            The directory for rolled log files can be configured by setting the
+            <span class="code">simplelog.rollover.directory</span> property.
+            The name of rolled log files can be configured by setting the
+            <span class="code">simplelog.rollover.filename</span>, which can include the incrementing number
+            and/or the date the rollover file is created.
+         </p>
+         <p>
+            Simple Log comes bundled with two strategies: File Size and Time of Day.
+            By default, the File Size strategy rolls the log every 100 megabytes and the Time of Day strategy
+            rolls at midnight based on the timezone of the local machine.
+            The strategies can be configured using the properties
+            <span class="code">simplelog.rollover.fileSize.size</span>,
+            <span class="code">simplelog.rollover.timeOfDay.time</span> and
+            <span class="code">simplelog.rollover.timeOfDay.timezone</span>.
+         </p>
+         <p class="example">
+<code>
+simplelog.logFile=application.log
+simplelog.rollover=timeOfDay
+simplelog.rollover.timeOfDay.time=02:00
+simplelog.rollover.timeOfDay.timezone=GMT+10:00
+</code>
+         </p>
+         <p>
+            You can also easily write your own implementation of <span class="code">RolloverStrategy</span>
+            which will have access to all the Simple Log properties.
+         </p>
+
+
+         <h3>Log4J</h3>
+         <p>
+            To enable log rolling in Log4J, you need to:
+         </p>
+         <ul>
+            <li>create a <span class="code">RollingFileAppender</span></li>
+            <li>specify the name of the main log file</li>
+            <li>specify the layout for the appender</li>
+            <li>attach the appender to your logger hierarchy</li>
+         </ul>
+         <p class="example">
+<code>
+log4j.rootLogger=info,File
+log4j.appender.File=org.apache.log4j.RollingFileAppender
+log4j.appender.File.File=application.log
+log4j.appender.File.layout=org.apache.log4j.SimpleLayout
+</code>
+         </p>
+         <p>
+            Rolled log files are placed in the same directory as the main log file.
+            They are given the same name as the main log file, with an increasing number appended.
+            The directory for rolled log files cannot be configured.
+            The name of rolled log files cannot be configured.
+         </p>
+         <p>
+            Log4J's <span class="code">RollingFileAppender</span> only maintains a specified number of
+            rolled log files, defaulting to one.
+            This can be configured by setting the
+            <span class="code">log4j.appender.File.MaxBackupIndex</span> property.
+            By default, the Rolling File Appender rolls the log every 10 megabytes.
+            This can be configured by setting the property <span class="code">MaxFileSize</span> property
+            of the appender.
+         </p>
+         <p class="example">
+<code>
+log4j.rootLogger=info,File
+log4j.appender.File=org.apache.log4j.RollingFileAppender
+log4j.appender.File.File=application.log
+log4j.appender.File.layout=org.apache.log4j.SimpleLayout
+log4j.appender.File.MaxFileSize=100MB
+log4j.appender.File.MaxBackupIndex=9
+</code>
+         </p>
+         <p>
+            Log4J also comes with a <span class="code">DailyRollingFileAppender</span>, which uses a date
+            pattern that enables rolling on a monthly, weekly, daily, half-daily, hourly, or minutely
+            schedule.
+         </p>
+         <p class="example">
+<code>
+log4j.rootLogger=info,File
+log4j.appender.File=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.File.File=application.log
+log4j.appender.File.layout=org.apache.log4j.SimpleLayout
+log4j.appender.File.DatePattern='.'yyyy-MM-dd
+</code>
+         </p>
+
+
+         <h2>Outputting the Source File, Method Name and Line Number</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            Simple Log has no mechanism for displaying the file, method or line number from which a
+            message was logged. Note that, in order to do this, it is necessary to create a new
+            <span class="code">Throwable</span> <b>every time a message is printed</b>.
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            Log4J's <span class="code">PatternLayout</span> can output this information using the
+            <span class="code">%F</span>, <span class="code">%M</span> and <span class="code">%L</span>
+            conversion characters.
+         </p>
+         <p class="example">
+<code>
+log4j.appender.Console.layout=org.apache.log4j.PatternLayout
+log4j.appender.Console.layout.ConversionPattern=%d{EEE yyyy/MM/dd HH:mm:ss.SSS}|   |%t|%c|%M|%F:%L|%m%n
+</code>
+         </p>
+         <p>
+            Note that the Log4J documentation warns against using this feature.
+         </p>
+         <p class="example">
+         <b>WARNING</b> Generating caller location information is extremely slow. It's use should be avoided unless execution speed is not an issue
+         </p>
+
+
+         <h2>Reloading Configuration</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            Simple Log can periodically check the modified date of the configuration file in use and
+            reconfigure itself if the file changes.
+            To enable this, you set the <span class="code">simplelog.reloading</span> property to
+            <span class="code">true</span>.
+         </p>
+         <p class="example">
+<code>
+simplelog.reloading = true
+</code>
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            The free Log4J documentation doesn't contain anything about reloading your log configuration
+            at runtime.
+         </p>
+         <p>
+            The <span class="code">org.apache.log4j.varia</span> package contains a class called
+            <span class="code">ReloadingPropertyConfigurator</span>, though the class is entirely
+            undocumented, so I've no idea how it works or how you'd install it.
+            There is no <span class="code">ReloadingDOMConfigurator</span>.
+         </p>
+
+
+         <h2>Customising the Log Format</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            The format of Simple Log's output can be customised by setting the value of the
+            <span class="code">simplelog.format.*</span> properties.
+            There are two properties for each type of log message
+            (<span class="code">debug</span>,
+            <span class="code">debugObject</span>,
+            <span class="code">debugException</span>,
+            <span class="code">entry</span> and <span class="code">exit</span>) -
+            one for each of the instance and non-instance log message types.
+         </p>
+         <p>
+            The syntax of the output properties are specified by
+            <span class="code">java.text.MessageFormat</span>.
+         </p>
+         <p>
+            The arguments passed into the <span class="code">MessageFormat</span>
+            are documented in the configuration file, which is what you'll already be looking at when you
+            need them.
+         </p>
+         <p class="example">
+<code>
+simplelog.format.debug = {0} [{1}] {4} {2}  - {5}
+</code>
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            The format of Log4J's output is customised by specifying a
+            <span class="code">PatternLayout</span> on your <span class="code">Appender</span> and specifying
+            the <span class="code">ConversionPattern</span> for this layout.
+         </p>
+         <p>
+            The syntax of the output is "closely related to the conversion pattern of the printf function in
+            C" and is documented in the API documentation of the <span class="code">PatternLayout</span>
+            class.
+         </p>
+         <p>
+            The "conversion specifiers" available to the <span class="code">PatternLayout</span> are also
+            documented in the API documentation of the <span class="code">PatternLayout</span>
+            class.
+         </p>
+         <p class="example">
+<code>
+log4j.appender.Console.layout=org.apache.log4j.PatternLayout
+log4j.appender.Console.layout.ConversionPattern=%d [%t] %p %c  - %m%n
+</code>
+         </p>
+
+
+         <h2>Outputting Fully-Qualified Class Names</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            With Simple Log, the decision to ouput the fully-qualified name of a class is specified,
+            in code, on a per-class basis. (And defaults to 'false'.)
+         </p>
+         <p class="example">
+<code>
+<span class="keywords">private static final</span> SimpleLogger log = <span class="keywords">new</span> SimpleLogger(Test.<span class="keywords">class</span>, <span class="keywords">true</span>);
+</code>
+         </p>
+         <p>
+            It is implemented like this based on the assumption that most class names are relatively unique
+            and that, should you ever <i>need</i> to see the fully-qualified name of a class, you will
+            only <i>want</i> to see it for those classes whose non-qualified names are ambiguous.
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            In Log4J, the decision about how much of the qualified class name to output is specified
+            in the Conversion Pattern.
+         </p>
+         <p class="example">
+<code>
+log4j.appender.Console.layout.ConversionPattern=%d{EEE yyyy/MM/dd HH:mm:ss.SSS}|   |%t|<font size="+1"><b>%C</b></font>|%m%n
+</code>
+         </p>
+         <p>
+            This means that every message output by that Appender will show the same amount of detail
+            about the class name.
+            You can limit the information based on either a maximum character length or a number of
+            package names.
+            However, whenever you want to see information about the package of one class that's logging,
+            you will have to output the same amount of information for all classes.
+         </p>
+
+
+         <h2>Instance-Based Logging</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            Simple Log supports a concept of "instance logging", where a SimpleLogger is created for each
+            instance of a class and messages output from that instance include the (specified) ID of the
+            object.
+         </p>
+         <p class="example">
+<code>
+<span class="keywords">public class</span>
+TreeNode
+{
+   <span class="keywords">private final</span> SimpleLogger log;
+
+   <span class="keywords">public</span>
+   TreeNode(String name)
+   {
+      log = <span class="keywords">new</span> SimpleLogger(TreeNode.<span class="keywords">class</span>, name);
+   }
+}
+</code>
+         </p>
+         <p>
+            As well as printing the instance ID in the log, Simple Log allows you to configure the log level
+            and trace flag based on the instance ID.
+         </p>
+         <p class="example">
+<code>
+TreeNode = Debug
+TreeNode.frequentlyOccurringLeaf = Info
+</code>
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            While Log4J doesn't have the concept of instance logging, it is possible to achieve a similar
+            functionality by concatenating the object's ID onto the class name.
+         </p>
+         <p class="example">
+<code>
+<span class="keywords">public class</span>
+TreeNode
+{
+   <span class="keywords">private final</span> Logger log;
+
+   <span class="keywords">public</span>
+   TreeNode(String name)
+   {
+      log = Logger.getLogger(TreeNode.<span class="keywords">class</span>.getName() + "." + name);
+   }
+}
+</code>
+         </p>
+         <p>
+            Log4J will then allow you to configure the level for these "instance" loggers in the same
+            way as any other category.
+         </p>
+         <p class="example">
+<code>
+log4j.logger.TreeNode = Debug
+log4j.logger.TreeNode.frequentlyOccurringLeaf = Info
+</code>
+         </p>
+         <p>
+            The shortfall here with Log4J is that, because it doesn't know about the "instance ID", and just
+            sees it as one more level in the logger name hierarchy, the unqualified "class name" of
+            statements printed by this logger will be just the instance ID, without the class name.
+            To see the class name as well, you would need to print more than one level of the logger name.
+            As discussed above under 'Outputting Fully-Qualified Class Names', configuring your pattern
+            layout like this in Log4J will mean that you will see the class logger name information for
+            <i>all</i> your loggers, not just the ones with instance IDs.
+         </p>
+
+
+         <h2>Printing Fixed-Width Log Messages</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            Simple Log does not have any explicit capability for print its output in fixed-width fields.
+            It is easy enough to define a fixed-width date format (as the default format is).
+            The default output will has a fixed width up until the class name for all messages from the
+            same thread, and up until the message contents for all messages from the same class in the
+            same thread.
+         </p>
+         <p class="example">
+<code>
+Thu 2006/02/09 08:38:11.269|&gt;&gt;&gt;|main|Test|main()
+Thu 2006/02/09 08:38:11.269|   |main|Test|About to print arguments
+Thu 2006/02/09 08:38:11.269|---|main|Test|argv|[test, arguments]
+Thu 2006/02/09 08:38:11.269|&gt;&gt;&gt;|Event Dispatch Thread|ApplicationMainWindow|main()
+Thu 2006/02/09 08:38:11.269|&lt;&lt;&lt;|Event Dispatch Thread|ApplicationMainWindow|main()
+Thu 2006/02/09 08:38:11.269|&lt;&lt;&lt;|main|Test|main()
+</code>
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            Log4J's <span class="code">PatternLayout</span> allows you to specify fixed-width conversion
+            specifiers for each field, allowing you to define a precisely fixed-width log mesage, provided
+            you are happy to lose a bit of detail if the value being printed is larger than the specified
+            widt of the field.
+         </p>
+         <p class="example">
+<code>
+log4j.appender.Console.layout.ConversionPattern=%d{EEE yyyy/MM/dd HH:mm:ss.SSS}|%<font size="+1"><b>-20.20</b></font>t|%<font size="+1"><b>-20.20</b></font>C|%m%n
+</code>
+</p>
+<p class="example">
+<code>
+Thu 2006/02/09 08:38:11.269|main                |Test                |IN: main()
+Thu 2006/02/09 08:38:11.269|main                |Test                |About to print arguments
+Thu 2006/02/09 08:38:11.269|main                |Test                |argv: [test, arguments]
+Thu 2006/02/09 08:38:11.269|Event Dispatch Threa|ApplicationMainWindo|IN: ApplicationMainWindow()
+Thu 2006/02/09 08:38:11.269|Event Dispatch Threa|ApplicationMainWindo|OUT: ApplicationMainWindow()
+Thu 2006/02/09 08:38:11.269|main                |Test                |OUT: main()
+</code>
+         </p>
+
+
+         <h2>Amount of Documentation in Provided Configuration Files</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            The Simple Log release includes properties files containing all the properties you will ever need
+            to configure Simple Log, except, of course, those or configuring the levels for your classes.
+            The properties files also contain full documentation of each of the properties.
+         </p>
+
+         <h3>Log4J</h3>
+         <p>
+            The Log4J release includes a number of example properties files that show how to set up Log4J
+            for a number of different common logging requirements.
+            It does not include a "complete" properties file or set of files that give all the properties
+            that can be used for configuration.
+            The documentation for many of the configuration options for Log4J are contained within the API
+            documentation.
+         </p>
+
+
+         <h2>Computation to Output a Log Message</h2>
+
+         <h3>Simple Log</h3>
+         <p>
+            When you log a message using Simple Log (e.g. to
+            <span class="code">SimpleLogger.debug(String)</span>),
+            and that message is going to be output, the following actions take place:
+         </p>
+         <ol>
+            <li>
+               the convenience method <span class="code">SimpleLogger.debug(String)</span> passes control
+               to the generic method <span class="code">SimpleLogger.db(DebugLevel, String)</span>
+            </li>
+            <li>
+               there is a check to see if the <span class="code">SimpleLog</span> to which
+               <span class="code">SimpleLogger</span> belongs is outputting anything at all
+            </li>
+            <li>
+               the level of the message is checked against the level of the
+               <span class="code">SimpleLogger</span> (integer comparison).
+            </li>
+            <li>
+               an array of the data to be output is created, which includes creating a new
+               <span class="code">Date</span> object and retrieving the current
+               <span class="code">Thread</span> name.
+            </li>
+            <li>
+               the appropriate <span class="code">MessageFormat</span> object is located (a simple
+               <span class="code"><span class="keywords">if</span>/<span class="keywords">else</span></span>)
+               and the message output is created by passing the object array into this format object
+            </li>
+            <li>
+               the message output is given to the <span class="code">SimpleLog</span> instance which
+               immediately prints it to the main output stream and, if necessary, to System.err.
+            </li>
+         </ol>
+
+         <h3>Log4J</h3>
+         <p>
+            When you log a message using Log4J (e.g. to <span class="code">Category.debug(String)</span>),
+            and that message is going to be output, the following actions take place:
+         </p>
+         <ol>
+            <li>
+               there is a check to see if the <span class="code">LoggerRepository</span> from which the
+               <span class="code">Logger</span> was created is disabled for the level of the message
+            </li>
+            <li>
+               the "effective level" of the <span class="code">Logger</span> is calculated, which involves
+               walking up the category hierarchy until a category is found which has had its
+               <span class="code">Level</span> explicitly set
+            </li>
+            <li>
+               the "effective level" of the <span class="code">Logger</span> is checked against the
+               <span class="code">DEBUG</span> level
+            </li>
+            <li>
+               the convenience method <span class="code">Category.debug(String)</span> passes control
+               to the generic method <span class="code">Category.db(String, Priority, Object, Throwable)</span>
+            </li>
+            <li>
+               a <span class="code">LoggingEvent</span> object is created, which includes aqcuiring the
+               system time.
+            </li>
+            <li>
+               <span class="code">callAppenders()</span> navigates up the <span class="code">Category</span>
+               hierarchy, and <i>at each level</i>:
+            </li>
+            <li>synchronises on the <span class="code">Category</span></li>
+            <li>
+               determines whether the <span class="code">Category</span> has a
+               <span class="code">Vector</span> of appenders and,
+               if it does, gets the size of the <span class="code">Vector</span>
+            </li>
+            <li>
+               retieves each appender from the <span class="code">Vector</span> and passes the event
+               to it using <span class="code">Appender.doAppend(LoggingEvent)</span>
+            </li>
+            <li>
+               checks the <span class="code">LoggingEvent</span>'s level against the
+               <span class="code">Appender</span>'s threshold
+            </li>
+            <li>
+               loops through the <span class="code">Appender</span>'s chain of
+               <span class="code">Filter</span>s, checking that no <span class="code">Filter</span>
+               filters out the event
+            </li>
+            <li>
+               passes the event to the <span class="code">append()</span> method, which, for a
+               <span class="code">ConsoleAppender</span> or <span class="code">FileAppender</span>:
+            </li>
+            <li>
+               checks the entry conditions, which means checking the <span class="code">Appender</span>
+               isn't closed, that it has a <span class="code">Writer</span> and that it has a
+               <span class="code">Layout</span>
+            </li>
+            <li>
+               passes the event to the <span class="code">subAppend()</span> method, which
+            </li>
+            <li>
+               formats the event using the <span class="code">Appender</span>'s
+               <span class="code">Layout</span> and
+            </li>
+            <li>
+               prints it to the
+               <span class="code">Appender</span>'s output stream.
+            </li>
+         </ol>
+      </div>
+
+      <p class="copyright">
+         Copyright (c) 2006 Graham Lea. All rights reserved.
+      </p>
+
+      <div class="bottomMenu">
+         <h1>Simple Log User Guide</h1>
+         <ul>
+            <li><a href="quickStart.html">Quick&nbsp;Start</a></li>
+            <li><a href="philosophy.html">Philosophy</a></li>
+            <li><a href="recommendedUse.html">Recommended&nbsp;Use</a></li>
+            <li><a href="properties.html">Properties</a></li>
+            <li><a href="rollover.html">Log&nbsp;Rolling</a></li>
+            <li><a href="log4jComparison.html">Comparison&nbsp;with&nbsp;Log4J</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="donations.html">Donations</a></li>
+            <li><a href="meaningOfLife.html">The Meaning of Life</a></li>
+         </ul>
+      </div>
+
+   </body>
+</html>
+
