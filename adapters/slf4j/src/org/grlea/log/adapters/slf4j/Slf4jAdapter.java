@@ -1,6 +1,6 @@
 package org.grlea.log.adapters.slf4j;
 
-// $Id: Slf4jAdapter.java,v 1.2 2005-11-20 00:35:33 grlea Exp $
+// $Id: Slf4jAdapter.java,v 1.3 2006-07-02 22:57:53 grlea Exp $
 // Copyright (c) 2004 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,13 +15,13 @@ package org.grlea.log.adapters.slf4j;
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import org.grlea.log.SimpleLogger;
 import org.grlea.log.DebugLevel;
 import org.grlea.log.SimpleLog;
+import org.grlea.log.SimpleLogger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.LoggerFactoryAdapter;
+import org.slf4j.impl.MarkerIgnoringBase;
 import org.slf4j.impl.MessageFormatter;
 
 /**
@@ -72,9 +72,7 @@ import org.slf4j.impl.MessageFormatter;
  * <p>
  * The SLF4J API provides logger names that are Strings, while Simple Log prefers Class
  * objects for naming its loggers. This adapter tries to rectify the discord by attempting to
- * interpret logger names (or domain names, in
- * {@link LoggerFactoryAdapter#getLogger(String, String) the two argument getLogger() method})
- * as fully qualified class names.
+ * interpret logger names as fully qualified class names.
  * Where this is not possible (because the logger name is not a class name), a
  * <code>SimpleLogger</code> will be created using a source class of
  * <code>org.slf4j.Logger</code> and with the provided logger name as the instance ID of the logger.
@@ -105,23 +103,35 @@ import org.slf4j.impl.MessageFormatter;
  * </p>
  *
  * @author Graham Lea
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class
 Slf4jAdapter
-implements Logger
+extends MarkerIgnoringBase
 {
    /** The logger this <code>Slf4jAdapter</code> will output to. */
    private final SimpleLogger log;
+
+   /** The name of this logger. */
+   private final String loggerName;
 
    /**
     * Creates a new <code>Slf4jAdapter</code> that will output to the provided {@link SimpleLogger}.
     *
     * @param log the logger this <code>Slf4jAdapter</code> will output to.
+    *
+    * @param loggerName the name of this logger
     */
-   Slf4jAdapter(SimpleLogger log)
+   Slf4jAdapter(SimpleLogger log, String loggerName)
    {
       this.log = log;
+      this.loggerName = loggerName;
+   }
+
+   public String
+   getName()
+   {
+      return loggerName;
    }
 
    public boolean
@@ -173,6 +183,15 @@ implements Logger
    }
 
    public void
+   error(String messageFormat, Object[] arguments)
+   {
+      if (log.wouldLog(DebugLevel.L2_ERROR))
+      {
+         log.db(DebugLevel.L2_ERROR, MessageFormatter.format(messageFormat, arguments));
+      }
+   }
+
+   public void
    error(String message, Throwable exception)
    {
       log.db(DebugLevel.L2_ERROR, message);
@@ -200,6 +219,15 @@ implements Logger
       if (log.wouldLog(DebugLevel.L3_WARN))
       {
          log.db(DebugLevel.L3_WARN, MessageFormatter.format(messageFormat, argument1, argument2));
+      }
+   }
+
+   public void
+   warn(String messageFormat, Object[] arguments)
+   {
+      if (log.wouldLog(DebugLevel.L3_WARN))
+      {
+         log.db(DebugLevel.L3_WARN, MessageFormatter.format(messageFormat, arguments));
       }
    }
 
@@ -235,6 +263,15 @@ implements Logger
    }
 
    public void
+   info(String messageFormat, Object[] arguments)
+   {
+      if (log.wouldLog(DebugLevel.L4_INFO))
+      {
+         log.db(DebugLevel.L4_INFO, MessageFormatter.format(messageFormat, arguments));
+      }
+   }
+
+   public void
    info(String message, Throwable exception)
    {
       log.db(DebugLevel.L4_INFO, message);
@@ -262,6 +299,15 @@ implements Logger
       if (log.wouldLog(DebugLevel.L5_DEBUG))
       {
          log.db(DebugLevel.L5_DEBUG, MessageFormatter.format(messageFormat, argument1, argument2));
+      }
+   }
+
+   public void
+   debug(String messageFormat, Object[] arguments)
+   {
+      if (log.wouldLog(DebugLevel.L5_DEBUG))
+      {
+         log.db(DebugLevel.L5_DEBUG, MessageFormatter.format(messageFormat, arguments));
       }
    }
 

@@ -32,29 +32,35 @@
 
 package org.slf4j;
 
+
 /**
- * LoggerFactoryAdapter interface is used internally by {@link
- * LoggerFactory}.
+ * <code>ILoggerFactory</code> instances manufacture {@link Logger}
+ * instances by name.
  * 
- * <p>Only developers wishing to write new SLF4J adapters need to
- * worry about this interface.
+ * <p>Most users retrieve {@link Logger} instances through the static
+ * {@link LoggerFactory#getLogger(String)} method. An instance of of this
+ * interface is bound internally with {@link LoggerFactory} class at 
+ * compile time. Only developers of SLF4J conforming logging systems 
+ * need to worry about this interface. 
+ * 
+ * <p>See the section <a href="http://slf4j.org/faq.html#3">Implementing 
+ * the SLF4J API</a> in the FAQ for details on how to make your logging 
+ * system conform to SLF4J.
  * 
  * @author Ceki G&uuml;lc&uuml;
- *
  */
-public interface LoggerFactoryAdapter {
+public interface ILoggerFactory {
   
   /**
-   * Return the appropriate named {@link Logger} instance.
+   * Return an appropriate {@link Logger} instance as specified by the
+   * <code>name</code> parameter.
+   * 
+   * <p>Null-valued name arguments are considered invalid.
+   *
+   * <p>Certain extremely simple logging systems, e.g. NOP, may always
+   * return the same logger instance regardless of the requested name.
+   * 
+   * @param name the name of the Logger to return
    */
   public Logger getLogger(String name);
-  
-  /**
-   * Return a {@link Logger} instance in <code>domain</code>, <code>subDomain</code>. 
-   *
-   * @param domain
-   * @param subDomain
-   * @return Logger instance
-   */
-  public Logger getLogger(String domain, String subDomain);  
 }

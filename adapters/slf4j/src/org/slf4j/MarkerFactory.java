@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2004-2005 SLF4J.ORG
- * Copyright (c) 2004-2005 QOS.ch
  *
  * All rights reserved.
  *
@@ -32,77 +31,59 @@
  */
 package org.slf4j;
 
-import org.slf4j.impl.StaticLoggerBinder;
+import org.slf4j.impl.StaticMarkerBinder;
 import org.slf4j.impl.Util;
 
 /**
- * The <code>LoggerFactory</code> is a utility class producing Loggers for
- * various logging APIs, most notably for NLOG4J and JDK 1.4 logging. Other
- * implementations such as {@link org.slf4j.impl.NOPLogger NOPLogger} and
- * {@link org.slf4j.impl.SimpleLogger SimpleLogger} are also supported.
+ * MarkerFactory is a utility class producing {@link Marker} instances as
+ * appropriate for the logging system currently in use.
  * 
  * <p>
- * <code>LoggerFactory</code> is essentially a wrapper around an
- * {@link ILoggerFactory} instance bound with <code>LoggerFactory</code> at
- * compile time.
+ * This class is essentially implemented as a wrapper around an
+ * {@link IMarkerFactory} instance bound at compile time.
  * 
  * <p>
- * Please note that all methods in <code>LoggerFactory</code> are static.
+ * Please note that all methods in this class are static.
  * 
  * @author Ceki G&uuml;lc&uuml;
  */
-public final class LoggerFactory {
+public class MarkerFactory {
+  static IMarkerFactory markerFactory;
 
-  static ILoggerFactory loggerFactory;
-
-  // private constructor prevents instantiation
-  private LoggerFactory() {
+  private MarkerFactory() {
   }
 
-
   static {
-    try { 
-      loggerFactory = StaticLoggerBinder.SINGLETON.getLoggerFactory();
+    try {
+      markerFactory = StaticMarkerBinder.SINGLETON.getMarkerFactory();
     } catch (Exception e) {
       // we should never get here
-      Util.reportFailure("Failed to instantiate logger ["
-          + StaticLoggerBinder.SINGLETON.getLoggerFactoryClassStr() + "]", e);
+      Util.reportFailure("Could not instantiate instance of class ["
+          + StaticMarkerBinder.SINGLETON.getMarkerFactoryClassStr() + "]", e);
     }
   }
 
   /**
-   * Return a logger named according to the name parameter using the statically
-   * bound {@link ILoggerFactory} instance.
+   * Return a Marker instance as specified by the name parameter using the
+   * previously bound {@link IMarkerFactory}instance.
    * 
    * @param name
-   *          The name of the logger.
-   * @return logger
+   *          The name of the {@link Marker} object to return.
+   * @return marker
    */
-  public static Logger getLogger(String name) {
-    return loggerFactory.getLogger(name);
+  public static Marker getMarker(String name) {
+    return markerFactory.getMarker(name);
   }
 
   /**
-   * Return a logger named corresponding to the class passed as parameter, using
-   * the statically bound {@link ILoggerFactory} instance.
+   * Return the {@link IMarkerFactory}instance in use.
    * 
-   * @param clazz
-   *          the returned logger will be named after clazz
-   * @return logger
+   * <p>The IMarkerFactory instance is usually bound with this class at 
+   * compile time.
+   * 
+   * @return the IMarkerFactory instance in use
    */
-  public static Logger getLogger(Class clazz) {
-    return loggerFactory.getLogger(clazz.getName());
-  }
-
-  /**
-   * Return the {@link ILoggerFactory} instance in use.
-   * 
-   * <p>ILoggerFactory instance is bound with this class at compile
-   * time.
-   * 
-   * @return the ILoggerFactory instance in use
-   */
-  public static ILoggerFactory getILoggerFactory() {
-    return loggerFactory;
+  public static IMarkerFactory getIMarkerFactory() {
+    return markerFactory;
   }
 }

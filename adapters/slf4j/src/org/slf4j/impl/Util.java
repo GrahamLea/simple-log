@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2004-2005 SLF4J.ORG
+ * Copyright (c) 2004-2005 QOS.ch
  *
  * All rights reserved.
  *
@@ -30,25 +31,20 @@
  *
  */
 
-package org.slf4j;
+package org.slf4j.impl;
+
 
 /**
- * Various constants used in the SLF4J API.
+ *
+ * An internal utility class.
+ *
+ * @author Ceki G&uuml;lc&uuml;
  */
-public interface Constants {
-	/**
-	 * The name of the system property to set in order to instruct
-	 * {@link LoggerFactory} class to use a specific factory adapter.
-	 * <p>
-	 * This constant is currently set to the value "org.slf4j.factory".
-	 */
-	final public static String LOGGER_FA_FACTORY_PROPERTY = "org.slf4j.factory";
-	
-	/**
-	 * Constant used to determined the name of the factory method for
-	 * creating factory adapters.
-	 * <p>
-	 * This constant current is set to the value "getInstance".
-	 */
-	final public static String FA_FACTORY_METHOD_NAME = "getInstance";
+public class Util {
+    
+  static final public void reportFailure(String msg, Throwable t) {
+    System.err.println(msg);
+    System.err.println("Reported exception:");
+    t.printStackTrace();
+  }
 }

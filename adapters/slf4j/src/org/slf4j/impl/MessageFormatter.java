@@ -35,12 +35,28 @@ package org.slf4j.impl;
 
 
 /**
- * Formats messages according to very simple rules. 
- * See {@link #format(String, Object)} and 
- * {@link #format(String, Object, Object)} for more details.
- *
- * @author Ceki G&uuml;lc&uuml;
- */
+  * Formats messages according to very simple substitution rules. Substitutions can be
+  * made 1, 2 or more arguments.
+  * <p>
+  * For example, 
+  * <pre>MessageFormatter.format("Hi {}.", "there");</pre> will
+  * return the string "Hi there.".
+  * <p>
+  * The {} pair is called the <em>formatting anchor</em>. It serves to designate the
+  * location where arguments need to be substituted within the message pattern.
+  * <p>
+  * In the rare case where you need to place the '{' or '}' in the message pattern 
+  * itself but do not want them to be interpreted as a formatting anchors, you can
+  * espace the '{' character with '\', that is the backslash character. Only the
+  * '{' character should be escaped. There is no need to escape the '}' character.  
+  * For example, <pre>MessageFormatter.format("File name is \\{{}}.", "App folder.zip");</pre>
+  * will return the string "File name is {App folder.zip}.". 
+  * 
+  * See {@link #format(String, Object)}, {@link #format(String, Object, Object)} 
+  * and {@link #arrayFormat(String, Object[])} methods for more details.
+  *
+  * @author Ceki G&uuml;lc&uuml;
+  */
 public class MessageFormatter {
   static final char DELIM_START = '{';
   static final char DELIM_STOP = '}';
@@ -49,71 +65,60 @@ public class MessageFormatter {
    * Performs single argument substitution for the 'messagePattern' passed as
    * parameter.
    * <p>
-   * For example, <code>MessageFormatter.format("Hi {}.", "there");</code> will
+   * For example, <pre>MessageFormatter.format("Hi {}.", "there");</pre> will
    * return the string "Hi there.".
    * <p>
-   * The {} pair is called the formatting element. It serves to designate the
-   * location where the argument needs to be inserted within the pattern.
-   * 
    * @param messagePattern The message pattern which will be parsed and formatted
-   * @param argument The argument to be inserted instead of the formatting element
+   * @param argument The argument to be substituted in place of the formatting anchor
    * @return The formatted message
    */
-  public static String format(String messagePattern, Object argument) {
-    int j = messagePattern.indexOf(DELIM_START);
-    int len = messagePattern.length();
-    char escape = 'x';
-
-    // if there are no { characters or { is the last character of the messsage
-    // then we just return messagePattern
-    if (j == -1 || (j+1 == len)) {
-      return messagePattern;
-    } else {
-      if(j+1 == len) {
-      }
-      
-      char delimStop = messagePattern.charAt(j + 1);
-      if (j > 0) {
-        escape = messagePattern.charAt(j - 1);
-      }
-      if ((delimStop != DELIM_STOP) || (escape == '\\')) {
-        // invalid DELIM_START/DELIM_STOP pair or espace character is
-        // present
-        return messagePattern;
-      } else {
-        StringBuffer sbuf = new StringBuffer(len + 20);
-        sbuf.append(messagePattern.substring(0, j));
-        sbuf.append(argument);
-        sbuf.append(messagePattern.substring(j + 2));
-        return sbuf.toString();
-      }
-    }
-  }
-
+  public static String format(String messagePattern, Object arg) {
+    return arrayFormat(messagePattern, new Object[] {arg});   
+   }
+  
   /**
-   * /**
+   *
    * Performs a two argument substitution for the 'messagePattern' passed as
    * parameter.
    * <p>
-   * For example, <code>MessageFormatter.format("Hi {}. My name is {}.", 
-   * "there", "David");</code> will return the string "Hi there. My name is David.".
-   * <p>
-   * The '{}' pair is called a formatting element. It serves to designate the
-   * location where the arguments need to be inserted within the message pattern.
+   * For example, 
+   * <pre>MessageFormatter.format("Hi {}. My name is {}.", "Alice", "Bob");</pre> will 
+   * return the string "Hi Alice. My name is Bob.".
    * 
    * @param messagePattern The message pattern which will be parsed and formatted
-   * @param arg1 The first argument to replace the first formatting element
-   * @param arg2 The second argument to replace the second formatting element
+   * @param arg1 The argument to be substituted in place of the first formatting anchor 
+   * @param arg2 The argument to be substituted in place of the second formatting anchor 
    * @return The formatted message
    */
   public static String format(String messagePattern, Object arg1, Object arg2) {
+   return arrayFormat(messagePattern, new Object[] {arg1, arg2});   
+  }
+  
+  /**
+   * Same principle as the {@link #format(String, Object)} and 
+   * {@link #format(String, Object, Object)} methods except that
+   * any number of arguments can be passed in an array.
+   * 
+   * @param messagePattern The message pattern which will be parsed and formatted
+   * @param argArray An array of arguments to be substituted in place of formatting anchors
+   * @return The formatted message
+   */
+  public static String arrayFormat(String messagePattern, Object[] argArray) {
+    if(messagePattern == null) {
+      return null;
+    }
     int i = 0;
     int len = messagePattern.length();
     int j = messagePattern.indexOf(DELIM_START);
-
+    
+  
+    
     StringBuffer sbuf = new StringBuffer(messagePattern.length() + 50);
 
-    for (int L = 0; L < 2; L++) {
+    for (int L = 0; L < argArray.length; L++) {
+      
+      char escape = 'x';
+      
       j = messagePattern.indexOf(DELIM_START, i);
 
       if (j == -1 || (j+1 == len)) {
@@ -126,14 +131,25 @@ public class MessageFormatter {
         }
       } else {
         char delimStop = messagePattern.charAt(j + 1);
-        if ((delimStop != DELIM_STOP)) {
+        if (j > 0) {
+          escape = messagePattern.charAt(j - 1);
+        }
+        
+        if(escape == '\\') {
+          L--; // DELIM_START was escaped, thus should not be incremented
+          sbuf.append(messagePattern.substring(i, j-1));
+          sbuf.append(DELIM_START);
+          i = j + 1;
+        } else if ((delimStop != DELIM_STOP)) {
           // invalid DELIM_START/DELIM_STOP pair
           sbuf.append(messagePattern.substring(i, messagePattern.length()));
           return sbuf.toString();
+        } else {
+          // normal case
+          sbuf.append(messagePattern.substring(i, j));
+          sbuf.append(argArray[L]);
+          i = j + 2;
         }
-        sbuf.append(messagePattern.substring(i, j));
-        sbuf.append((L == 0) ? arg1 : arg2);
-        i = j + 2;
       }
     }
     // append the characters following the second {} pair.
