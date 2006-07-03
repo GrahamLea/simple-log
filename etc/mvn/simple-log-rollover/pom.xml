@@ -1,0 +1,84 @@
+<?xml version="1.0" ?>
+<!-- $Id: pom.xml,v 1.1 2006-07-03 23:06:59 grlea Exp $ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>org.grlea.log</groupId>
+   <artifactId>simple-log-rollover</artifactId>
+   <version>2.0</version>
+   <packaging>jar</packaging>
+   <name>Simple Log - Rollover</name>
+   <description>Simple Log Components for Log Rolling</description>
+   <url>https://simple-log.dev.java.net/</url>
+   <issueManagement>
+      <system>java.net</system>
+      <url>https://simple-log.dev.java.net/servlets/ProjectIssues</url>
+   </issueManagement>
+   <inceptionYear>1999</inceptionYear>
+   <mailingLists>
+      <mailingList>
+         <name>Users</name>
+         <subscribe>users-subscribe@simple-log.dev.java.net</subscribe>
+         <unsubscribe>users-unsubscribe@simple-log.dev.java.net</unsubscribe>
+         <post>users@simple-log.dev.java.net</post>
+         <archive>https://simple-log.dev.java.net/servlets/SummarizeList?listName=users</archive>
+      </mailingList>
+      <mailingList>
+         <name>Announcements</name>
+         <subscribe>announce-subscribe@simple-log.dev.java.net</subscribe>
+         <unsubscribe>announce-unsubscribe@simple-log.dev.java.net</unsubscribe>
+         <post>announce@simple-log.dev.java.net</post>
+         <archive>https://simple-log.dev.java.net/servlets/SummarizeList?listName=announce</archive>
+      </mailingList>
+      <mailingList>
+         <name>CVS Commits</name>
+         <subscribe>cvs-subscribe@simple-log.dev.java.net</subscribe>
+         <unsubscribe>cvs-unsubscribe@simple-log.dev.java.net</unsubscribe>
+         <post>cvs@simple-log.dev.java.net</post>
+         <archive>https://simple-log.dev.java.net/servlets/SummarizeList?listName=cvs</archive>
+      </mailingList>
+      <mailingList>
+         <name>Issue Tracking</name>
+         <subscribe>issues-subscribe@simple-log.dev.java.net</subscribe>
+         <unsubscribe>issues-unsubscribe@simple-log.dev.java.net</unsubscribe>
+         <post>issues@simple-log.dev.java.net</post>
+         <archive>https://simple-log.dev.java.net/servlets/SummarizeList?listName=issues</archive>
+      </mailingList>
+   </mailingLists>
+   <developers>
+      <developer>
+         <id>grlea</id>
+         <name>Graham Lea</name>
+         <email>grlea@dev.java.net</email>
+         <url>http://www.grlea.org/</url>
+         <roles>
+            <role>Lead Developer</role>
+            <role>Technical Writer</role>
+         </roles>
+         <timezone>10</timezone>
+      </developer>
+   </developers>
+   <licenses>
+      <license>
+         <name>The Apache Software License, Version 2.0</name>
+         <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+         <distribution>repo</distribution>
+      </license>
+   </licenses>
+   <dependencies>
+      <dependency>
+         <groupId>org.grlea.log</groupId>
+         <artifactId>simple-log</artifactId>
+         <version>[2.0,)</version>
+      </dependency>
+   </dependencies>
+   <scm>
+      <connection>scm:cvs:pserver:guest@cvs.dev.java.net:/cvs:simple-log</connection>
+      <url>https://simple-log.dev.java.net/source/browse/simple-log/</url>
+   </scm>
+   <organization>
+      <name>Graham Lea</name>
+      <url>http://www.grlea.org/</url>
+   </organization>
+</project> 
