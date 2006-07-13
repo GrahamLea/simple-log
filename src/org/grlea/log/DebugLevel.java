@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-// $Id: DebugLevel.java,v 1.8 2006-02-25 15:14:42 grlea Exp $
-// Copyright (c) 2004-2005 Graham Lea. All rights reserved.
+// $Id: DebugLevel.java,v 1.9 2006-07-13 12:40:06 grlea Exp $
+// Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.util.Map;
  * <p>Note that tracing is not related to the debug levels, as tracing is controlled
  * independently.</p>
  *
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  * @author $Author: grlea $
  */
 public final class

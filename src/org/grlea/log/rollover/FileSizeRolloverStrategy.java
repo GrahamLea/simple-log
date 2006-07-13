@@ -1,7 +1,7 @@
 package org.grlea.log.rollover;
 
-// $Id: FileSizeRolloverStrategy.java,v 1.3 2006-02-25 15:24:50 grlea Exp $
-// Copyright (c) 2004 Graham Lea. All rights reserved.
+// $Id: FileSizeRolloverStrategy.java,v 1.4 2006-07-13 12:39:15 grlea Exp $
+// Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.util.Map;
  * slightly more than the specified size before being rolled.</p>
  *
  * @author Graham Lea
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 class
 FileSizeRolloverStrategy

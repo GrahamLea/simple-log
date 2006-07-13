@@ -1,7 +1,7 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.20 2006-05-29 22:26:29 grlea Exp $
-// Copyright (c) 2004-2005 Graham Lea. All rights reserved.
+// $Id: SimpleLog.java,v 1.21 2006-07-13 12:40:07 grlea Exp $
+// Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ import java.util.Map;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  * @author $Author: grlea $
  */
 public final class

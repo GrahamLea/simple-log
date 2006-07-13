@@ -1,7 +1,7 @@
 package org.grlea.log.rollover;
 
-// $Id: RolloverStrategy.java,v 1.1 2005-11-09 21:47:55 grlea Exp $
-// Copyright (c) 2004 Graham Lea. All rights reserved.
+// $Id: RolloverStrategy.java,v 1.2 2006-07-13 12:39:15 grlea Exp $
+// Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import java.util.Map;
  * </p>
  *
  * @author Graham Lea
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public interface
 RolloverStrategy
