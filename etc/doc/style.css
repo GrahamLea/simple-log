@@ -10,13 +10,15 @@ h1,h2, h3 {
 
 h1 {
    font-size: 3em;
-   background-color: inherit;
+   background-color: #BBBBEE;
+   padding: 0.2em;
 }
 
 h2 {
    font-size: 1.3em;
    background-color: #DDDDFF;
    padding: 0.3em;
+   clear: right;
 }
 
 h3 {
@@ -66,8 +68,13 @@ div.topMenu, div.bottomMenu {
    background-color: #EEEEFF;
 }
 
+div.topMenu h1 {
+   background-color: #EEEEFF;
+}
+
 div.topMenu {
    float: right;
+   clear: right;
 }
 
 div.bottomMenu {
@@ -127,4 +134,17 @@ span.reference {
    font-size: 0.75em;
    display: block;
    padding-top: 0.3em;
+}
+
+body#indexPage ul li {
+   padding-top: 1em;
+   font-size: 1.4em;
+   font-weight: bold;
+   list-style-type: square;
+}
+
+img.illustration {
+   margin: 0;
+   padding: 0;
+   float: right;
 }
