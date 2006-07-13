@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <!--
-$Id: build.xml,v 1.13 2006-02-26 00:28:05 grlea Exp $
-Copyright (c) 2004-2005 Graham Lea. All rights reserved.
+$Id: build.xml,v 1.14 2006-07-13 12:42:13 grlea Exp $
+Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -32,6 +32,9 @@ limitations under the License.
    <property name="etcDir" value="${basedir}/etc"/>
    <property name="libDir" value="${basedir}/lib"/>
    <property name="javadocPackages" value="org.grlea.*"/>
+
+   <property name="slf4j-javadoc" value="http://www.slf4j.org/api/"/>
+   <property name="commons-logging-javadoc" value="http://jakarta.apache.org/commons/logging/apidocs/"/>
 
    <!-- Classpath -->
    <path id="classpath">
@@ -98,7 +101,7 @@ limitations under the License.
             <include name="simple-log-rollover.jar"/>
             <include name="simplelog.properties"/>
             <include name="simplelog-config.properties"/>
-            <include name="simplelog-plain.properties"/>
+            <include name="simplelog-PLAIN.properties"/>
             <include name="simplelog-rollover.properties"/>
             <include name="ChangeLog.txt"/>
             <include name="LICENSE.txt"/>
@@ -202,7 +205,7 @@ limitations under the License.
       </copy>
 
       <copy todir="${docDir}">
-         <fileset dir="etc/doc" includes="*" />
+         <fileset dir="etc/doc" includes="*.html,*.css,images/*.png" />
       </copy>
 
       <copy todir="${classesDestination}/meta-inf/${ant.project.name}" flatten="true">
@@ -229,11 +232,19 @@ limitations under the License.
                access="protected" Author="true" Use="true"  Version="true"
                Windowtitle="${product.name} ${product.version} API Documentation"
                nodeprecatedlist="true" notree="true" nohelp="true" failonerror="true">
+
          <sourcepath>
             <path path="${sourceDir}"/>
             <path path="${commonsAdapter-sourceDir}"/>
             <path path="${slf4jImplementation-sourceDir}"/>
          </sourcepath>
+
+         <classpath>
+            <path refid="commonsAdapter-classpath"/>
+         </classpath>
+
+         <link href="${slf4j-javadoc}"/>
+         <link href="${commons-logging-javadoc}"/>
 
          <group>
             <title>Simple Log</title>
@@ -261,7 +272,7 @@ limitations under the License.
          </header>
          <footer>
             &lt;font size="-1"&gt;
-               Copyright (c) 2004-2005, Graham Lea. All rights reserved. &lt;br&gt;
+               Copyright (c) 2004-2006, Graham Lea. All rights reserved. &lt;br&gt;
             &lt;/font&gt;
          </footer>
       </javadoc>
