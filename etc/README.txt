@@ -7,7 +7,7 @@
 
 LICENSE
 
-Simple Log is Copyright (c) 2004-2005 Graham Lea. All rights reserved.
+Simple Log is Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 Simple Log is freely distributed under the Apache License 2.0.
 See LICENSE.txt for details.
 
@@ -28,7 +28,10 @@ Download Java now   @   http://java.com/
 
 USAGE
 
-To use Simple Log in your application, you need jars and properties:
+To best understand how to use Simple Log, you should read the Quick Start in the User Guide
+(doc/quickStart.html). If you're too lazy to even do that, here's the general idea...
+
+To use Simple Log in your application you need jars and properties:
 
 1. JARS
 
@@ -90,19 +93,13 @@ STATUS
 
 Version 1.0 was basically a major refactor of my own similar logger that I've been using for years.
 
-Version 1.7 continues the tradition of implementing a good suggestion from a user and making a
-release! I've also started implementing some of the outstanding issues,so this release now comes
-with adapters for commons-logging and SLF4J (which explains why the release doubled in size).
+Version 2.0 was the biggest and most important update to Simple Log since its creation.
+Most notably, the inclusing of log rolling now makes Simple Log the perfect logging toolkit for
+lightweight enterprise applications. Along with that, a couple of small enhancements have been
+added to increase your flexibility in using Simple Log. Version 2 also sees the inclusion of a
+brand-spanking new User Guide. I think you'll like it.
 
 See ChangeLog.txt for a list of new features and completed issues.
-
-Users should not that the configuration files for version 1.6 are incompatible with previous
-versions' configuration files in two small ways:
-1. The log formats have changed, which will change the result of any custom formats being used.
-   Old formats can be upgraded by changing any {4} and {5} arguments to {5} and {6}, respectively.
-   Users using the default formats should not be affected.
-2. The tracing configuration now uses the suffix "#trace" instead of ".trace".
-   Most old configurations can be upgraded by performing a search/replace for .trace/#trace
 
 
 FUTURE FEATURES
@@ -110,8 +107,9 @@ FUTURE FEATURES
 Some features that might be added in the future *if people ask for them* are:
 
 * Programmatic access to the log formats
-* Ability to turn logging off for a class/package (rather than just down to "Fatal")
-* Option to use a different filename/location for the default SimpleLog instance's properties
+* Option to log threadId rather than threadName (in Java 1.5+)
+* Ability to output to System.out instead of System.err
+* Ability to attach listeners to a SimpleLog instance
 
 If you think you need one of these features, or some other feature, please feel free to contact me
 and I should be able to hack it up within a couple of days (assuming I haven't gone camping).
