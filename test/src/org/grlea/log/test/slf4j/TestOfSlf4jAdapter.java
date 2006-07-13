@@ -1,7 +1,7 @@
 package org.grlea.log.test.slf4j;
 
-// $Id: TestOfSlf4jAdapter.java,v 1.1 2005-08-09 10:14:39 grlea Exp $
-// Copyright (c) 2004 Graham Lea. All rights reserved.
+// $Id: TestOfSlf4jAdapter.java,v 1.2 2006-07-13 12:44:56 grlea Exp $
+// Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import java.util.Properties;
  * <p>Tests the public interface of {@link CommonsLoggingAdapter}.</p>
  *
  * @author Graham Lea
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class
 TestOfSlf4jAdapter

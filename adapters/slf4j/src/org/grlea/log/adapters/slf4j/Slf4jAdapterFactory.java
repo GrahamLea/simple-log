@@ -1,7 +1,7 @@
 package org.grlea.log.adapters.slf4j;
 
-// $Id: Slf4jAdapterFactory.java,v 1.1 2006-07-02 22:57:53 grlea Exp $
-// Copyright (c) 2004 Graham Lea. All rights reserved.
+// $Id: Slf4jAdapterFactory.java,v 1.2 2006-07-13 12:44:58 grlea Exp $
+// Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.slf4j.ILoggerFactory;
  * </p>
  *
  * @author Graham Lea
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class
 Slf4jAdapterFactory

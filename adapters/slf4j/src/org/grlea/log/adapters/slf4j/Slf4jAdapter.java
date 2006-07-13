@@ -1,7 +1,7 @@
 package org.grlea.log.adapters.slf4j;
 
-// $Id: Slf4jAdapter.java,v 1.3 2006-07-02 22:57:53 grlea Exp $
-// Copyright (c) 2004 Graham Lea. All rights reserved.
+// $Id: Slf4jAdapter.java,v 1.4 2006-07-13 12:44:57 grlea Exp $
+// Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -103,7 +103,7 @@ import org.slf4j.impl.MessageFormatter;
  * </p>
  *
  * @author Graham Lea
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class
 Slf4jAdapter

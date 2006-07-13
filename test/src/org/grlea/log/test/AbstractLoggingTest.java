@@ -1,7 +1,7 @@
 package org.grlea.log.test;
 
-// $Id: AbstractLoggingTest.java,v 1.2 2005-11-09 21:58:48 grlea Exp $
-// Copyright (c) 2004 Graham Lea. All rights reserved.
+// $Id: AbstractLoggingTest.java,v 1.3 2006-07-13 12:44:56 grlea Exp $
+// Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import java.util.Properties;
  * <p></p>
  *
  * @author Graham Lea
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public abstract class
 AbstractLoggingTest

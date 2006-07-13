@@ -1,7 +1,7 @@
 package org.grlea.log.adapters.commons;
 
-// $Id: CommonsLoggingAdapter.java,v 1.1 2005-08-08 14:11:46 grlea Exp $
-// Copyright (c) 2004 Graham Lea. All rights reserved.
+// $Id: CommonsLoggingAdapter.java,v 1.2 2006-07-13 12:44:52 grlea Exp $
+// Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -115,7 +115,7 @@ import org.apache.commons.logging.Log;
  * </p>
  *
  * @author Graham Lea
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class
 CommonsLoggingAdapter

@@ -1,7 +1,7 @@
 package org.grlea.log.test.commons;
 
-// $Id: SimpleCommonsLoggingClass.java,v 1.2 2005-08-09 10:11:29 grlea Exp $
-// Copyright (c) 2004 Graham Lea. All rights reserved.
+// $Id: SimpleCommonsLoggingClass.java,v 1.3 2006-07-13 12:44:54 grlea Exp $
+// Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
  * <p></p>
  *
  * @author Graham Lea
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class
 SimpleCommonsLoggingClass

@@ -1,7 +1,7 @@
 package org.grlea.log.test;
 
-// $Id: TestOfPropertiesLocationOptions.java,v 1.1 2006-02-25 23:34:56 grlea Exp $
-// Copyright (c) 2004 Graham Lea. All rights reserved.
+// $Id: TestOfPropertiesLocationOptions.java,v 1.2 2006-07-13 12:44:57 grlea Exp $
+// Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.Properties;
  * <p></p>
  *
  * @author Graham Lea
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class
 TestOfPropertiesLocationOptions
