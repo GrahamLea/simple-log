@@ -23,6 +23,7 @@ CHANGE LOG
    + Issue 31: Need Simple Log internal debugging (simplelog.dev.debug system property)
    + Issue 32: Imported files not being read from same location as importer
    + Issue 33: Configuration reloading fails when file URL contains spaces
+   + Issue 37: Package of CommonsLoggingAdapter incorrect in Javadoc
    + Split the existing properties file into three (-config and -rollover)
 
 1.7

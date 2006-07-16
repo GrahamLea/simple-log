@@ -1,6 +1,6 @@
 package org.grlea.log.adapters.commons;
 
-// $Id: CommonsLoggingAdapter.java,v 1.2 2006-07-13 12:44:52 grlea Exp $
+// $Id: CommonsLoggingAdapter.java,v 1.3 2006-07-16 22:50:23 grlea Exp $
 // Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +32,7 @@ import org.apache.commons.logging.Log;
  * <p>
  * To use this <code>CommonsLoggingAdapter</code> with Commons Logging, simply
  * {@link System#setProperty set the system property} '<code>org.apache.commons.logging.Log</code>'
- * to '<code>org.grlea.log.commons.commons.CommonsLoggingAdapter</code>'.
+ * to '<code>org.grlea.log.adapters.commons.CommonsLoggingAdapter</code>'.
  * </p>
  *
  * <p><b>Implementation Details</b></p>
@@ -115,7 +115,7 @@ import org.apache.commons.logging.Log;
  * </p>
  *
  * @author Graham Lea
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class
 CommonsLoggingAdapter
