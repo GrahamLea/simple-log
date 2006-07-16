@@ -55,7 +55,6 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
    * The unique instance of this class.
    */
   public static final StaticLoggerBinder SINGLETON = new StaticLoggerBinder();
-  // Note: Simple gets substituted at build time by an appropriate Ant task
   private static final String loggerFactoryClassStr ="org.slf4j.impl.SimpleLoggerFactory";
 
   /** The ILoggerFactory instance returned by the {@link #getLoggerFactory} method
@@ -64,7 +63,6 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
   private final ILoggerFactory loggerFactory;
 
   private StaticLoggerBinder() {
-//  Note: Simple gets substituted at build time by an appropriate Ant task
     loggerFactory = new org.grlea.log.adapters.slf4j.Slf4jAdapterFactory();
   }
 
