@@ -95,15 +95,16 @@ information about how the SLF4J API maps to a Simple Log configuration.
 
 STATUS
 
-Version 1.0 was basically a major refactor of my own similar logger that I've been using for years.
+Version 1.0 of Simpel Log was basically a major refactor of my own similar logger that I've been
+using for years.
 
 Version 2.0 was the biggest and most important update to Simple Log since its creation.
-Most notably, the inclusing of log rolling now makes Simple Log the perfect logging toolkit for
+Most notably, the inclusion of log rolling now makes Simple Log the perfect logging toolkit for
 lightweight enterprise applications. Along with that, a couple of small enhancements have been
 added to increase your flexibility in using Simple Log. Version 2 also sees the inclusion of a
 brand-spanking new User Guide. I think you'll like it.
 
-See ChangeLog.txt for a list of new features and completed issues.
+See ChangeLog.txt for a list of new features and resolved issues.
 
 
 FUTURE FEATURES
