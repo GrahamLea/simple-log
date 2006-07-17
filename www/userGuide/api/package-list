@@ -1,0 +1,4 @@
+org.grlea.log
+org.grlea.log.adapters.commons
+org.grlea.log.adapters.slf4j
+org.grlea.log.rollover

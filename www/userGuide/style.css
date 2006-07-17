@@ -1,0 +1,150 @@
+body {
+   font-size: 0.9em;
+}
+
+h1,h2, h3 {
+   font-family: Verdana, Arial, Helvetica, Sans-Serif;
+   font-weight: bold;
+   vertical-align: middle;
+}
+
+h1 {
+   font-size: 3em;
+   background-color: #BBBBEE;
+   padding: 0.2em;
+}
+
+h2 {
+   font-size: 1.3em;
+   background-color: #DDDDFF;
+   padding: 0.3em;
+   clear: right;
+}
+
+h3 {
+   font-size: 1em;
+   background-color: #CCCCCC;
+   vertical-align: middle;
+   padding: 0.4em;
+}
+
+h3.propertyName {
+   font-family: monospace;
+}
+
+p {
+   margin: 0px;
+   margin-top: 1em;
+   margin-bottom: 1em;
+}
+
+ul {
+   margin: 0px;
+   margin-top: 1em;
+   margin-left: 2em;
+   margin-bottom: 1em;
+}
+
+table {
+   text-align: left;
+   border: 1px solid #000000;
+}
+
+th, td {
+   padding: 0.3em;
+}
+
+p.copyright {
+   font-size: 0.9em;
+   font-weight: bold;
+   color: #333333;
+   margin-top: 3em;
+}
+
+div.topMenu, div.bottomMenu {
+   margin: 1em;
+   padding: 1em;
+   border: 3px ridge #EEEEFF;
+   background-color: #EEEEFF;
+}
+
+div.topMenu h1 {
+   background-color: #EEEEFF;
+}
+
+div.topMenu {
+   float: right;
+   clear: right;
+}
+
+div.bottomMenu {
+   margin: 0;
+   margin-top: 3em;
+   margin-bottom: 3em;
+}
+
+div.topMenu h1, div.bottomMenu h1 {
+   font-size: 1em;
+}
+
+div.bottomMenu h1 {
+   margin-top: 0;
+}
+
+div.topMenu ul {
+   list-style: none;
+   margin: 0;
+   padding: 0;
+}
+
+div.topMenu li {
+   list-style: none;
+   margin-bottom: 0.5em;
+}
+
+div.bottomMenu ul {
+   margin: 0;
+   padding: 0;
+   list-style: disc;
+}
+
+div.bottomMenu li {
+   display: inline;
+   border: 0;
+   margin: 0;
+   padding: 0;
+   padding-right: 1em;
+}
+
+p.emphasis, p.quote {
+   padding-left: 50px;
+}
+
+p.emphasis {
+   font-size: 1.2em;
+   font-style: oblique;
+}
+
+ul.lotsOfText li {
+   padding-bottom: 1em;
+}
+
+span.reference {
+   font-style: oblique;
+   font-size: 0.75em;
+   display: block;
+   padding-top: 0.3em;
+}
+
+body#indexPage ul li {
+   padding-top: 1em;
+   font-size: 1.4em;
+   font-weight: bold;
+   list-style-type: square;
+}
+
+img.illustration {
+   margin: 0;
+   padding: 0;
+   float: right;
+}

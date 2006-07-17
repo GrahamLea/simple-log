@@ -1,11 +1,30 @@
 
                                Simple  Log
 
-                               Version 1.7
+                               Version 2.0
 
                       http://simple-log.dev.java.net
 
 CHANGE LOG
+
+2.0
+
+   + Issue 2: Provide options for properties file location
+   + Issue 15: Log file rollover
+   + Issue 21: Properties file not closed
+   + Issue 22: Copyright for SLF4J javadoc
+   + Issue 23: Allow importing of other properties files
+   + Issue 24: SimpleLog's List of SimpleLoggers should use WeakReferences
+   + Issue 25: Should put the release version number in the properties file
+   + Issue 26: Update SLF4J adapter to 1.0.2
+   + Issue 27: Add a simplelog-plain.properties file
+   + Issue 29: Create a Simple Log User Guide
+   + Issue 30: Default rollover filename fails when active log file is absolute
+   + Issue 31: Need Simple Log internal debugging (simplelog.dev.debug system property)
+   + Issue 32: Imported files not being read from same location as importer
+   + Issue 33: Configuration reloading fails when file URL contains spaces
+   + Issue 37: Package of CommonsLoggingAdapter incorrect in Javadoc
+   + Split the existing properties file into three (-config and -rollover)
 
 1.7
 

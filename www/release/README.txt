@@ -1,13 +1,13 @@
 
                                Simple  Log
 
-                               Version 1.7
+                               Version 2.0
 
                       http://simple-log.dev.java.net
 
 LICENSE
 
-Simple Log is Copyright (c) 2004-2005 Graham Lea. All rights reserved.
+Simple Log is Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 Simple Log is freely distributed under the Apache License 2.0.
 See LICENSE.txt for details.
 
@@ -28,13 +28,45 @@ Download Java now   @   http://java.com/
 
 USAGE
 
-To use Simple Log in your application, you will need to:
+To best understand how to use Simple Log, you should read the Quick Start in the User Guide
+(doc/quickStart.html). If you're too lazy to even do that, here's the general idea...
 
-1. Have the simple-log.jar in your classpath.
+To use Simple Log in your application you need jars and properties:
 
-2. Have a 'simplelog.properties' file in a directory or JAR that is on your classpath.
+1. JARS
+
+   You need to have the simple-log.jar in your classpath.
+   If you want rolling logs, you'll also need simple-log-rollover.jar.
+
+2. PROPERTIES
+
+   You need to have a 'simplelog.properties' file in a directory or JAR that is on your classpath.
    Simple Log will not fail if this file is not present, but it will not produce any output.
+
+   As of Simple Log 2, it is possible for the simplelog.properties file to import other files.
+   Any files you want to import must also be in the classpath.
+
    A template properties file is included with the release.
+   The template 'simplelog.properties' file imports two other files:
+
+      simplelog-config.properties
+      simplelog-rollover.properties
+
+   The standard file contains the default debug level and trace flag, and the documentation for
+   writing properties to configure the levels and flags for your own classes and packages.
+
+   The -config file contains properties for almost all the optional features, including writing log
+   output to a file, enabling reloading properties and changing the format of log messages.
+
+   The -rollover file contains the properties needed to enable log rolling.
+
+   If you want to use any of these options, you will need to include the corresponding files.
+   Otherwise, you should remove their names from the import property to prevent Simple Log from
+   printing error messages.
+
+   If you think you're so good at using Simple Log that you don't ned the documentation in the
+   properties file, you may find it easier to use simplelog-PLAIN.properties, which contains only
+   the properties and their default values.
 
 
 COMMONS LOGGING
@@ -63,21 +95,16 @@ information about how the SLF4J API maps to a Simple Log configuration.
 
 STATUS
 
-Version 1.0 was basically a major refactor of my own similar logger that I've been using for years.
+Version 1.0 of Simpel Log was basically a major refactor of my own similar logger that I've been
+using for years.
 
-Version 1.7 continues the tradition of implementing a good suggestion from a user and making a
-release! I've also started implementing some of the outstanding issues,so this release now comes
-with adapters for commons-logging and SLF4J (which explains why the release doubled in size).
+Version 2.0 was the biggest and most important update to Simple Log since its creation.
+Most notably, the inclusion of log rolling now makes Simple Log the perfect logging toolkit for
+lightweight enterprise applications. Along with that, a couple of small enhancements have been
+added to increase your flexibility in using Simple Log. Version 2 also sees the inclusion of a
+brand-spanking new User Guide. I think you'll like it.
 
-See ChangeLog.txt for a list of new features and completed issues.
-
-Users should not that the configuration files for version 1.6 are incompatible with previous
-versions' configuration files in two small ways:
-1. The log formats have changed, which will change the result of any custom formats being used.
-   Old formats can be upgraded by changing any {4} and {5} arguments to {5} and {6}, respectively.
-   Users using the default formats should not be affected.
-2. The tracing configuration now uses the suffix "#trace" instead of ".trace".
-   Most old configurations can be upgraded by performing a search/replace for .trace/#trace
+See ChangeLog.txt for a list of new features and resolved issues.
 
 
 FUTURE FEATURES
@@ -85,9 +112,9 @@ FUTURE FEATURES
 Some features that might be added in the future *if people ask for them* are:
 
 * Programmatic access to the log formats
-* Ability to turn logging off for a class/package (rather than just down to "Fatal")
-* Option to use a different filename/location for the default SimpleLog instance's properties
-* Log file rolling
+* Option to log threadId rather than threadName (in Java 1.5+)
+* Ability to output to System.out instead of System.err
+* Ability to attach listeners to a SimpleLog instance
 
 If you think you need one of these features, or some other feature, please feel free to contact me
 and I should be able to hack it up within a couple of days (assuming I haven't gone camping).

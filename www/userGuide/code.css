@@ -1,0 +1,13 @@
+span.filePath {
+   font-family: monospace;
+}
+
+.commandLine, .code, .output, .configuration {
+   font-family: monospace;
+   padding-top: 0.5em;
+   padding-bottom: 0.5em;
+}
+
+pre.commandLine, pre.code, pre.output, pre.configuration {
+   margin-left: 2em;
+}
