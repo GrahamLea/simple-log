@@ -64,6 +64,10 @@ To use Simple Log in your application you need jars and properties:
    Otherwise, you should remove their names from the import property to prevent Simple Log from
    printing error messages.
 
+   If you think you're so good at using Simple Log that you don't ned the documentation in the
+   properties file, you may find it easier to use simplelog-PLAIN.properties, which contains only
+   the properties and their default values.
+
 
 COMMONS LOGGING
 
