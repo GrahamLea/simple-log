@@ -1,5 +1,5 @@
 <html>
-   <!-- $Id: rollover.html,v 1.2 2006-07-13 08:54:39 grlea Exp $ -->
+   <!-- $Id: rollover.html,v 1.3 2006-07-17 10:27:58 grlea Exp $ -->
    <head>
       <title>Simple Log - Log Rolling</title>
       <meta http-equiv="description" content="Explanation of Log Roliing in Simple Log" />
@@ -56,8 +56,16 @@
 
       <p>
          Simple Log comes with two Rollover Strategies, although you can also write your own if necessary.
-         The <a href="javadoc/org/grlea/log/rollover/FileSizeRolloverStrategy.html">'File Size'</a> strategy will roll the active log file whenever it reaches a particular size,
-         while the <a href="javadoc/org/grlea/log/rollover/TimeOfDayRolloverStrategy.html">'Time of Day'</a> strategy rolls the active log file at a particular time of day.
+         The
+         <!--<a href="api/org/grlea/log/rollover/FileSizeRolloverStrategy.html">-->
+            'File Size'
+         <!--</a> -->
+         strategy will roll the active log file whenever it reaches a particular size,
+         while the
+         <!--<a href="api/org/grlea/log/rollover/TimeOfDayRolloverStrategy.html">-->
+            'Time of Day'
+         <!--</a> -->
+         strategy rolls the active log file at a particular time of day.
       </p>
 
       <p>
@@ -85,7 +93,7 @@
 
       <p>
          If you have some other requirement for determining when your logs are rolled, for example "once a week", "when the moonlight is at just the right angle", or using the "Schimke Random Rolling" algorithm,
-         you can easily write your own implementation of <a href="javadoc/org/grlea/log/rollover/RolloverStrategy.html">RolloverStrategy</a>.
+         you can easily write your own implementation of <a href="api/org/grlea/log/rollover/RolloverStrategy.html">RolloverStrategy</a>.
          It's as simple as creating a zero-argument constructor and implementing the <pre class="code">configure(Map properties)</pre> method and the all-important <pre class="code">boolean rolloverNow(Date fileCreated, long fileLength)</pre> function. The documentation is pretty straight-forward, and there's of course the source code of the other two strategies for you to look at.
       </p>
 
