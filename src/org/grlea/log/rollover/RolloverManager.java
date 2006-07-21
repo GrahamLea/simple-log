@@ -1,6 +1,6 @@
 package org.grlea.log.rollover;
 
-// $Id: RolloverManager.java,v 1.6 2006-07-13 12:39:15 grlea Exp $
+// $Id: RolloverManager.java,v 1.7 2006-07-21 11:57:31 grlea Exp $
 // Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,7 +44,7 @@ import java.util.TimerTask;
  * no log content is lost while the roll over is being conducted.</p>
  *
  * @author Graham Lea
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class
 RolloverManager
@@ -369,6 +369,11 @@ extends Writer
                   if (parsedFileId > maximumFileId)
                      maximumFileId = parsedFileId;
                }
+            }
+            catch (NumberFormatException e)
+            {
+               // This will happen for any filenames that appear to match the pattern but don't
+               // e.g. 'old-application.log' matches {1}-application.log, but 'old' isn't a number
             }
             catch (ParseException e)
             {

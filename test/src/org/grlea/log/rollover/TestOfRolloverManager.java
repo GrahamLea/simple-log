@@ -1,6 +1,6 @@
 package org.grlea.log.rollover;
 
-// $Id: TestOfRolloverManager.java,v 1.2 2006-07-13 12:44:53 grlea Exp $
+// $Id: TestOfRolloverManager.java,v 1.3 2006-07-21 11:57:29 grlea Exp $
 // Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@ package org.grlea.log.rollover;
 import junit.framework.TestCase;
 
 import java.io.IOException;
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.Map;
@@ -29,7 +30,7 @@ import java.util.TimeZone;
  * <p>Tests the public interface of {@link RolloverManager}.</p>
  *
  * @author Graham Lea
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class
 TestOfRolloverManager
@@ -193,6 +194,35 @@ extends TestCase
       }
       catch (IOException e)
       {}
+   }
+
+   public void
+   testFileWithPseudoUniqueNumberFormat() throws IOException
+   {
+      String rolloverDirectoryName = "rolloverTest";
+      File rolloverDirectory = new File(rolloverDirectoryName);
+      rolloverDirectory.mkdirs();
+
+      File fileWithPseudoUniqueNumberFormat = new File(rolloverDirectory, "TEST-foo.log");
+      fileWithPseudoUniqueNumberFormat.createNewFile();
+
+      Properties properties = new Properties();
+      properties.setProperty("simplelog.logFile", "foo.log");
+      properties.setProperty("simplelog.rollover.directory", rolloverDirectoryName);
+      properties.setProperty("simplelog.rollover.filename", "{1}-foo.log");
+      properties.setProperty(KEY_ROLLOVER, "fileSize");
+
+      try
+      {
+         new RolloverManager(properties, null);
+      }
+      catch (NumberFormatException e)
+      {
+         fail("File caused NumberFormatException");
+      }
+
+      fileWithPseudoUniqueNumberFormat.delete();
+      rolloverDirectory.delete();
    }
 
    public static class
