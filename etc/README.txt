@@ -1,7 +1,7 @@
 
                                Simple  Log
 
-                               Version @VERSION@
+                              Version @VERSION@
 
                       http://simple-log.dev.java.net
 

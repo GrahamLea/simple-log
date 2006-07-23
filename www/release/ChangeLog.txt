@@ -1,11 +1,15 @@
 
                                Simple  Log
 
-                               Version 2.0
+                              Version 2.0.1
 
                       http://simple-log.dev.java.net
 
 CHANGE LOG
+
+2.0.1
+
+   + Issue 39: RolloverManager throws NFE
 
 2.0
 
