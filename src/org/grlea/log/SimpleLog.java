@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.22 2006-08-15 10:29:45 grlea Exp $
+// $Id: SimpleLog.java,v 1.23 2006-08-15 10:39:40 grlea Exp $
 // Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -61,7 +61,7 @@ import java.util.Map;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  * @author $Author: grlea $
  */
 public final class
@@ -895,12 +895,57 @@ SimpleLog
    }
 
    /**
-    * <p>Returns the default instance of <code>SimpleLog</code>.</p>
+    * <p>Sets the default instance of <code>SimpleLog</code>.</p>
     *
-    * <p>The default instance is either configured from a properties file found on the classpath
-    * with the name 'simplelog.properties', or not configured at all (if the file cannot be found).
-    * <br>If the instance is not configured at all, it will not produce any output unless a writer
-    * is programmatically assigned to it (see {@link #setWriter}).</p>
+    * <p>If the default instance has already been initialised and has been used to create one or
+    * more {@link SimpleLogger}s, this method will print a warning on <code>System.err</code>
+    * but the operation will still be completed.</p>
+    *
+    * @param log the SimpleLog instance to be used as the default instance
+    */
+   public static void
+   setDefaultInstance(SimpleLog log)
+   {
+      if (log == null)
+         throw new IllegalArgumentException("log cannot be null.");
+
+      synchronized (defaultInstanceLock)
+      {
+         printDebugIfEnabled("Default SimpleLog instance being set programatically");
+
+         if (defaultInstance != null &&
+               (!defaultInstance.loggers.isEmpty() ||
+                !defaultInstance.instanceLoggerReferences.isEmpty()))
+         {
+            printError("Warning: The default SimpleLog instance is being replaced, but has already " +
+                       "been used to create SimpleLoggers.");
+         }
+
+         defaultInstance = log;
+      }
+   }
+
+   /**
+    * <p>Returns the default instance of <code>SimpleLog</code>. If one has not been set manually,
+    * a default instance is created and initialised automatically.</p>
+    *
+    * <p>The automatically-initialised default instance is configured:
+    * <ul>
+    * <li>from a properties file specified in the value of the system property
+    * <code>simplelog.configuration</code> via the classpath or file system, depending on whether
+    * the property value begins with <code>classpath:</code> or <code>file:</code></li>
+    * <li>or, if the system property is not specified, from a properties file
+    * found on the classpath with the name 'simplelog.properties' <i>(this is the most usual method
+    * of configuration)</i></li>
+    * <li>or, if that file is not found in the classpath, not configured at all, in which case
+    * Simple Log will produce no output whatsoever unless a writer is programmatically assigned
+    * (see {@link #setWriter}).</li>
+    * </ul>
+    * </p>
+    *
+    * <p>If your chosen method of configuration does not appear to be working, you can set the value
+    * of the <code>simplelog.dev.debug</code> system property to <code>true</code> to see where
+    * Simple Log is looking for its configuration.</p>
     *
     * @return the default instance of <code>SimpleLog</code>.
     */
