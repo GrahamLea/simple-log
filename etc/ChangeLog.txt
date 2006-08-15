@@ -7,6 +7,11 @@
 
 CHANGE LOG
 
+2.1
+
+   + Issue 35: Enable console output to go onto System.out
+   + Issue 41: Add a SimpleLog.setDefaultInstance() method
+
 2.0.1
 
    + Issue 39: RolloverManager throws NFE
