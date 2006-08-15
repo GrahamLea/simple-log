@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.21 2006-07-13 12:40:07 grlea Exp $
+// $Id: SimpleLog.java,v 1.22 2006-08-15 10:29:45 grlea Exp $
 // Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,6 +26,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.io.UnsupportedEncodingException;
+import java.io.PrintStream;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
@@ -60,7 +61,7 @@ import java.util.Map;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.22 $
  * @author $Author: grlea $
  */
 public final class
@@ -91,6 +92,9 @@ SimpleLog
 
    /** The prefix for all special properties keys. */
    private static final String KEY_PREFIX = "simplelog.";
+
+   /** The prefix for all special properties keys. */
+   private static final String KEY_CONSOLE = KEY_PREFIX + "console";
 
    /** The property key for a list of files to import. */
    private static final String KEY_IMPORT = KEY_PREFIX + "import";
@@ -263,6 +267,9 @@ SimpleLog
    /** The destination of this <code>SimpleLog</code>'s output. */
    private PrintWriter out;
 
+   /** This <code>SimpleLog</code>'s console. */
+   private PrintStream console;
+
    /** The writer that the print writer is printing to. */
    private Writer currentWriter;
 
@@ -388,7 +395,8 @@ SimpleLog
 
       this.configurationSource = null;
       this.properties = properties;
-      this.out = new PrintWriter(System.err, true);
+      setConsole(properties);
+      this.out = new PrintWriter(console, true);
 
       readSettingsFromProperties();
    }
@@ -409,7 +417,8 @@ SimpleLog
    {
       this.configurationSource = configurationSource;
       this.properties = new Properties();
-      this.out = new PrintWriter(System.err, true);
+      setConsole(properties);
+      this.out = new PrintWriter(console, true);
 
       loadProperties();
       readSettingsFromProperties();
@@ -443,6 +452,15 @@ SimpleLog
       {
          printDebugIfEnabled("Configuration reloading is disabled");
       }
+   }
+
+   private void setConsole(Properties properties)
+   {
+      String console = properties.getProperty(KEY_CONSOLE);
+      if (console != null && console.trim().toLowerCase().equals("system.out"))
+         this.console = System.out;
+      else
+         this.console = System.err;
    }
 
    /**
@@ -542,6 +560,8 @@ SimpleLog
    {
       if (!outputSetProgramatically)
       {
+         setConsole(properties);
+
          try
          {
             String rolloverStrategyString = properties.getProperty(KEY_ROLLOVER_STRATEGY);
@@ -743,7 +763,7 @@ SimpleLog
       {
          if (newLogFile == null)
          {
-            writer = new OutputStreamWriter(System.err);
+            writer = new OutputStreamWriter(console);
             printWriterGoesToConsole = true;
          }
          else
@@ -1023,7 +1043,7 @@ SimpleLog
          out.println(s);
          if (!printWriterGoesToConsole && pipingOutputToConsole)
          {
-            System.err.println(s);
+            console.println(s);
          }
       }
    }
