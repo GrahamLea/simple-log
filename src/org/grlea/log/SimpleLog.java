@@ -1,6 +1,6 @@
 package org.grlea.log;
 
-// $Id: SimpleLog.java,v 1.23 2006-08-15 10:39:40 grlea Exp $
+// $Id: SimpleLog.java,v 1.24 2006-08-15 10:49:23 grlea Exp $
 // Copyright (c) 2004-2006 Graham Lea. All rights reserved.
 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -61,7 +61,7 @@ import java.util.Map;
  * <code>SimpleLog</code> - just use the {@link SimpleLogger#SimpleLogger(Class) basic SimpleLogger
  * constructor} and you'll never even know nor care.</p>
  *
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.24 $
  * @author $Author: grlea $
  */
 public final class
@@ -403,8 +403,6 @@ SimpleLog
 
    /**
     * Creates a new <code>SimpleLog</code> configured by a properties file read from the given URL.
-    * <br>
-    * All <code>SimpleLog</code>s log to System.err by default.
     *
     * @param configurationSource the properties file to use to configure the <code>SimpleLog</code>
     * instance.
@@ -452,6 +450,26 @@ SimpleLog
       {
          printDebugIfEnabled("Configuration reloading is disabled");
       }
+   }
+
+   /**
+    * <p>Creates a new <code>SimpleLog</code> configured by a specified properties file.</p>
+    *
+    * <p>Note that this is merely a convenience method equivalent to:
+    * <code>new SimpleLog(configurationSource.toURL())</code>
+    * </p>
+    *
+    * @param configurationSource the properties file to use to configure the <code>SimpleLog</code>
+    * instance.
+    *
+    * @throws IOException if an error occurs interpreting the file name as a URL or if the
+    * properties file cannot be read.
+    */
+   public
+   SimpleLog(File configurationSource)
+   throws IOException
+   {
+      this(configurationSource.toURL());
    }
 
    private void setConsole(Properties properties)

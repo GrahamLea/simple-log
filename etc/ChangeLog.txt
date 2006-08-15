@@ -11,6 +11,7 @@ CHANGE LOG
 
    + Issue 35: Enable console output to go onto System.out
    + Issue 41: Add a SimpleLog.setDefaultInstance() method
+   + Issue 44: Add a SimpleLog(File) constructor
 
 2.0.1
 
