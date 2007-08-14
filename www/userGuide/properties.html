@@ -1,5 +1,5 @@
 <html>
-   <!-- $Id: properties.html,v 1.2 2006-07-23 22:16:15 grlea Exp $ -->
+   <!-- $Id: properties.html,v 1.3 2007-08-14 11:47:17 grlea Exp $ -->
    <head>
       <title>Simple Log Properties</title>
       <meta http-equiv="description" content="Documentation of the properties accepted by Simple Log" />
@@ -55,6 +55,44 @@
          using the -D command line argument to your Java Virtual Machine, or by calling
          <span class="code">System.setProperty()</span>.
       </p>
+
+      <a name="simplelog.configuration"/>
+      <h3 class="propertyName">simplelog.configuration</h3>
+
+      <p>
+         By default, Simple Log tries to load its configuration from a file called
+         <span class="configuration">simplelog.properties</span> which it looks for in the root of the classpath.
+         The <span class="configuration">simplelog.configuration</span> lets you tell it to look somewhere else.
+         It can be used to load configuration either from the file system or from somewhere else on the classpath.
+      </p>
+
+      <p>
+         To load the configuration from the file system, the value of <span class="configuration">simplelog.configuration</span>
+         should be <span class="configuration">file:</span> followed by either an absolute or relative path to the configuarion file.
+         If a relative path is used, the path is interpreted relative to the working directory of the process
+         (standard java.io.File behaviour).
+      </p>
+
+      <p>
+         Example: you to want load your properties from /etc/simple-log-shared.properties
+         <blockquote>
+<pre>-Dsimplelog.configuration=file:/etc/simple-log-shared.properties</pre>
+         </blockquote>
+      </p>
+
+      <p>
+         To load the configuration from the classpath, the value of <span class="configuration">simplelog.configuration</span>
+         should be <span class="configuration">classpath:</span> followed by a path specifing where to find the configuarion file
+         relative to the root of the classpath.
+      </p>
+
+      <p>
+         Example: your properties are in WEB-INF/properties/secret-logging.properties in your web application
+         <blockquote>
+<pre>-Dsimplelog.configuration=classpath:WEB-INF/properties/secret-logging.properties</pre>
+         </blockquote>
+      </p>
+
 
       <a name="simplelog.dev.debug"/>
       <h3 class="propertyName">simplelog.dev.debug</h3>
