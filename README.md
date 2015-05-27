@@ -10,3 +10,5 @@ Though it hasn't been changed in almost a decade, it is still a very useful alte
 > I started with a list of things that I didn't want to do. I didn't want to do them because I'd seen them done in other logging libraries and they annoyed me a lot.
 
 What Simple Log lacks in features, it makes up for with a comprehensive and witty user guide.
+
+There is more documentation (complete, but unstyled) at http://grahamlea.github.io/simple-log/
