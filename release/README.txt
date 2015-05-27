@@ -7,7 +7,7 @@
 
 LICENSE
 
-Simple Log is Copyright (c) 2004-2006 Graham Lea. All rights reserved.
+Simple Log is Copyright (c) 2004-2015 Graham Lea. All rights reserved.
 Simple Log is freely distributed under the Apache License 2.0.
 See LICENSE.txt for details.
 
