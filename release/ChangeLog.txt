@@ -3,7 +3,7 @@
 
                               Version 2.0.1
 
-                      http://simple-log.dev.java.net
+                 https://github.com/GrahamLea/simple-log
 
 CHANGE LOG
 

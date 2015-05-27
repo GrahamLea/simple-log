@@ -3,7 +3,7 @@
 
                               Version 2.0.1
 
-                      http://simple-log.dev.java.net
+                 https://github.com/GrahamLea/simple-log
 
 LICENSE
 
@@ -71,7 +71,7 @@ To use Simple Log in your application you need jars and properties:
 
 COMMONS LOGGING
 
-If you plan use Simple Log's CommonsLoggingAdapter with Jakarta Commons Logging, you will also need
+If you plan use Simple Log's CommonsLoggingAdapter with Apache Commons Logging, you will also need
 to:
 
 1. Include the simple-log-commons-logging.jar in your classpath.
@@ -95,7 +95,7 @@ information about how the SLF4J API maps to a Simple Log configuration.
 
 STATUS
 
-Version 1.0 of Simpel Log was basically a major refactor of my own similar logger that I've been
+Version 1.0 of Simple Log was basically a major refactor of my own similar logger that I've been
 using for years.
 
 Version 2.0 was the biggest and most important update to Simple Log since its creation.
@@ -136,9 +136,7 @@ If you find a bug, please follow these steps:
    Does it only occur when the properties file is in a certain place?
    Can you write a really small test class that demonstrates the problem?
 
-3. Send an email, with the subject "Simple Log BUG", to:
-
-      issues@simple-log.dev.java.net
+3. Use the GitHub issue tracker at
 
    Please describe the problem VERBOSELY.
    Make sure to include your Java versions and Simple Log version.
@@ -147,4 +145,4 @@ If you find a bug, please follow these steps:
 
  - Contacting the Creator -
 
-If you need to contact me regarding Simple Log, I can be reached at owner@simple-log.dev.java.net
+If you need to contact me regarding Simple Log, I can be reached via Github: https://github.com/GrahamLea
